@@ -16,7 +16,7 @@
 #include <ctime>
 #include <cmath>
 #include <fstream>
-#include "libiomp/omp.h"
+//#include "libiomp/omp.h"
 //#include "gsl/gsl_multimin.h"
 #include <Eigen/SparseCholesky>
 #include <Eigen/Dense>
