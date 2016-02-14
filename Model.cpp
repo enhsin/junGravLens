@@ -510,51 +510,53 @@ double Model::getRegularizationSrcValue (vec d) {
 double Model::getZerothOrderReg (Conf* conf, Image* dataImage) {
 	//s is known;
 	double sum = 0;
-
 	long naxis1 = conf->srcSize[0];
 	long naxis2 = conf->srcSize[1];
 	Image* srcImg =new Image(srcPosXList, srcPosYList, &dataImage->dataList, naxis1, naxis2, conf->bitpix);
-
-
 
 	for (int i=0; i< naxis1 ; ++i) {
 		for (int j=0; j< naxis2 ; ++j) {
 			int index = i+j*naxis1;
 			sum += srcImg->data[index] * srcImg->data[index] ;
-
 		}
-
 	}
-
-
 	delete srcImg;
 	return sum ;
 }
 
 
-void Model::clearMatrix() {
-/*
-			L.resize(length,length);
-			r.resize(2*length);
-			s.resize(length);
-			phi.resize(length);
-			square_s.resize(conf->srcSize[0]*conf->srcSize[1]);
-			Ds.resize(length, 2*length);
-			Dphi.resize(2*length,length);
-			Hs1(length, length);
-			Hs2(length, length);
-			Hphi(length, length);
-			HtH(length, length);
-			HphiH(length, length);
-			T(conf->srcSize[0]*conf->srcSize[1], length);
-			RtR(2*length, 2*length);
-			H0(conf->srcSize[0]*conf->srcSize[1], conf->srcSize[0]*conf->srcSize[1]);
-			lambdaS(lambdaS);*/
+double Model::getSecondOrderReg(Conf* conf, Image* dataImage) {
+	double sum = 0;
+	double diff = 0;  
+	long naxis1 = conf->srcSize[0];
+	long naxis2 = conf->srcSize[1];
+	int index = 0 ; 
+	int index_edge = 0; 
+	int index_next = 0; 
+	Image* srcImg =new Image(srcPosXList, srcPosYList, &dataImage->dataList, naxis1, naxis2, conf->bitpix);
 
+	for (int i=0; i< naxis1 ; ++i) {
+		index_edge = (naxis2 - 1)* naxis1 + i; 
+		sum +=  srcImg->data[index_edge] * srcImg->data[index_edge]; 		
+		for (int j=0; j< naxis2-1 ; ++j) {
+			index  		= i + j 	* naxis1;
+			index_next 	= i + (j+1) * naxis1; 
+			diff = srcImg->data[index] - srcImg->data[index_next]; 
+			sum += diff*diff; 
+		}
+	}
 
+	for (int j=0; j< naxis2 ; ++j) {
+		index_edge = j * naxis2 + (naxis1-1) ; 
+		sum +=  srcImg->data[index_edge] *  srcImg->data[index_edge]; 
+		for (int i=0; i< naxis1-1 ; ++i) {
+			index  		= i 	+ j * naxis1;
+			index_next 	= (i+1) + j * naxis1; 
+			diff = srcImg->data[index] - srcImg->data[index_next]; 
+			sum += diff*diff; 
+		}
+	}
+	return sum ; 
 }
-
-
-
 
 

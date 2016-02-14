@@ -305,7 +305,7 @@ int main() {
 	params->conf = conf;
 
 
-	double lambdaS = 1.0;
+	double lambdaS = 0.001;
 
 	gridSearch(conf, param,  dataImage, d, dir, lambdaS);
 

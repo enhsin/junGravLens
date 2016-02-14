@@ -166,6 +166,7 @@ void gridSearch(Conf* conf, MultModelParam param, Image* dataImage, vec d, strin
 
 			//double srcReg = model1->getRegularizationSrcValue(d);
 			double zerothOrder = model1->getZerothOrderReg (conf, dataImage);
+			double secondOrder = model1->getSecondOrderReg (conf, dataImage); 
 			++i;
 
 			Image* resImg   	= 	new Image(dataImage->xList, dataImage->yList, &model1->res_img, conf->imgSize[0], conf->imgSize[1], conf->bitpix);
@@ -182,6 +183,7 @@ void gridSearch(Conf* conf, MultModelParam param, Image* dataImage, vec d, strin
 
 			cout << model1->param.parameter[0].critRad  << "\t" ;
 			cout << zerothOrder << "\t" ;
+			cout << secondOrder << "\t" ;
 			cout << model1->chi2 << "\t" << model1->srcR << "\t" << model1->penalty << endl;
 			delete model1;
 

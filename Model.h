@@ -194,7 +194,10 @@ public:
 	virtual ~Model();
 	void updateReducedResidual(Image* dataImage);
 	double getRegularizationSrcValue (vec d);
-	double getZerothOrderReg (Conf* conf, Image* dataImage);
+
+	double getZerothOrderReg(Conf* conf, Image* dataImage);
+	double getSecondOrderReg(Conf* conf, Image* dataImage); 
+
 	void clearMatrix();
 };
 
