@@ -396,6 +396,8 @@ void Image::normalizeData() {
 }
 
 
+
+
 Image::~Image() {
 	// TODO Auto-generated destructor stub
 }

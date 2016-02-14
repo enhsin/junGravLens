@@ -195,8 +195,9 @@ public:
 	void updateReducedResidual(Image* dataImage);
 	double getRegularizationSrcValue (vec d);
 
-	double getZerothOrderReg(Conf* conf, Image* dataImage);
-	double getSecondOrderReg(Conf* conf, Image* dataImage); 
+	double getZerothOrderReg  	(Conf* conf, Image* dataImage);
+	double getGradientOrderReg	(Conf* conf, Image* dataImage); 
+	double getCurvatureOrderReg	(Conf* conf, Image* dataImage); 
 
 	void clearMatrix();
 };

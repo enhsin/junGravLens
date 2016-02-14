@@ -525,7 +525,7 @@ double Model::getZerothOrderReg (Conf* conf, Image* dataImage) {
 }
 
 
-double Model::getSecondOrderReg(Conf* conf, Image* dataImage) {
+double Model::getGradientOrderReg(Conf* conf, Image* dataImage) {
 	double sum = 0;
 	double diff = 0;  
 	long naxis1 = conf->srcSize[0];
@@ -556,6 +556,62 @@ double Model::getSecondOrderReg(Conf* conf, Image* dataImage) {
 			sum += diff*diff; 
 		}
 	}
+	return sum ; 
+}
+
+
+double Model::getCurvatureOrderReg(Conf* conf, Image* dataImage) {
+
+	double sum = 0;
+	double diff = 0;  
+	double diff_edge = 0; 
+	long naxis1 = conf->srcSize[0];
+	long naxis2 = conf->srcSize[1];
+
+	int index1 = 0 ;
+	int index2 = 0 ;
+	int index3 = 0 ;
+
+	int index_edge1 = 0; 
+	int index_edge2 = 0;	 
+
+	Image* srcImg =new Image(srcPosXList, srcPosYList, &dataImage->dataList, naxis1, naxis2, conf->bitpix);
+
+	for (int i=0; i< naxis1 ; ++i) {
+		index_edge1 = (naxis2 - 2)* naxis1 + i;
+		index_edge2 = (naxis2 - 1)* naxis1 + i; 
+		diff_edge = srcImg->data[index_edge1] -  srcImg->data[index_edge2]; 
+		sum +=  diff_edge * diff_edge +  srcImg->data[index_edge2]*  srcImg->data[index_edge2]; 
+
+		for ( int j=0 ; j< naxis2-2; ++j) {
+			index1 = i + j  * naxis1; 
+			index2 = index1 + naxis1; 
+			index3 = index2 + naxis1; 
+			diff = srcImg->data[index1] - 2* srcImg->data[index2] + srcImg->data[index3]; 
+			sum += diff * diff; 
+
+		}
+
+	}	
+	
+	for ( int j=0 ; j< naxis2; ++j) {
+		index_edge1 = j * naxis1 + naxis1-2;
+		index_edge2 = j * naxis1 + naxis1-1; 
+		diff_edge = srcImg->data[index_edge1] -  srcImg->data[index_edge2]; 
+		sum +=  diff_edge * diff_edge +  srcImg->data[index_edge2]*  srcImg->data[index_edge2];
+
+		for (int i=0; i< naxis1-2 ; ++i) {
+			index1 = i + j  * naxis1; 
+			index2 = index1 + 1; 
+			index3 = index2 + 1; 
+			diff = srcImg->data[index1] - 2* srcImg->data[index2] + srcImg->data[index3]; 
+			sum += diff * diff; 
+
+		}
+
+	}	
+
+
 	return sum ; 
 }
 
