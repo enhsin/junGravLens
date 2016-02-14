@@ -30,6 +30,7 @@ Image::Image() {
 Image::Image(vector<double> xpos, vector<double> ypos, vector<double> *briList, long naxis1, long naxis2, int bitpix):
 			naxis(2), naxis1(naxis1), naxis2(naxis2), bitpix(bitpix), data(naxis1*naxis2, 0) {
 	npixels = naxis1*naxis2;
+
 	long iList=0, x, y;
 	for(int i=0; i< briList->size(); ++i) {
 		x = nearbyint(xpos[i]);
@@ -39,6 +40,7 @@ Image::Image(vector<double> xpos, vector<double> ypos, vector<double> *briList, 
 			iList = naxis1*y+x;
 		}
 		data[iList] += briList->at(i);
+
 	}
 }
 
@@ -358,7 +360,8 @@ sp_mat Image::getVarMatrix()  {
 	sp_mat invC(n, n);
 	invC.reserve(n);
 	for(int i=0; i<n; ++i) {
-		invC.insert(i,i)=1; ///varList[i];
+		invC.insert(i,i)= 1.0; ///varList[i];
+		//cout << dataList[i] << endl;
 	}
 	return invC;
 }

@@ -134,6 +134,9 @@ public:
 
 
 	vector<double> res_img;    // Residual brightness.
+	vector<double> simple_res_img;
+
+
 	vector<double> mod_img;
 	vector<double> red_res_img; //
 	vector<double> critical;
@@ -145,6 +148,7 @@ public:
 	sp_mat L;
 	sp_mat M;
 	vec r;
+	vec new_r;
 	vec s;
 	vec phi;
 	vec square_s;
@@ -189,6 +193,8 @@ public:
 	void updateCritCaustic(Image* dataImage,  Conf* constList);
 	virtual ~Model();
 	void updateReducedResidual(Image* dataImage);
+	double getRegularizationSrcValue (vec d);
+	double getZerothOrderReg (Conf* conf, Image* dataImage);
 	void clearMatrix();
 };
 

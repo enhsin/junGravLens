@@ -37,6 +37,7 @@ Model::Model(Conf* conf, MultModelParam param, double lambdaS):
 		red_res_img(length),
 		L(length,length),
 		r(2*length),
+		new_r(2*length),
 		s(length),
 		phi(length),
 		square_s(conf->srcSize[0]*conf->srcSize[1]),
@@ -135,6 +136,8 @@ vector<double> Model::getDeflectionAngle(Conf* conf, int imgX, int imgY, double 
 			double fMult = param.parameter[i].critRad*param.parameter[i].critRad/fDenom;
 			*pDeltaX +=  fX*fMult;
 			*pDeltaY +=  fY*fMult;
+
+
 		}
 
 
@@ -176,10 +179,10 @@ vector<double> Model::getDeflectionAngle(Conf* conf, int imgX, int imgY, double 
 	srcX = (pfX - (*pDeltaX))/conf->srcRes+conf->srcXCenter;
 	srcY = (pfY - (*pDeltaY))/conf->srcRes+conf->srcYCenter;
 
-	//ofstream debug("debug.txt" , ios::out | ios::app  );
+	ofstream debug("debug.txt" , ios::out | ios::app  );
 
-	//debug << imgX << "\t" << imgY  << "\t" <<*pDeltaX<< "\t" << *pDeltaY << "\t"<<  srcX << "\t" << srcY << endl;
-	//debug.close();
+	debug << imgX << "\t" << imgY  << "\t" <<*pDeltaX<< "\t" << *pDeltaY << "\t"<<  srcX << "\t" << srcY << endl;
+	debug.close();
 	srcPos.push_back(srcX);
 	srcPos.push_back(srcY);
 	return srcPos;
@@ -220,9 +223,6 @@ void Model::updateLensAndRegularMatrix(Image* dataImage,  Conf* constList) {
 	vector<double> w, w5;
 
 
-	chrono::time_point<std::chrono::system_clock> start, end;
-	start = std::chrono::system_clock::now();
-
 	for (int i=0; i<constList->length; ++i) {
 
 	//	if(dataImage->type[i]==1) {// || dataImage->type[i]==0) {
@@ -246,22 +246,22 @@ void Model::updateLensAndRegularMatrix(Image* dataImage,  Conf* constList) {
 				int iUp   = up  ->second;
 				int iDown = down->second;
 				int iRight= right->second;
-				Point A(srcPosXList[iLeft], srcPosYList[iLeft], s(iLeft));
-				Point B(srcPosXList[iUp], srcPosYList[iUp], s(iUp));
-				Point C(srcPosXList[i], srcPosYList[i], s(i));
-				Point D(srcPosXList[iDown], srcPosYList[iDown], s(iDown));
+				Point A(srcPosXList[iLeft ], srcPosYList[iLeft ], s(iLeft ));
+				Point B(srcPosXList[iUp   ], srcPosYList[iUp   ], s(iUp   ));
+				Point C(srcPosXList[i     ], srcPosYList[i     ], s(i     ));
+				Point D(srcPosXList[iDown ], srcPosYList[iDown ], s(iDown ));
 				Point E(srcPosXList[iRight], srcPosYList[iRight], s(iRight));
 				w5 = getPentWeigth(A, B, C, D, E);
-				Hs1.insert(i, iLeft) 	= w5[0];
-				Hs1.insert(i, iUp) 		= w5[1];
-				Hs1.insert(i, i) 		= w5[2];
-				Hs1.insert(i, iDown) 	= w5[3];
+				Hs1.insert(i, iLeft	) 	= w5[0];
+				Hs1.insert(i, iUp	) 	= w5[1];
+				Hs1.insert(i, i		) 	= w5[2];
+				Hs1.insert(i, iDown	) 	= w5[3];
 				Hs1.insert(i, iRight) 	= w5[4];
 
-				Hs2.insert(i, iLeft) 	= w5[5];
-				Hs2.insert(i, iUp) 		= w5[6];
-				Hs2.insert(i, i) 		= w5[7];
-				Hs2.insert(i, iDown) 	= w5[8];
+				Hs2.insert(i, iLeft	) 	= w5[5];
+				Hs2.insert(i, iUp	) 	= w5[6];
+				Hs2.insert(i, i		) 	= w5[7];
+				Hs2.insert(i, iDown	) 	= w5[8];
 				Hs2.insert(i, iRight) 	= w5[9];
 			}
 
@@ -278,19 +278,18 @@ void Model::updateLensAndRegularMatrix(Image* dataImage,  Conf* constList) {
 				int iDown = down->second;
 
 				Point A(srcPosXList[iLeft], srcPosYList[iLeft], s(iLeft));
-				Point B(srcPosXList[iUp], srcPosYList[iUp], s(iUp));
+				Point B(srcPosXList[iUp  ], srcPosYList[iUp	 ], s(iUp  ));
 				Point C(srcPosXList[iDown], srcPosYList[iDown], s(iDown));
-				Point P(srcPosXList[i], srcPosYList[i], s(i));
+				Point P(srcPosXList[i	 ], srcPosYList[i	 ], s(i    ));
 
 				w = getTriWeight( A, B, C, P);
-				L.insert(i, iLeft) = w[0];
-				L.insert(i, iUp)   = w[1];
-				L.insert(i, iDown) = w[2];
-				//Hs1.insert(i, i) 		= 1;
-				//Hs2.insert(i, i) 		= 1;
+				L.insert(i, iLeft) 	= w[0];
+				L.insert(i, iUp	 )  = w[1];
+				L.insert(i, iDown) 	= w[2];
+
 				normVec n = getNormVector(A, B, C);
 				normV[iLeft].push_back(n);
-				normV[iUp].push_back(n);
+				normV[iUp  ].push_back(n);
 				normV[iDown].push_back(n);
 			}
 			else L.insert(i, i) = 1;
@@ -298,8 +297,6 @@ void Model::updateLensAndRegularMatrix(Image* dataImage,  Conf* constList) {
 	}
 
 
-	end = std::chrono::system_clock::now();
-	std::chrono::duration<double> elapsed_seconds_1 = end-start;
 
 	HtH = Hs1.transpose()*Hs1 + Hs2.transpose()*Hs2;
 
@@ -315,20 +312,12 @@ void Model::updateLensAndRegularMatrix(Image* dataImage,  Conf* constList) {
 
 
 
-	start = std::chrono::system_clock::now();
+	//start = std::chrono::system_clock::now();
 	//for (int k=0; k<HtH.outerSize(); ++k)
 	//  for (SparseMatrix<double>::InnerIterator it(HtH,k); it; ++it)
 	//	  RtR.insert(it.row(), it.col()) = it.value()*lambdaS*lambdaS;
 	RtR = lambdaS*lambdaS*HtH;
 	RtR.conservativeResize(2*constList->length, 2*constList->length);
-
-
-
-	end = std::chrono::system_clock::now();
-	std::chrono::duration<double> elapsed_seconds_2 = end-start;
-
-//	cout << "sub _ elapsed time _ 1: " << elapsed_seconds_1.count() << endl;
-//	cout << "sub _ elapsed time _ 2: " << elapsed_seconds_2.count() << endl;
 
 }
 
@@ -410,12 +399,17 @@ void Model::updatePenalty(sp_mat* invC, vec d) {
 	// get Penalty Function;
 	for(int i=0; i<length; ++i) {
 		r(i) = s(i);
+		new_r(i) = d(i);
 	}
+
 	for(int i=length; i<2*length; ++i) {
 		r(i) = 0;
+		new_r(i) = 0;
 	}
 	vec res = M*r-d;
 	res_img = eigenV_to_cV(res);
+	simple_res_img = eigenV_to_cV(M*new_r-d);
+
 	mod_img = eigenV_to_cV(M*r);
 
 	vec temp1 =  res.transpose()*(*invC)*res;
@@ -504,6 +498,37 @@ void Model::writeSrcImage(string outFileName, Conf* conList) {
 	srcImg->writeToFile(outFileName);
 	delete srcImg;
 
+}
+
+
+double Model::getRegularizationSrcValue (vec d) {
+	// HtH and d is known
+	return  d.transpose()*HtH*d;
+}
+
+
+double Model::getZerothOrderReg (Conf* conf, Image* dataImage) {
+	//s is known;
+	double sum = 0;
+
+	long naxis1 = conf->srcSize[0];
+	long naxis2 = conf->srcSize[1];
+	Image* srcImg =new Image(srcPosXList, srcPosYList, &dataImage->dataList, naxis1, naxis2, conf->bitpix);
+
+
+
+	for (int i=0; i< naxis1 ; ++i) {
+		for (int j=0; j< naxis2 ; ++j) {
+			int index = i+j*naxis1;
+			sum += srcImg->data[index] * srcImg->data[index] ;
+
+		}
+
+	}
+
+
+	delete srcImg;
+	return sum ;
 }
 
 

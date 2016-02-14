@@ -275,9 +275,9 @@ int Ameoba_test() {
 
 int main() {
 	/***** prepare*****/
-	//string dir("pt_test/");
+	string dir("pt_test/");
 	//string dir("horseshoe/");
-	string dir("sie_test/");
+	//string dir("sie_test/");
 	//string dir("blind_test/");
 	string confFileName = dir+ "conf.txt";
 	map<string, string> mapConf = parseConfigure(confFileName);
@@ -286,7 +286,7 @@ int main() {
 	Image* dataImage = new Image(mapConf["imageFileName"]);
 	dataImage->updateFilterImage(mapConf["regionFileName"], 1);
 	dataImage->updateGridPointType();
-	dataImage->updateVarList(1.5, 0.25); // (threshold, var);
+	dataImage->updateVarList(1, 0.1); // (threshold, var);
 	dataImage->invC = dataImage->getVarMatrix();
 	Conf *conf = new Conf(dataImage, mapConf);
 
@@ -304,7 +304,10 @@ int main() {
 	params->dataImage = dataImage;
 	params->conf = conf;
 
-	gridSearch(conf, param,  dataImage, d, dir);
+
+	double lambdaS = 1.0;
+
+	gridSearch(conf, param,  dataImage, d, dir, lambdaS);
 
 
 

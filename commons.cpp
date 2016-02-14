@@ -221,10 +221,11 @@ void getLinearInterpolate(Point A, Point B,  Point C,  Point *P,  char direction
 	}
 	if(direction=='y') {
 
-		a = (A.y-B.y)/(A.x-B.x);
-		b = A.y-a*A.x;
-		P->x = C.x;
-		P->y = a*C.x+b;
+			a = (A.y-B.y)/(A.x-B.x);
+			b = A.y-a*A.x;
+			P->x = C.x;
+			P->y = a*C.x+b;
+
 	}
 
 }
@@ -252,20 +253,20 @@ vector<double> getPentWeigth(Point A, Point B, Point C, Point D, Point E) {
 	double dCP_DE = dist(C, P)*dist(D, E);
 	//double dAB = ;
 
-	pentWeight.push_back(dist(Q, B)/dCQ_AB);    // wAx
-	pentWeight.push_back(dist(Q, A)/dCQ_AB); 		// wBx
-	pentWeight.push_back(-(1/dist(C, P)+1/dist(C, Q)));  //wCx
-	pentWeight.push_back(dist(P, E)/dCP_DE);   //wDx
-	pentWeight.push_back(dist(P, D)/dCP_DE); 			//wEx
+	pentWeight.push_back(dist(Q, B)/dCQ_AB);    			// 	wAx
+	pentWeight.push_back(dist(Q, A)/dCQ_AB); 				// 	wBx
+	pentWeight.push_back(-(1/dist(C, P)+1/dist(C, Q)));  	//	wCx
+	pentWeight.push_back(dist(P, E)/dCP_DE);   				//	wDx
+	pentWeight.push_back(dist(P, D)/dCP_DE); 				//	wEx
 
 	double dCN_AD = dist(C, N)*dist(A, D);
 	double dCM_BE = dist(C, M)*dist(B, E);
 
-	pentWeight.push_back(dist(N, D)/dCN_AD);   //wAy
-	pentWeight.push_back(dist(M, E)/dCM_BE);   //wBy
-	pentWeight.push_back(-(1/dist(C, N)+1/dist(C,M)));  //wCy
-	pentWeight.push_back(dist(A, N)/dCN_AD);    //wDy
-	pentWeight.push_back(dist(B, M)/dCM_BE);    // wEy
+	pentWeight.push_back(dist(N, D)/dCN_AD);   				//	wAy
+	pentWeight.push_back(dist(M, E)/dCM_BE);   				//	wBy
+	pentWeight.push_back(-(1/dist(C, N)+1/dist(C,M)));  	//	wCy
+	pentWeight.push_back(dist(A, N)/dCN_AD);    			//	wDy
+	pentWeight.push_back(dist(B, M)/dCM_BE);    			// 	wEy
 
 	return pentWeight;
 

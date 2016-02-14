@@ -1,0 +1,32 @@
+## Setting primary parameters: 
+omega     0.28600
+lambda	  0.70000
+weos	  -1.000000
+hubble	  0.696000
+srcZ	2.379
+lenZ	0.4457
+
+
+## Setting secondary parameters: 
+srcRes	0.1
+imgRes	0.1
+potRes	0.1
+
+## Files
+imageFileName	pt_test/jun_image.fits
+regionFileName	pt_test/mask_narrow.reg
+varFileName	  jun_var.fits
+psfFileName		PSF_test/cut_psf.fits
+
+
+## Source plane size
+srcX	200
+srcY	200
+
+
+## Model_PTMASS {xfrom, xto, xinc, yfrom, yto, yinc, critfrom, critto, critinc}
+PTMASS 0.0 0.0 0.0 0.0 0.0 0.0 5.6 6.2 0.03 
+## Model_PTMASS {xfrom, xto, xinc, yfrom, yto, yinc, critfrom, critto, critinc, ellfrom, ellto, ellinc, pafrom, pato, painc, corefrom, coreto, coreinc}
+##SIE 0.0 0.0 0.0 0.0 0.0 0.0 5.4 6.4 0.1 0.2 0.8 0.01 60 90 2 0.5 0.8 0.01 
+
+ 

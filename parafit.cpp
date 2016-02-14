@@ -140,17 +140,15 @@ int	gsl_min_wrap(minimiser_params *params) {
 
 
 
-void gridSearch(Conf* conf, MultModelParam param, Image* dataImage, vec d, string dir) {
+void gridSearch(Conf* conf, MultModelParam param, Image* dataImage, vec d, string dir, double lambdaS) {
 
 
 
   //string dir("pt_test/");
 
-	double lambdaS = 0.01;
+	//double lambdaS = 0.01;
 	Model *model1 = new Model(conf, param, lambdaS);
 
-	double minPenalty = 999999999;
-	double minR;
 	int i=0;
 
 	// PTMASS model:
@@ -165,15 +163,25 @@ void gridSearch(Conf* conf, MultModelParam param, Image* dataImage, vec d, strin
 			model1->updatePenalty(&dataImage->invC, d);
 			// Write residual image:
 			model1->updateReducedResidual(dataImage);
+
+			//double srcReg = model1->getRegularizationSrcValue(d);
+			double zerothOrder = model1->getZerothOrderReg (conf, dataImage);
 			++i;
 
-			Image* resImg   = 	new Image(dataImage->xList, dataImage->yList, &model1->res_img, conf->imgSize[0], conf->imgSize[1], conf->bitpix);
-			Image* modelImg = 	new Image(dataImage->xList, dataImage->yList, &model1->mod_img, conf->imgSize[0], conf->imgSize[1], conf->bitpix);
-			resImg	->writeToFile  	(dir + "img_res_"+to_string(i) +".fits");
-			modelImg->writeToFile	(dir + "img_mod_"+to_string(i)  +".fits");
-			model1	->writeSrcImage	(dir + "img_src_"+to_string(i)  +".fits", conf);
+			Image* resImg   	= 	new Image(dataImage->xList, dataImage->yList, &model1->res_img, conf->imgSize[0], conf->imgSize[1], conf->bitpix);
+			//Image* simple_resImg= 	new Image(dataImage->xList, dataImage->yList, &model1->simple_res_img, conf->imgSize[0], conf->imgSize[1], conf->bitpix);
+			Image* modelImg 	= 	new Image(dataImage->xList, dataImage->yList, &model1->mod_img, conf->imgSize[0], conf->imgSize[1], conf->bitpix);
+			Image* srcImg 		= 	new Image(model1->srcPosXList, model1->srcPosYList, &dataImage->dataList, conf->srcSize[0], conf->srcSize[1], conf->bitpix);
+
+			resImg		 ->writeToFile  (dir + "img_res_"		+to_string(i) +".fits");
+			//simple_resImg->writeToFile  (dir + "img_simple_res_"+to_string(i) +".fits");
+			modelImg	 ->writeToFile	(dir + "img_mod_"		+to_string(i) +".fits");
+			srcImg 		 -> writeToFile (dir + "img_src_" 		+to_string(i) +".fits");
+
+			//model1	->writeSrcImage	(dir + "img_src_" + to_string(i) +".fits", conf);
 
 			cout << model1->param.parameter[0].critRad  << "\t" ;
+			cout << zerothOrder << "\t" ;
 			cout << model1->chi2 << "\t" << model1->srcR << "\t" << model1->penalty << endl;
 			delete model1;
 
@@ -205,9 +213,13 @@ void gridSearch(Conf* conf, MultModelParam param, Image* dataImage, vec d, strin
 					int j=0;
 					Image* resImg 	= new Image(dataImage->xList, dataImage->yList, &model1->res_img, conf->imgSize[0], conf->imgSize[1], conf->bitpix);
 					Image* modelImg = new Image(dataImage->xList, dataImage->yList, &model1->mod_img, conf->imgSize[0], conf->imgSize[1], conf->bitpix);
+					Image* srcImg = new Image(model1->srcPosXList, model1->srcPosYList, &dataImage->dataList, conf->srcSize[0], conf->srcSize[1], conf->bitpix);
+
+
 					resImg	->writeToFile  	(dir + "img_res_" + to_string(i) + "_" + to_string(j) +".fits");
 					modelImg->writeToFile	(dir + "img_mod_" + to_string(i) + "_" + to_string(j) +".fits");
-					model1	->writeSrcImage	(dir + "img_src_" + to_string(i) + "_" + to_string(j) +".fits", conf);
+					//model1	->writeSrcImage	(dir + "img_src_" + to_string(i) + "_" + to_string(j) +".fits", conf);
+					srcImg -> writeToFile (dir + "img_src_" + to_string(i) + "_" + to_string(j) +".fits");
 
 					cout << model1->param.parameter[0].e  << "\t" ;
 					cout << model1->param.parameter[0].critRad  << "\t" ;

@@ -36,8 +36,9 @@ public:
 
 
 	vector<double> data;
-	vector<double> dataList;
 	vector<double> varList;
+	/*** ImageList After Filter  ***/
+	vector<double> dataList;
 	vector<int> xList;
 	vector<int> yList;
 	vector<int> iList;
