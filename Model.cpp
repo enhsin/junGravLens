@@ -122,7 +122,7 @@ vector<double> Model::getDeflectionAngle(Conf* conf, int imgX, int imgY, double 
 	vector<double> srcPos;
 	for(int i=0; i<nLens; ++i) {
 		// Unit:  aresecond.
-		fX = (imgX -conf->imgXCenter-param.parameter[i].centerX)*conf->imgRes;   // lens center frame
+		fX = (imgX -conf->imgXCenter-param.parameter[i].centerX)*conf->imgRes;   // lens center frame, 
 		fY = (imgY -conf->imgYCenter-param.parameter[i].centerY)*conf->imgRes;
 
 		pfX = (imgX-conf->imgXCenter)*conf->imgRes; 			// image center frame;
@@ -176,8 +176,10 @@ vector<double> Model::getDeflectionAngle(Conf* conf, int imgX, int imgY, double 
 
 
 	}
-	srcX = (pfX - (*pDeltaX))/conf->srcRes+conf->srcXCenter;
-	srcY = (pfY - (*pDeltaY))/conf->srcRes+conf->srcYCenter;
+	// SrcX and SrcY are in unit aresec;   
+	// (SrcX, SrcY) = (0, 0) is the center point of source plane; 
+	srcX = pfX - (*pDeltaX);     
+	srcY = pfY - (*pDeltaY);
 
 	ofstream debug("debug.txt" , ios::out | ios::app  );
 
@@ -196,9 +198,9 @@ Model::~Model() {
 
 
 
-void Model::updatePosMapping(Image* image, Conf* conList) {
+void Model::updatePosMapping(Image* image, Conf* conf) {
 
-	length = conList->length;
+	length = conf->length;
 	vector<double> srcPos;
 	for(int i=0; i<length; ++i) {
 		int imgX = image->xList[i];
@@ -206,12 +208,16 @@ void Model::updatePosMapping(Image* image, Conf* conList) {
 		//cout << param.critRad << endl;
 		double defX = 0 ;
 		double defY = 0 ;
-		srcPos = getDeflectionAngle(conList,imgX, imgY, &defX, &defY);
+		srcPos = getDeflectionAngle(conf,imgX, imgY, &defX, &defY);
 		pDeltaX.push_back(defX);
 		pDeltaY.push_back(defY);
 
 		srcPosXList.push_back(srcPos[0]);
 		srcPosYList.push_back(srcPos[1]);
+
+		srcPosXListPixel.push_back(srcPos[0]/conf->srcRes+conf->srcXCenter);
+		srcPosYListPixel.push_back(srcPos[1]/conf->srcRes+conf->srcYCenter);
+
 		posMap[make_pair(imgX, imgY)] = i;
 	}
 
@@ -494,7 +500,7 @@ void Model::updateReducedResidual(Image* dataImage) {
 void Model::writeSrcImage(string outFileName, Conf* conList) {
 	vector<double> sBright = eigenV_to_cV(s);
 
-	Image* srcImg = new Image(srcPosXList, srcPosYList, &sBright, conList->srcSize[0], conList->srcSize[1], conList->bitpix);
+	Image* srcImg = new Image(srcPosXListPixel, srcPosYListPixel, &sBright, conList->srcSize[0], conList->srcSize[1], conList->bitpix);
 	srcImg->writeToFile(outFileName);
 	delete srcImg;
 
@@ -507,12 +513,12 @@ double Model::getRegularizationSrcValue (vec d) {
 }
 
 
-double Model::getZerothOrderReg (Conf* conf, Image* dataImage) {
+double Model::getZerothOrderReg (Conf* conf, vector<double> briList) {
 	//s is known;
 	double sum = 0;
 	long naxis1 = conf->srcSize[0];
 	long naxis2 = conf->srcSize[1];
-	Image* srcImg =new Image(srcPosXList, srcPosYList, &dataImage->dataList, naxis1, naxis2, conf->bitpix);
+	Image* srcImg =new Image(srcPosXListPixel, srcPosYListPixel, &briList, naxis1, naxis2, conf->bitpix);
 
 	for (int i=0; i< naxis1 ; ++i) {
 		for (int j=0; j< naxis2 ; ++j) {
@@ -525,7 +531,7 @@ double Model::getZerothOrderReg (Conf* conf, Image* dataImage) {
 }
 
 
-double Model::getGradientOrderReg(Conf* conf, Image* dataImage) {
+double Model::getGradientOrderReg(Conf* conf, vector<double> briList) {
 	double sum = 0;
 	double diff = 0;  
 	long naxis1 = conf->srcSize[0];
@@ -533,7 +539,7 @@ double Model::getGradientOrderReg(Conf* conf, Image* dataImage) {
 	int index = 0 ; 
 	int index_edge = 0; 
 	int index_next = 0; 
-	Image* srcImg =new Image(srcPosXList, srcPosYList, &dataImage->dataList, naxis1, naxis2, conf->bitpix);
+	Image* srcImg =new Image(srcPosXListPixel, srcPosYListPixel, &briList, naxis1, naxis2, conf->bitpix);
 
 	for (int i=0; i< naxis1 ; ++i) {
 		index_edge = (naxis2 - 1)* naxis1 + i; 
@@ -560,7 +566,7 @@ double Model::getGradientOrderReg(Conf* conf, Image* dataImage) {
 }
 
 
-double Model::getCurvatureOrderReg(Conf* conf, Image* dataImage) {
+double Model::getCurvatureOrderReg(Conf* conf, vector<double> briList) {
 
 	double sum = 0;
 	double diff = 0;  
@@ -575,7 +581,7 @@ double Model::getCurvatureOrderReg(Conf* conf, Image* dataImage) {
 	int index_edge1 = 0; 
 	int index_edge2 = 0;	 
 
-	Image* srcImg =new Image(srcPosXList, srcPosYList, &dataImage->dataList, naxis1, naxis2, conf->bitpix);
+	Image* srcImg =new Image(srcPosXListPixel, srcPosYListPixel, &briList, naxis1, naxis2, conf->bitpix);
 
 	for (int i=0; i< naxis1 ; ++i) {
 		index_edge1 = (naxis2 - 2)* naxis1 + i;

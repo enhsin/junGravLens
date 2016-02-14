@@ -154,7 +154,7 @@ void gridSearch(Conf* conf, MultModelParam param, Image* dataImage, vec d, strin
 	// PTMASS model:
 	if(param.parameter[0].name=="PTMASS") {
 		for (param.parameter[0].critRad=param.parameter[0].critRadFrom ;
-				param.parameter[0].critRad <param.parameter[0].critRadTo;
+				param.parameter[0].critRad <= param.parameter[0].critRadTo;
 				param.parameter[0].critRad += param.parameter[0].critRadInc) {   // elliptictiy // Critical radius
 			model1 = new Model(conf, param, lambdaS);
 			model1->updatePosMapping(dataImage, conf);
@@ -164,17 +164,21 @@ void gridSearch(Conf* conf, MultModelParam param, Image* dataImage, vec d, strin
 			// Write residual image:
 			model1->updateReducedResidual(dataImage);
 
+			//vector<double> sBright = eigenV_to_cV(model1->s);
+			vector<double> sBright = dataImage->dataList; 
 			//double srcReg = model1->getRegularizationSrcValue(d);
-			double zerothOrder = model1->getZerothOrderReg   (conf, dataImage);
-			double gradientOrder = model1->getGradientOrderReg (conf, dataImage); 
-			double curvatureOrder = model1->getCurvatureOrderReg   (conf, dataImage);
+			double zerothOrder 		= model1->getZerothOrderReg   (conf, sBright);
+			double gradientOrder 	= model1->getGradientOrderReg (conf, sBright); 
+			double curvatureOrder 	= model1->getCurvatureOrderReg(conf, sBright);
 			++i;
 
+
+			
 			Image* resImg   	= 	new Image(dataImage->xList, dataImage->yList, &model1->res_img, conf->imgSize[0], conf->imgSize[1], conf->bitpix);
 			//Image* simple_resImg= 	new Image(dataImage->xList, dataImage->yList, &model1->simple_res_img, conf->imgSize[0], conf->imgSize[1], conf->bitpix);
 			Image* modelImg 	= 	new Image(dataImage->xList, dataImage->yList, &model1->mod_img, conf->imgSize[0], conf->imgSize[1], conf->bitpix);
-			Image* srcImg 		= 	new Image(model1->srcPosXList, model1->srcPosYList, &dataImage->dataList, conf->srcSize[0], conf->srcSize[1], conf->bitpix);
-
+			//Image* srcImg 		= 	new Image(model1->srcPosXList, model1->srcPosYList, &dataImage->dataList, conf->srcSize[0], conf->srcSize[1], conf->bitpix);
+			Image* srcImg 		= 	new Image(model1->srcPosXListPixel, model1->srcPosYListPixel, &sBright, conf->srcSize[0], conf->srcSize[1], conf->bitpix);
 			resImg		 ->writeToFile  (dir + "img_res_"		+to_string(i) +".fits");
 			//simple_resImg->writeToFile  (dir + "img_simple_res_"+to_string(i) +".fits");
 			modelImg	 ->writeToFile	(dir + "img_mod_"		+to_string(i) +".fits");
@@ -186,7 +190,7 @@ void gridSearch(Conf* conf, MultModelParam param, Image* dataImage, vec d, strin
 			cout << zerothOrder << "\t" ;
 			cout << gradientOrder << "\t" ;
 			cout << curvatureOrder << "\t"; 
-//			cout << model1->chi2 << "\t" << model1->srcR << "\t" << model1->penalty ; 
+			cout << model1->chi2 << "\t" << model1->srcR << "\t" << model1->penalty ; 
 			cout << endl;
 			delete model1;
 

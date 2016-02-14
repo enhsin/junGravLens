@@ -123,15 +123,17 @@ public:
 	double totalParam;
 	MultModelParam param;
 
-	vector<double> srcPosXList;	  // Source position after deflection in X direction;
-	vector<double> srcPosYList;	  // Source position after deflection in Y direction;
+	vector<double> srcPosXList;	  // Source position after deflection in X direction, in arcsec;
+	vector<double> srcPosYList;	  // Source position after deflection in Y direction, in arcsec;
+
+	vector<double> srcPosXListPixel;	  // Source position after deflection in X direction, in pixel;
+	vector<double> srcPosYListPixel;	  // Source position after deflection in Y direction, in pixel;
+
 	vector<double> pDeltaX;  	// Deflection angle in X direction;
 	vector<double> pDeltaY; 	// Deflection angle in Y direction;
 	vector<double> invMag;
 	vector<double> dSy1; 
 	vector<double> dSy2; 
-
-
 
 	vector<double> res_img;    // Residual brightness.
 	vector<double> simple_res_img;
@@ -195,9 +197,9 @@ public:
 	void updateReducedResidual(Image* dataImage);
 	double getRegularizationSrcValue (vec d);
 
-	double getZerothOrderReg  	(Conf* conf, Image* dataImage);
-	double getGradientOrderReg	(Conf* conf, Image* dataImage); 
-	double getCurvatureOrderReg	(Conf* conf, Image* dataImage); 
+	double getZerothOrderReg  	(Conf* conf, vector<double> briList);
+	double getGradientOrderReg	(Conf* conf, vector<double> briList); 
+	double getCurvatureOrderReg	(Conf* conf, vector<double> briList); 
 
 	void clearMatrix();
 };
