@@ -391,10 +391,7 @@ void Image::normalizeData() {
 	cout << "normSum: " << sum << endl;
 	for(int i=0; i<length; ++i)
 		data[i] = data[i]/sum;
-
-
 }
-
 
 
 

@@ -277,7 +277,8 @@ int main() {
 	/***** prepare*****/
 	//string dir("pt_test/");
 	//string dir("horseshoe/");
-	string dir("sie_test/");
+	//string dir("sie_test/");
+	string dir("horseshoe_test/");
 	//string dir("blind_test/");
 	string confFileName = dir+ "conf.txt";
 	map<string, string> mapConf = parseConfigure(confFileName);
@@ -307,10 +308,7 @@ int main() {
 	min_params->model = new Model(conf, param, lambdaS); 
 
 
-	gridSearch(conf, param,  dataImage, d, dir, lambdaS);
-
-
-
+	gridSearch(conf, param,  dataImage, d, dir, lambdaS);	
 
 
 	//int status = gsl_min_wrap(min_params);

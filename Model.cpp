@@ -181,10 +181,12 @@ vector<double> Model::getDeflectionAngle(Conf* conf, int imgX, int imgY, double 
 	srcX = pfX - (*pDeltaX);     
 	srcY = pfY - (*pDeltaY);
 
+	/*   
 	ofstream debug("debug.txt" , ios::out | ios::app  );
 
 	debug << imgX << "\t" << imgY  << "\t" <<*pDeltaX<< "\t" << *pDeltaY << "\t"<<  srcX << "\t" << srcY << endl;
 	debug.close();
+	*/
 	srcPos.push_back(srcX);
 	srcPos.push_back(srcY);
 	return srcPos;
