@@ -8,9 +8,9 @@ weos	  -1.000000
 hubble	  0.696000
 zl	  0.4457
 prefix	  jun
-xmin	  -11.000000
+xmin	  -10.000000
 ymin	  -10.000000
-xmax	  11.000000
+xmax	  10.000000
 ymax	  10.000000
 pix_ext   0.10000
 pix_poi   3.000000
@@ -28,8 +28,8 @@ obs_ncomb      1
 startup 1 1 0 
 #lens point 5.0e12 0.0 0.0 0.0 0.0 0.0  0.0
 #lens sie 540 0.0 0.0 0.0 0.0 0.0  0.0
-lens sie 600 0.0 0.0 0.0 0.0 0.0  0.0
-extend gauss 2.379 2.5  0.0  0.0 0.0 0.0 0.5 0.0
+lens sie 600 0.0 0.0 0.2 45.0 0.0  0.0
+extend gauss 2.379 2.5  0.0  0.0 0.0 0.0 0.1 0.0
 
 #point 2.379  2.0e8 0.0 10.0
 #extend point  2.379 2.0e8  0.0 0.0  0.0   0.0 0.0 0.0

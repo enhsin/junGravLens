@@ -8,7 +8,7 @@ lenZ	0.4457
 
 
 ## Setting secondary parameters: 
-srcRes	0.1
+srcRes	0.5
 imgRes	0.1
 potRes	0.1
 
@@ -20,11 +20,11 @@ psfFileName		PSF_test/cut_psf.fits
 
 
 ## Source plane size
-srcX	220
+srcX	200
 srcY	200
 
 
 ## Model_PTMASS {xfrom, xto, xinc, yfrom, yto, yinc, critfrom, critto, critinc}
-##PTMASS 0.0 0.0 0.0 0.0 0.0 0.0 5.4 6.4 0.1 
+##PTMASS 0.0 0.0 0.0 0.0 0.0 0.0 6.8 7.4 0.05 
 ## Model_PTMASS {xfrom, xto, xinc, yfrom, yto, yinc, critfrom, critto, critinc, ellfrom, ellto, ellinc, pafrom, pato, painc, corefrom, coreto, coreinc}
-SIE 0.0 0.0 0.0 0.0 0.0 0.0 6.5 7.8 0.05 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 
+SIE 0.0 0.0 0.0 0.0 0.0 0.0 7.26 7.26 0.025 0.01 0.9 0.05 45.0 45.0 1.0 0.0 0.0 0.0 
