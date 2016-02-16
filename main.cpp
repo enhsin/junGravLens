@@ -297,15 +297,15 @@ int main() {
 	MultModelParam param = MultModelParam(mapConf);
 
 
+	double lambdaS = 0.001;
 
-	minimiser_params *params = new minimiser_params();
+	minimiser_params *min_params = new minimiser_params();
 
 	//params->model = model1;
-	params->dataImage = dataImage;
-	params->conf = conf;
+	min_params->dataImage = dataImage;
+	min_params->conf = conf;
+	min_params->model = new Model(conf, param, lambdaS); 
 
-
-	double lambdaS = 0.001;
 
 	gridSearch(conf, param,  dataImage, d, dir, lambdaS);
 
@@ -313,7 +313,7 @@ int main() {
 
 
 
-	//int status = gsl_min_wrap(params);
+	//int status = gsl_min_wrap(min_params);
 
 	//int test = Ameoba_test();
 

@@ -63,7 +63,7 @@ Description:    Wrapper function that sets up the GSL amoeba style minimiser the
 Arguments:
 Returns:    0: success.
 ****************************/
-int	gsl_min_wrap(minimiser_params *params) {
+int	gsl_min_wrap(minimiser_params *min_params) {
 
 	cout << "hello0 " << endl;
 	size_t iter = 0;
@@ -80,38 +80,49 @@ int	gsl_min_wrap(minimiser_params *params) {
 	cout << "hello1 " << endl;
 
 	my_func.f = &penalty_func;
-	my_func.n = params->model->totalParam;
-	my_func.params = params;
+	my_func.n = 1; //params->model->totalParam;
+	my_func.params = min_params;
+
+	int nParam = 1; 
+	iParam=0;
+
+
+	//params->model = new Model(params->conf, model->param, model->lambdaS);
 
 	/* Set up initial guess. Just take the middle of the param range */
-	x = gsl_vector_alloc(params->model->totalParam);
-	iParam=0;
+	x = gsl_vector_alloc(nParam);
 
-	for (int j=0; j< params->model->nLens; j++) {
-		for (int i=0; i< params->model->param.parameter[j].nParam ; i++) {
-			fTemp = 5.6; //(params->pLens->pComponent[j].fParamto[i] + params->pLens->pComponent[j].fParamfrom[i])*0.5;
-			gsl_vector_set (x, iParam,fTemp);
-			cout << "number of param: " <<  iParam << endl;
-			iParam++;
-		}
-	}
+
+	//for (int j=0; j< params->model->nLens; j++) {
+	//	for (int i=0; i< params->model->param.parameter[j].nParam ; i++) {
+	fTemp =  7.0; // (params->model->params.parameter[0].critRadFrom + params->model->params.parameter[0].critRadTo)*0.5;
+	gsl_vector_set (x, iParam,fTemp);
+	//			cout << "number of param: " <<  iParam << endl;
+	//		iParam++;
+	//	}
+	//}
 
 	/* set step sizes */
-	step = gsl_vector_alloc(params->model->totalParam);
-	iParam=0;
+	//step = gsl_vector_alloc(params->model->totalParam);
+	step = gsl_vector_alloc(nParam);
+	double stepSize = 0.1 ; //params->model->parameter[0].critRadInc; 
+	gsl_vector_set (step, iParam,stepSize);
 
-	for (int j=0; j< params->model->nLens; j++) {
-		for (int i=0; i< params->model->param.parameter[j].nParam ; i++) {
-			fTemp = 0.5; //(params->pLens->pComponent[j].fParamto[i] - params->pLens->pComponent[j].fParamfrom[i])*0.5;
-			gsl_vector_set (step, iParam,fTemp);
-			iParam++;
-		}
-	}
+	//for (int j=0; j< params->model->nLens; j++) {
+	//	for (int i=0; i< params->model->param.parameter[j].nParam ; i++) {
+	//		fTemp = 0.5; //(params->pLens->pComponent[j].fParamto[i] - params->pLens->pComponent[j].fParamfrom[i])*0.5;
+	
+	//		iParam++;
+	//	}
+	//}
 
 	T = gsl_multimin_fminimizer_nmsimplex;
-	s = gsl_multimin_fminimizer_alloc(T, params->model->totalParam);
+	s = gsl_multimin_fminimizer_alloc(T, min_params->model->totalParam);
+	s = gsl_multimin_fminimizer_alloc(T, nParam);	
 
 	gsl_multimin_fminimizer_set(s, &my_func, x, step);
+
+	cout << "hello2 " << endl; 
 
 	do {
 		iter++;
@@ -241,8 +252,8 @@ void gridSearch(Conf* conf, MultModelParam param, Image* dataImage, vec d, strin
 					srcImg -> writeToFile (dir + "img_src_" + to_string(i) + "_" + to_string(j) +".fits");
 
 					//cout << model1->param.parameter[0].critRad  << "\t" ;
-					//cout << model1->param.parameter[0].e  << "\t" ;
-					cout << model1->param.parameter[0].PA  << "\t" ;
+					cout << model1->param.parameter[0].e  << "\t" ;
+					//cout << model1->param.parameter[0].PA  << "\t" ;
 
 					//cout << model1->param.parameter[0].e  << "\t" ;
 					cout << vegetiiReg << "\t" ; 
