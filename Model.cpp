@@ -146,13 +146,13 @@ vector<double> Model::getDeflectionAngle(Conf* conf, int imgX, int imgY, double 
 			double phi,root1mq,fq,fac,fCore=0,fCosTheta,fSinTheta,x1,y1,deltax1,deltay1;
 			//	fX -= g_PixelResn*pLensComp->fParameter[3];
 			//	fY -= g_PixelResn*pLensComp->fParameter[4];
-
+			
 			if (fX == 0 && fY == 0)
 				*pDeltaX = *pDeltaY = param.parameter[i].critRad; // pLensComp->fParameter[0];
 
 			//pre-calculate constants
-			fCosTheta = cos(param.parameter[i].PA*M_PI/180);
-			fSinTheta = sin(param.parameter[i].PA*M_PI/180);
+			fCosTheta = cos(param.parameter[i].PA*M_PI/180 + 0.5*M_PI);
+			fSinTheta = sin(param.parameter[i].PA*M_PI/180 + 0.5*M_PI);
 			fq = 1-param.parameter[i].e;
 			if (fq>1.0) cout << "Axis ratio should be smaller than 1. " << endl;
 			if (fq==1.0) fq = 0.999;
