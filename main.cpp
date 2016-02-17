@@ -314,7 +314,10 @@ int main() {
 	//int status = gsl_min_wrap(min_params);
 
 	//int test = Ameoba_test();
-
+	delete conf; 
+	delete dataImage; 
+	delete min_params->model; 
+	delete min_params; 
 	return 0;
 }
 

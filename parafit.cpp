@@ -248,18 +248,18 @@ void gridSearch(Conf* conf, MultModelParam param, Image* dataImage, vec d, strin
 					int j=0;
 					//Image* resImg 	= new Image(dataImage->xList, dataImage->yList, &model1->simple_res_img, conf->imgSize[0], conf->imgSize[1], conf->bitpix);
 					//Image* modelImg = new Image(dataImage->xList, dataImage->yList, &model1->mod_img, conf->imgSize[0], conf->imgSize[1], conf->bitpix);
-					Image* srcImg 	= new Image(model1->srcPosXListPixel, model1->srcPosYListPixel, &sBright, conf->srcSize[0], conf->srcSize[1], conf->bitpix);
+					//Image* srcImg 	= new Image(model1->srcPosXListPixel, model1->srcPosYListPixel, &sBright, conf->srcSize[0], conf->srcSize[1], conf->bitpix);
 
 
 					//resImg	->writeToFile  	(dir + "img_res_" + to_string(i) + "_" + to_string(j) +".fits");
 					//modelImg->writeToFile	(dir + "img_mod_" + to_string(i) + "_" + to_string(j) +".fits");
 					//model1	->writeSrcImage	(dir + "img_src_" + to_string(i) + "_" + to_string(j) +".fits", conf);
-					srcImg -> writeToFile (dir + "img_src_" + to_string(i) + "_" + to_string(j) +".fits");
+					//srcImg -> writeToFile (dir + "img_src_" + to_string(i) + "_" + to_string(j) +".fits");
 
 					// output to console; 
 					cout  << model1->param.parameter[0].critRad  << "\t" ;
-					//cout << model1->param.parameter[0].e  << "\t" ;
-					//cout << model1->param.parameter[0].PA  << "\t" ;
+					cout << model1->param.parameter[0].e  << "\t" ;
+					cout << model1->param.parameter[0].PA  << "\t" ;
 
 					//cout << vegetiiReg << "\t" ; 
 					cout << zerothOrder << "\t" ;
@@ -270,8 +270,8 @@ void gridSearch(Conf* conf, MultModelParam param, Image* dataImage, vec d, strin
 
 					// output to file; 
 					output << model1->param.parameter[0].critRad  << "\t" ;
-					//output << model1->param.parameter[0].e  << "\t" ;
-					//output << model1->param.parameter[0].PA  << "\t" ;
+					output << model1->param.parameter[0].e  << "\t" ;
+					output << model1->param.parameter[0].PA  << "\t" ;
 
 					//output << vegetiiReg << "\t" ; 
 					output << zerothOrder << "\t" ;

@@ -118,7 +118,13 @@ void Model::updateMatrixT(Conf* conf) {
 }
 
 vector<double> Model::getDeflectionAngle(Conf* conf, int imgX, int imgY, double *pDeltaX, double *pDeltaY) {
-	double fDenom, srcX, srcY, fX, fY, pfX, pfY;
+	double fDenom = 0 ; 
+	double srcX   = 0;  
+	double srcY   = 0 ; 
+	double fX  = 0; 
+	double fY  = 0; 
+	double pfX = 0; 
+	double pfY = 0;
 	vector<double> srcPos;
 	for(int i=0; i<nLens; ++i) {
 		// Unit:  aresecond.
@@ -564,6 +570,7 @@ double Model::getGradientOrderReg(Conf* conf, vector<double> briList) {
 			sum += diff*diff; 
 		}
 	}
+	delete srcImg; 
 	return sum ; 
 }
 
@@ -619,7 +626,7 @@ double Model::getCurvatureOrderReg(Conf* conf, vector<double> briList) {
 
 	}	
 
-
+	delete srcImg; 
 	return sum ; 
 }
 

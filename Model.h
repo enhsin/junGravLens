@@ -41,7 +41,7 @@ class MultModelParam{
 
 public:
 	vector<SingleModelParam> parameter;
-	int nLens;
+	int nLens ;
 	vector<int> nParam;
 
 	MultModelParam(map<string,string> confMap) {
