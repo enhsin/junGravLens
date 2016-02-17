@@ -171,12 +171,43 @@ inline double area(Point A, Point B, Point C) {
 	return sqrt(s*(s-side_a)*(s-side_b)*(s-side_c));
 }
 
+double	lm_nfw_mass(double x) {
+	double	logx_2=0,result=0;
+
+	if (x < 0) {
+		cout << "error running lm_nfw_mass" << endl; //fprintf(stderr,"lm_nfw_mass: invalid x: %g. Must be > 0\n",x);
+		return result;
+	}
+
+	if (x==0) return 0;
+	logx_2 = log(0.5 * x);
+	if (x < 1.0) {
+		result = lm_arccosh(1/x)/sqrt(1 - x*x);
+	}
+	else if (x == 1.0) {
+		result =  1.0;
+	}
+	else {	 /* x > 1 */
+		result =  acos(1.0/x)/sqrt(x*x -1.);
+	}
+	return 4.0*(logx_2 + result);
+}
+
+
 double lm_arctanh(double x) {
 	if (x < -1 || x > 1.) {
 		fprintf(stderr,"lm_arctanh: invalid x: %g. Must be 0 <= x <= 1\n",x);
 		return 0;
 	}
 	return log(sqrt((1.+x)/(1.-x)));
+}
+
+double	lm_arccosh(double x) {
+	if (x < 1.) {
+		fprintf(stderr,"lm_arccosh: invalid x: %g. Must be >= 1.\n",x);
+		return 0;
+	}
+	return log(sqrt(x*x-1.)+x);
 }
 
 vector<double> getTriWeight(Point A, Point B, Point C, Point P) {

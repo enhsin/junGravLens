@@ -239,7 +239,7 @@ void gridSearch(Conf* conf, MultModelParam param, Image* dataImage, vec d, strin
 					//vector<double> sBright = eigenV_to_cV(model1->s);
 					vector<double> sBright = dataImage->dataList; 
 					//double srcReg = model1->getRegularizationSrcValue(d);
-					double vegetiiReg = d.transpose()*model1->HtH*d;
+					//double vegetiiReg = d.transpose()*model1->HtH*d;
 					double zerothOrder 		= model1->getZerothOrderReg   (conf, sBright);
 					double gradientOrder 	= model1->getGradientOrderReg (conf, sBright); 
 					double curvatureOrder 	= model1->getCurvatureOrderReg(conf, sBright);

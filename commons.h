@@ -95,7 +95,8 @@ sp_mat generatePSFoperator(string psfFileName, Image* image);
 vector<double> eigenV_to_cV(vec v) ;
 vec cV_to_eigenV(vector<double> s);
 vector<string> splitString(string s);
-
+double	lm_arccosh(double x); 
+double	lm_nfw_mass(double x); 
 
 
 

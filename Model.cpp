@@ -150,9 +150,6 @@ vector<double> Model::getDeflectionAngle(Conf* conf, int imgX, int imgY, double 
 		if(param.parameter[i].name.compare("SIE")==0) {
 
 			double phi,root1mq,fq,fac,fCore=0,fCosTheta,fSinTheta,x1,y1,deltax1,deltay1;
-			//	fX -= g_PixelResn*pLensComp->fParameter[3];
-			//	fY -= g_PixelResn*pLensComp->fParameter[4];
-			
 			if (fX == 0 && fY == 0)
 				*pDeltaX = *pDeltaY = param.parameter[i].critRad; // pLensComp->fParameter[0];
 
@@ -176,12 +173,102 @@ vector<double> Model::getDeflectionAngle(Conf* conf, int imgX, int imgY, double 
 
 			*pDeltaX = deltax1*fCosTheta - deltay1*fSinTheta;
 			*pDeltaY = deltay1*fCosTheta + deltax1*fSinTheta;
+		}
+		
+
+		if(param.parameter[i].name.compare("NFW")==0) {
+		
+			double fEllip,fCosTheta,fSinTheta,x1,y1,fPhi,fAngRadius,fTempResult,fCosPhi,fSinPhi,fScale;
+  			fCosTheta = cos(param.parameter[i].PA*M_PI/180 + 0.5*M_PI);
+			fSinTheta = sin(param.parameter[i].PA*M_PI/180 + 0.5*M_PI);
+
+			fEllip = param.parameter[i].e; 
+			fScale = param.parameter[i].radScale;
+
+            if (fEllip >= 1.0 || fEllip < 0 || fScale < 0) 
+                cout << "Bad parameters of 'e' or 'scale'. " << endl; 
+                    
+      		// create elliptical co-ords still in angle units from rotated frame sky coords 
+			x1 = sqrt(1.0 - fEllip)*(fX*fCosTheta + fY*fSinTheta);
+			y1 = sqrt(1.0 + fEllip)*(-fX*fSinTheta + fCosTheta*fY);
+			fPhi = atan2(y1,x1);
+
+			// angular radius is in dimensionless units 
+			fAngRadius = sqrt(x1*x1 + y1*y1)/fScale;
+
+			if (fAngRadius > 0.0) {
+				double	deflx,defly;
+
+				fCosPhi = cos(fPhi);
+				fSinPhi = sin(fPhi);
+					
+				fTempResult = param.parameter[i].massScale * fScale * lm_nfw_mass(fAngRadius)/(fAngRadius);
+				deflx = sqrt(1.-fEllip)*fTempResult*fCosPhi;
+				defly = sqrt(1.+fEllip)*fTempResult*fSinPhi;
+				*pDeltaX = (deflx*fCosTheta - defly*fSinTheta);
+				*pDeltaY = (deflx*fSinTheta + defly*fCosTheta);
+			}
+			else {
+				*pDeltaX = 0.0;
+				*pDeltaY = 0.0;
+			} 
+		}
+		
+
+		if(param.parameter[i].name.compare("SPEMD")==0)  {
+
+			double	fTempKappa = 0.0,fTempCoreSqu=0.0, fTempAxratio=1.0, fTempDefl[2], fTempGamma = 0.0, fTempCenterX=0, fTempCenterY=0;
+			double	x1, y1;
+			double 	fCosTheta, fSinTheta;
+
+            
+			fTempAxratio = 1.0 - pLensComp->fParameter[1];
+			fTempCoreSqu = pLensComp->fParameter[4]*pLensComp->fParameter[4];
+			fTempGamma = pLensComp->fParameter[3];
+            if (fTempAxratio > 1.0 || fTempAxratio<=0 ) {
+                iStatus = LM_BADPROJ;
+                break;
+            }
+
+
+				if (fX == 0 && fY == 0 && fTempGamma >= 0.5) {
+					*pDeltaX = *pDeltaY = pLensComp->fParameter[0];
+					iStatus =LM_IGNORE_PROJ;
+					break;
+				}
+
+
+				fCosTheta = cos(pLensComp->fParameter[2]*M_PI/180);
+				fSinTheta = sin(pLensComp->fParameter[2]*M_PI/180);
+
+                
+                x1 = (fX*fCosTheta + fY*fSinTheta);
+                y1 = (-fX*fSinTheta + fY*fCosTheta);
+
+
+				fTempKappa = 0.5*pLensComp->fParameter[0]*pow((2.0-2.0*fTempGamma)/fTempAxratio,fTempGamma);
+				/* call the FORTRAN function thing */
+				fastelldefl_(&x1,&y1,&fTempKappa,&fTempGamma,&fTempAxratio,&fTempCoreSqu,fTempDefl);
+
+				*pDeltaX = fTempDefl[0]*fCosTheta - fTempDefl[1]*fSinTheta;
+				*pDeltaY = fTempDefl[1]*fCosTheta + fTempDefl[0]*fSinTheta;
+			
+
+			}
+
+
 
 
 		}
 
 
 	}
+
+
+
+
+
+
 	// SrcX and SrcY are in unit aresec;   
 	// (SrcX, SrcY) = (0, 0) is the center point of source plane; 
 	srcX = pfX - (*pDeltaX);     

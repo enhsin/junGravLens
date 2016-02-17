@@ -28,6 +28,9 @@ struct SingleModelParam {
 	double centerX, centerXFrom, centerXTo, centerXInc;
 	double centerY, centerYFrom, centerYTo, centerYInc;
 	double critRad, critRadFrom, critRadTo, critRadInc;
+	double massScale, massScaleFrom, massScaleTo, massScaleInc; 
+	double radScale, radScaleFrom, radScaleTo, radScaleInc; 
+
 	double e, eFrom, eTo, eInc;
 	double q, qFrom, qTo, qInc;
 	double PA, PAFrom, PATo, PAInc;
@@ -48,7 +51,8 @@ public:
 		nLens = 0;
 		map<string, string>::iterator itPTMASS = confMap.find("PTMASS") ;
 		map<string, string>::iterator itSIE   = confMap.find("SIE");
-
+		map<string, string>::iterator itNFW   = confMap.find("NFW");
+		map<string, string>::iterator itSPEMD   = confMap.find("SPEMD");
 
 		if(itPTMASS != confMap.end()) {
 			vector<string> items = splitString(itPTMASS->second);
@@ -77,31 +81,57 @@ public:
 
 			tempParam.name = "SIE";
 
-			tempParam.centerXFrom = stof(items[0]);
+			tempParam.centerXFrom 	= stof(items[0]);
 			tempParam.centerXTo 	= stof(items[1]);
 			tempParam.centerXInc 	= stof(items[2]);
-
-			tempParam.centerYFrom = stof(items[3]);
+			tempParam.centerYFrom 	= stof(items[3]);
 			tempParam.centerYTo 	= stof(items[4]);
 			tempParam.centerYInc 	= stof(items[5]);
-
-			tempParam.critRadFrom = stof(items[6]);
-			tempParam.critRadTo   = stof(items[7]);
-			tempParam.critRadInc  = stof(items[8]);
-
-			tempParam.eFrom		= stof(items[9]);
-			tempParam.eTo 		= stof(items[10]);
-			tempParam.eInc 		= stof(items[11]);
-
+			tempParam.critRadFrom 	= stof(items[6]);
+			tempParam.critRadTo   	= stof(items[7]);
+			tempParam.critRadInc  	= stof(items[8]);
+			tempParam.eFrom			= stof(items[9]);
+			tempParam.eTo 			= stof(items[10]);
+			tempParam.eInc 			= stof(items[11]);
 			tempParam.PAFrom 		= stof(items[12]);
-			tempParam.PATo		= stof(items[13]);
-			tempParam.PAInc		= stof(items[14]);
-
+			tempParam.PATo			= stof(items[13]);
+			tempParam.PAInc			= stof(items[14]);
 			parameter.push_back(tempParam);
 			nParam.push_back(NUM_SIE_PARAM);
 
 			nLens +=1;
 		}
+		if(itNFW != confMap.end()) {
+			vector<string> items = splitString(itSIE->second);
+
+			SingleModelParam tempParam;
+
+			tempParam.name = "NFW";
+
+			tempParam.centerXFrom 	= stof(items[0]);
+			tempParam.centerXTo 	= stof(items[1]);
+			tempParam.centerXInc 	= stof(items[2]);
+			tempParam.centerYFrom 	= stof(items[3]);
+			tempParam.centerYTo 	= stof(items[4]);
+			tempParam.centerYInc 	= stof(items[5]);
+			tempParam.massScaleFrom = stof(items[6]);
+			tempParam.massScaleTo   = stof(items[7]);
+			tempParam.massScaleInc  = stof(items[8]);
+			tempParam.radScaleFrom 	= stof(items[9]);
+			tempParam.radScaleTo   	= stof(items[10]);
+			tempParam.radScaleInc  	= stof(items[11]);
+			tempParam.eFrom			= stof(items[12]);
+			tempParam.eTo 			= stof(items[13]);
+			tempParam.eInc 			= stof(items[14]);
+			tempParam.PAFrom 		= stof(items[15]);
+			tempParam.PATo			= stof(items[16]);
+			tempParam.PAInc			= stof(items[17]);
+			parameter.push_back(tempParam);
+			nParam.push_back(NUM_SIE_PARAM);
+
+			nLens +=1;
+		}
+
 
 	}
 
