@@ -16,6 +16,7 @@
 #include <ctime>
 #include <cmath>
 #include <fstream>
+#include "fastell.h"
 //#include "libiomp/omp.h"
 //#include "gsl/gsl_multimin.h"
 #include <Eigen/SparseCholesky>
@@ -215,43 +216,35 @@ vector<double> Model::getDeflectionAngle(Conf* conf, int imgX, int imgY, double 
 		}
 		
 
-		if(param.parameter[i].name.compare("SPEMD")==0)  {
+		if(param.parameter[i].name.compare("SPEMD")==0)  {  
 
 			double	fTempKappa = 0.0,fTempCoreSqu=0.0, fTempAxratio=1.0, fTempDefl[2], fTempGamma = 0.0, fTempCenterX=0, fTempCenterY=0;
 			double	x1, y1;
 			double 	fCosTheta, fSinTheta;
 
             
-			fTempAxratio = 1.0 - pLensComp->fParameter[1];
-			fTempCoreSqu = pLensComp->fParameter[4]*pLensComp->fParameter[4];
-			fTempGamma = pLensComp->fParameter[3];
+			fTempAxratio = 1.0 - param.parameter[i].critRad;
+			fTempCoreSqu = param.parameter[i].core*param.parameter[i].core;
+			fTempGamma = param.parameter[i].power;
             if (fTempAxratio > 1.0 || fTempAxratio<=0 ) {
-                iStatus = LM_BADPROJ;
-                break;
+                cout << "Ellipticity is out of range; " << endl; 
             }
-
-
-				if (fX == 0 && fY == 0 && fTempGamma >= 0.5) {
-					*pDeltaX = *pDeltaY = pLensComp->fParameter[0];
-					iStatus =LM_IGNORE_PROJ;
-					break;
-				}
-
-
-				fCosTheta = cos(pLensComp->fParameter[2]*M_PI/180);
-				fSinTheta = sin(pLensComp->fParameter[2]*M_PI/180);
+			if (fX == 0 && fY == 0 && fTempGamma >= 0.5) {
+				*pDeltaX = *pDeltaY = param.parameter[i].critRad;
+				//iStatus =LM_IGNORE_PROJ;
+				//break;
+			}
+			fCosTheta = cos(param.parameter[i].PA*M_PI/180 + 0.5*M_PI);
+			fSinTheta = sin(param.parameter[i].PA*M_PI/180 + 0.5*M_PI);
 
                 
-                x1 = (fX*fCosTheta + fY*fSinTheta);
-                y1 = (-fX*fSinTheta + fY*fCosTheta);
+            x1 = (fX*fCosTheta + fY*fSinTheta);
+            y1 = (-fX*fSinTheta + fY*fCosTheta);
+			fTempKappa = 0.5 * param.parameter[i].critRad * pow((2.0-2.0*fTempGamma)/fTempAxratio,fTempGamma);
+			//fastelldefl_(&x1,&y1,&fTempKappa,&fTempGamma,&fTempAxratio,&fTempCoreSqu,fTempDefl);
 
-
-				fTempKappa = 0.5*pLensComp->fParameter[0]*pow((2.0-2.0*fTempGamma)/fTempAxratio,fTempGamma);
-				/* call the FORTRAN function thing */
-				fastelldefl_(&x1,&y1,&fTempKappa,&fTempGamma,&fTempAxratio,&fTempCoreSqu,fTempDefl);
-
-				*pDeltaX = fTempDefl[0]*fCosTheta - fTempDefl[1]*fSinTheta;
-				*pDeltaY = fTempDefl[1]*fCosTheta + fTempDefl[0]*fSinTheta;
+			*pDeltaX = fTempDefl[0]*fCosTheta - fTempDefl[1]*fSinTheta;
+			*pDeltaY = fTempDefl[1]*fCosTheta + fTempDefl[0]*fSinTheta;  
 			
 
 			}
@@ -262,7 +255,6 @@ vector<double> Model::getDeflectionAngle(Conf* conf, int imgX, int imgY, double 
 		}
 
 
-	}
 
 
 

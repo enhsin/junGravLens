@@ -1,0 +1,3 @@
+#!/bin/bash
+./glafic jun.input
+#cp jun_image.fits jun_var.fits
