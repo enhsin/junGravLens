@@ -41,29 +41,17 @@ def main():
     #plt.contour(X, Y, Z)
     #plt.show()
 
-    plt.plot(X, Y, '-o')
-    plt.show()
-    n = 3 # vegetti regularization:
-    n = 4 # zeroth:
-    n = 5 # gradient;
-    n = 6 # curvature;
+  
+    #n = 3 # vegetti regularization:
+    n = 1 # zeroth:
+    n = 2 # gradient;
+    n = 3 # curvature;
 
-    n = 6
+    n = 5
 
     index = cols[n].index(max(cols[n]))
     for i in range(len(cols)):
         print cols[i][index]
-
-
-    #for y in uY:
-    #    for z in uZ:
-    #        for i in range(len(X)):
-    #            if y==Y[i] and z==Z[i]:
-    #                #plt.plot( X[i], cols[3][i], '-o')
-
-
-
-
 
 
 
