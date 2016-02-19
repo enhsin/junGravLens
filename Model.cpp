@@ -129,8 +129,8 @@ vector<double> Model::getDeflectionAngle(Conf* conf, int imgX, int imgY, double 
 	vector<double> srcPos;
 	for(int i=0; i<nLens; ++i) {
 		// Unit:  aresecond.
-		fX = (imgX -conf->imgXCenter-param.parameter[i].centerX)*conf->imgRes;   // lens center frame, 
-		fY = (imgY -conf->imgYCenter-param.parameter[i].centerY)*conf->imgRes;
+		fX = (imgX - conf->imgXCenter-param.parameter[i].centerX ) * conf->imgRes;   // lens center frame, 
+		fY = (imgY - conf->imgYCenter-param.parameter[i].centerY ) * conf->imgRes;
 
 		pfX = (imgX-conf->imgXCenter)*conf->imgRes; 			// image center frame;
 		pfY = (imgY-conf->imgYCenter)*conf->imgRes;
@@ -503,7 +503,7 @@ void Model::updatePenalty(sp_mat* invC, vec d) {
 	res_img = eigenV_to_cV(res);
 	simple_res_img = eigenV_to_cV(M*new_r-d);
 
-	mod_img = eigenV_to_cV(M*r);
+	mod_img = eigenV_to_cV(M*new_r);
 
 	vec temp1 =  res.transpose()*(*invC)*res;
 	//cout << "HtH: " << HtH << endl ;
