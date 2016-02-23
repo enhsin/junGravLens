@@ -12,20 +12,24 @@ INC_EIGEN=-I/Users/juncheng/work/eigen-eigen-b30b87236a1b
 endif
 CC=g++ #clang++
 CFLAGS=-Wall -O3
-LDFLAGS=-lcfitsio -lgsl 
+LDFLAGS=-lcfitsio -lgsl -L. -lfortranstuff -lgfortran
 # -larmadillo -lboost_iostreams -lboost_system #-fopenmp 
 SRCS=main.cpp Image.cpp commons.cpp Model.cpp
+FC=gfortran
 #OMP_NUM_THREADS=8
 
 #all: main.o Image.o commons.o Model.o
 #	g++ $(INC) $(LIB) $(CFLAG) $(LDFLAGS) commons.cpp main.cpp Image.cpp Model.cpp -o junGL 
 #	./junGL
 
-all: #main.cpp Image.o commons.o Model.o 
+all: libfortranstuff.a#main.cpp Image.o commons.o Model.o 
 	
 	$(CC) $(CFLAGS) $(INC) $(INC_EIGEN) $(LIB) $(LDFLAGS) commons.cpp main.cpp Image.cpp Model.cpp gl_crit.cpp parafit.cpp -o junGL #-mmacosx-version-min=10.8
 	#valgrind --tool=memcheck --leak-check=full --verbose --log-file=memcheck.log --track-origins=yes ./junGL
 	./junGL
 
-	
-	
+libfortranstuff.a: 
+	$(FC) -O -c slatec/src/*.f fastell.f
+	ar -r libfortranstuff.a *.o
+	rm *.o
+
