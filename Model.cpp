@@ -204,6 +204,7 @@ vector<double> Model::getDeflectionAngle(Conf* conf, int imgX, int imgY, double 
 				fSinPhi = sin(fPhi);
 					
 				fTempResult = param.parameter[i].massScale * fScale * lm_nfw_mass(fAngRadius)/(fAngRadius);
+				//cout << param.parameter[i].radScale << "\t" << fScale << "\t" << fAngRadius << "\t" << fTempResult  << endl; 
 				deflx = sqrt(1.-fEllip)*fTempResult*fCosPhi;
 				defly = sqrt(1.+fEllip)*fTempResult*fSinPhi;
 				*pDeltaX = (deflx*fCosTheta - defly*fSinTheta);

@@ -310,6 +310,116 @@ void gridSearch(Conf* conf, MultModelParam param, Image* dataImage, vec d, strin
 
 
 
+	// NFW model:
+
+	if(param.parameter[0].name=="NFW") {
+		ofstream output; 
+		output.open("output.txt"); 
+
+
+
+		for (param.parameter[0].massScale=param.parameter[0].massScaleFrom ;
+			param.parameter[0].massScale <=param.parameter[0].massScaleTo	;
+			param.parameter[0].massScale += param.parameter[0].massScaleInc) {   // elliptictiy // Critical radius
+
+		 	for (param.parameter[0].e=param.parameter[0].eFrom ; 
+		  		param.parameter[0].e <=param.parameter[0].eTo;
+		  		param.parameter[0].e += param.parameter[0].eInc) {
+			  	
+			  	for (param.parameter[0].PA=param.parameter[0].PAFrom ;
+			  		param.parameter[0].PA <=param.parameter[0].PATo;
+			  		param.parameter[0].PA += param.parameter[0].PAInc) {   
+
+			  		for (param.parameter[0].centerX=param.parameter[0].centerXFrom ;
+			  			param.parameter[0].centerX <=param.parameter[0].centerXTo;
+			  			param.parameter[0].centerX += param.parameter[0].centerXInc) {  
+
+			  			for (param.parameter[0].centerY=param.parameter[0].centerYFrom ;
+			  				param.parameter[0].centerY <=param.parameter[0].centerYTo;
+			  				param.parameter[0].centerY += param.parameter[0].centerYInc) {
+			  				
+			  				for (param.parameter[0].radScale=param.parameter[0].radScaleFrom ;
+			  					param.parameter[0].radScale <=param.parameter[0].radScaleTo;
+			  					param.parameter[0].radScale += param.parameter[0].radScaleInc) {   
+
+				  			//param.parameter[0].PA = 90; 
+					  		model1 = new Model(conf, param, lambdaS);
+							model1->updatePosMapping(dataImage, conf);
+							//model1->updateLensAndRegularMatrix(dataImage, conf);
+							//model1->updateGradient(dataImage);
+							//model1->updatePenalty(&dataImage->invC, d);
+
+							// Write residual image:
+							//model1->updateReducedResidual(dataImage);
+					
+							//vector<double> sBright = eigenV_to_cV(model1->s);
+							vector<double> sBright = dataImage->dataList; 
+							//double srcReg = model1->getRegularizationSrcValue(d);
+							//double vegetiiReg = d.transpose()*model1->HtH*d;
+							double zerothOrder 		= model1->getZerothOrderReg   (conf, sBright);
+							double gradientOrder 	= model1->getGradientOrderReg (conf, sBright); 
+							double curvatureOrder 	= model1->getCurvatureOrderReg(conf, sBright);
+
+							++i;
+							int j=0;
+							//Image* resImg 	= new Image(dataImage->xList, dataImage->yList, &model1->simple_res_img, conf->imgSize[0], conf->imgSize[1], conf->bitpix);
+							//Image* modelImg = new Image(dataImage->xList, dataImage->yList, &model1->mod_img, conf->imgSize[0], conf->imgSize[1], conf->bitpix);
+							Image* srcImg 	= new Image(model1->srcPosXListPixel, model1->srcPosYListPixel, &sBright, conf->srcSize[0], conf->srcSize[1], conf->bitpix);
+
+
+							//resImg	->writeToFile  	(dir + "img_res_" + to_string(i) + "_" + to_string(j) +".fits");
+							//modelImg->writeToFile	(dir + "img_mod_" + to_string(i) + "_" + to_string(j) +".fits");
+							//model1	->writeSrcImage	(dir + "img_src_" + to_string(i) + "_" + to_string(j) +".fits", conf);
+							srcImg -> writeToFile (dir + "img_src_" + to_string(i) + "_" + to_string(j) +".fits");
+
+							// output to console; 
+							//cout << model1->param.parameter[0].centerX  << "\t" ;
+							//cout << model1->param.parameter[0].centerY  << "\t" ;
+							cout << model1->param.parameter[0].radScale  << "\t" ;
+
+							cout << model1->param.parameter[0].massScale  << "\t" ;
+							cout << model1->param.parameter[0].e  << "\t" ;
+							cout << model1->param.parameter[0].PA  << "\t" ;
+					
+
+							//cout << vegetiiReg << "\t" ; 
+							cout << zerothOrder << "\t" ;
+							cout << gradientOrder << "\t" ;
+							cout << curvatureOrder << "\t"; 
+							//cout << model1->chi2 << "\t" << model1->srcR << "\t" << model1->penalty ; 
+							cout << endl;
+
+							// output to file; 
+							//output << model1->param.parameter[0].centerX  << "\t" ;
+							//output << model1->param.parameter[0].centerY  << "\t" ;
+							output << model1->param.parameter[0].massScale  << "\t" ;
+							output << model1->param.parameter[0].radScale  << "\t" ;
+							output << model1->param.parameter[0].e  << "\t" ;
+							output << model1->param.parameter[0].PA  << "\t" ;
+					
+
+							//output << vegetiiReg << "\t" ; 
+							output << zerothOrder << "\t" ;
+							output << gradientOrder << "\t" ;
+							output << curvatureOrder << "\t"; 
+							//output << model1->chi2 << "\t" << model1->srcR << "\t" << model1->penalty ; 
+							output << endl;
+					
+							delete model1;
+						}
+							}
+						}
+					}
+				}
+			}
+
+
+		output.close(); 
+		
+	}
+
+
+
 
 
 }

@@ -30,8 +30,8 @@ struct SingleModelParam {
 	double centerX, centerXFrom, centerXTo, centerXInc;
 	double centerY, centerYFrom, centerYTo, centerYInc;
 	double critRad, critRadFrom, critRadTo, critRadInc;
-	double massScale, massScaleFrom, massScaleTo, massScaleInc; 
-	double radScale, radScaleFrom, radScaleTo, radScaleInc; 
+	double massScale, massScaleFrom, massScaleTo, massScaleInc;   // For NFW model; 
+	double radScale, radScaleFrom, radScaleTo, radScaleInc; 	// For NFW model; 
 
 	double e, eFrom, eTo, eInc;
 	double q, qFrom, qTo, qInc;
