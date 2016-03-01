@@ -242,7 +242,7 @@ vector<double> Model::getDeflectionAngle(Conf* conf, int imgX, int imgY, double 
             x1 = (fX*fCosTheta + fY*fSinTheta);
             y1 = (-fX*fSinTheta + fY*fCosTheta);
 			fTempKappa = 0.5 * param.parameter[i].critRad * pow((2.0-2.0*fTempGamma)/fTempAxratio,fTempGamma);
-			//fastelldefl_(&x1,&y1,&fTempKappa,&fTempGamma,&fTempAxratio,&fTempCoreSqu,fTempDefl);
+			fastelldefl_(&x1,&y1,&fTempKappa,&fTempGamma,&fTempAxratio,&fTempCoreSqu,fTempDefl);
 
 			*pDeltaX = fTempDefl[0]*fCosTheta - fTempDefl[1]*fSinTheta;
 			*pDeltaY = fTempDefl[1]*fCosTheta + fTempDefl[0]*fSinTheta;  
