@@ -276,9 +276,10 @@ int Ameoba_test() {
 int main() {
 	/***** prepare*****/
 	//string dir("pt_test/");
-	string dir("nfw_test/"); 
+	//string dir("nfw_test/"); 
+	//string dir("sersic_test/"); 
 	//string dir("sie_test/");
-	//string dir("horseshoe_test/");
+	string dir("horseshoe_test/");
 	//string dir("blind_test/");
 	string confFileName = dir+ "conf.txt";
 	map<string, string> mapConf = parseConfigure(confFileName);

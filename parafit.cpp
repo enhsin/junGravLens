@@ -170,11 +170,11 @@ void gridSearch(Conf* conf, MultModelParam param, Image* dataImage, vec d, strin
 				param.parameter[0].critRad += param.parameter[0].critRadInc) {   // elliptictiy // Critical radius
 			model1 = new Model(conf, param, lambdaS);
 			model1->updatePosMapping(dataImage, conf);
-			model1->updateLensAndRegularMatrix(dataImage, conf);
-			model1->updateGradient(dataImage);
-			model1->updatePenalty(&dataImage->invC, d);
+			//model1->updateLensAndRegularMatrix(dataImage, conf);
+			//model1->updateGradient(dataImage);
+			//model1->updatePenalty(&dataImage->invC, d);
 			// Write residual image:
-			model1->updateReducedResidual(dataImage);
+			//model1->updateReducedResidual(dataImage);
 
 			//vector<double> sBright = eigenV_to_cV(model1->s);
 			vector<double> sBright = dataImage->dataList; 
@@ -184,25 +184,36 @@ void gridSearch(Conf* conf, MultModelParam param, Image* dataImage, vec d, strin
 			double curvatureOrder 	= model1->getCurvatureOrderReg(conf, sBright);
 			++i;
 
+			//Image* resImg 	= new Image(dataImage->xList, dataImage->yList, &model1->simple_res_img, conf->imgSize[0], conf->imgSize[1], conf->bitpix);
+			//Image* modelImg = new Image(dataImage->xList, dataImage->yList, &model1->mod_img, conf->imgSize[0], conf->imgSize[1], conf->bitpix);
+			Image* srcImg 	= new Image(model1->srcPosXListPixel, model1->srcPosYListPixel, &sBright, conf->srcSize[0], conf->srcSize[1], conf->bitpix);
 
-			
-			Image* resImg   	= 	new Image(dataImage->xList, dataImage->yList, &model1->res_img, conf->imgSize[0], conf->imgSize[1], conf->bitpix);
+
+			//resImg	->writeToFile  	(dir + "img_res_" + to_string(i) +".fits");
+			//modelImg->writeToFile	(dir + "img_mod_" + to_string(i)  +".fits");
+			//model1	->writeSrcImage	(dir + "img_src_" + to_string(i) + "_" + to_string(j) +".fits", conf);
+			srcImg -> writeToFile (dir + "img_src_" + to_string(i)  +".fits");
+
+
+
+			/*
+			Image* resImg   	= 	new Image(dataImage->xList, dataImage->yList, &model1->simple_res_img, conf->imgSize[0], conf->imgSize[1], conf->bitpix);
 			//Image* simple_resImg= 	new Image(dataImage->xList, dataImage->yList, &model1->simple_res_img, conf->imgSize[0], conf->imgSize[1], conf->bitpix);
 			Image* modelImg 	= 	new Image(dataImage->xList, dataImage->yList, &model1->mod_img, conf->imgSize[0], conf->imgSize[1], conf->bitpix);
-			//Image* srcImg 		= 	new Image(model1->srcPosXList, model1->srcPosYList, &dataImage->dataList, conf->srcSize[0], conf->srcSize[1], conf->bitpix);
-			Image* srcImg 		= 	new Image(model1->srcPosXListPixel, model1->srcPosYListPixel, &sBright, conf->srcSize[0], conf->srcSize[1], conf->bitpix);
+			Image* srcImg 		= 	new Image(model1->srcPosXList, model1->srcPosYList, &dataImage->dataList, conf->srcSize[0], conf->srcSize[1], conf->bitpix);
+			//Image* srcImg 		= 	new Image(model1->srcPosXListPixel, model1->srcPosYListPixel, &sBright, conf->srcSize[0], conf->srcSize[1], conf->bitpix);
 			resImg		 ->writeToFile  (dir + "img_res_"		+to_string(i) +".fits");
 			//simple_resImg->writeToFile  (dir + "img_simple_res_"+to_string(i) +".fits");
 			modelImg	 ->writeToFile	(dir + "img_mod_"		+to_string(i) +".fits");
 			srcImg 		 -> writeToFile (dir + "img_src_" 		+to_string(i) +".fits");
-
+	*/
 			//model1	->writeSrcImage	(dir + "img_src_" + to_string(i) +".fits", conf);
 
 			cout << model1->param.parameter[0].critRad  << "\t" ;
 			cout << zerothOrder << "\t" ;
 			cout << gradientOrder << "\t" ;
 			cout << curvatureOrder << "\t"; 
-			cout << model1->chi2 << "\t" << model1->srcR << "\t" << model1->penalty ; 
+			//cout << model1->chi2 << "\t" << model1->srcR << "\t" << model1->penalty ; 
 			cout << endl;
 			delete model1;
 
@@ -239,9 +250,9 @@ void gridSearch(Conf* conf, MultModelParam param, Image* dataImage, vec d, strin
 				  			//param.parameter[0].PA = 90; 
 					  		model1 = new Model(conf, param, lambdaS);
 							model1->updatePosMapping(dataImage, conf);
-							model1->updateLensAndRegularMatrix(dataImage, conf);
-							model1->updateGradient(dataImage);
-							model1->updatePenalty(&dataImage->invC, d);
+							//model1->updateLensAndRegularMatrix(dataImage, conf);
+							//model1->updateGradient(dataImage);
+							//model1->updatePenalty(&dataImage->invC, d);
 
 							// Write residual image:
 							//model1->updateReducedResidual(dataImage);
@@ -261,14 +272,14 @@ void gridSearch(Conf* conf, MultModelParam param, Image* dataImage, vec d, strin
 							Image* srcImg 	= new Image(model1->srcPosXListPixel, model1->srcPosYListPixel, &sBright, conf->srcSize[0], conf->srcSize[1], conf->bitpix);
 
 
-							resImg	->writeToFile  	(dir + "img_res_" + to_string(i) + "_" + to_string(j) +".fits");
-							modelImg->writeToFile	(dir + "img_mod_" + to_string(i) + "_" + to_string(j) +".fits");
+							//resImg	->writeToFile  	(dir + "img_res_" + to_string(i) + "_" + to_string(j) +".fits");
+							//modelImg->writeToFile	(dir + "img_mod_" + to_string(i) + "_" + to_string(j) +".fits");
 							//model1	->writeSrcImage	(dir + "img_src_" + to_string(i) + "_" + to_string(j) +".fits", conf);
 							srcImg -> writeToFile (dir + "img_src_" + to_string(i) + "_" + to_string(j) +".fits");
 
 							// output to console; 
-							cout << model1->param.parameter[0].centerX  << "\t" ;
-							cout << model1->param.parameter[0].centerY  << "\t" ;
+							//cout << model1->param.parameter[0].centerX  << "\t" ;
+							//cout << model1->param.parameter[0].centerY  << "\t" ;
 							cout << model1->param.parameter[0].critRad  << "\t" ;
 							cout << model1->param.parameter[0].e  << "\t" ;
 							cout << model1->param.parameter[0].PA  << "\t" ;
@@ -345,9 +356,9 @@ void gridSearch(Conf* conf, MultModelParam param, Image* dataImage, vec d, strin
 				  			//param.parameter[0].PA = 90; 
 					  		model1 = new Model(conf, param, lambdaS);
 							model1->updatePosMapping(dataImage, conf);
-							//model1->updateLensAndRegularMatrix(dataImage, conf);
-							//model1->updateGradient(dataImage);
-							//model1->updatePenalty(&dataImage->invC, d);
+							model1->updateLensAndRegularMatrix(dataImage, conf);
+							model1->updateGradient(dataImage);
+							model1->updatePenalty(&dataImage->invC, d);
 
 							// Write residual image:
 							//model1->updateReducedResidual(dataImage);
@@ -362,13 +373,13 @@ void gridSearch(Conf* conf, MultModelParam param, Image* dataImage, vec d, strin
 
 							++i;
 							int j=0;
-							//Image* resImg 	= new Image(dataImage->xList, dataImage->yList, &model1->simple_res_img, conf->imgSize[0], conf->imgSize[1], conf->bitpix);
-							//Image* modelImg = new Image(dataImage->xList, dataImage->yList, &model1->mod_img, conf->imgSize[0], conf->imgSize[1], conf->bitpix);
+							Image* resImg 	= new Image(dataImage->xList, dataImage->yList, &model1->simple_res_img, conf->imgSize[0], conf->imgSize[1], conf->bitpix);
+							Image* modelImg = new Image(dataImage->xList, dataImage->yList, &model1->mod_img, conf->imgSize[0], conf->imgSize[1], conf->bitpix);
 							Image* srcImg 	= new Image(model1->srcPosXListPixel, model1->srcPosYListPixel, &sBright, conf->srcSize[0], conf->srcSize[1], conf->bitpix);
 
 
-							//resImg	->writeToFile  	(dir + "img_res_" + to_string(i) + "_" + to_string(j) +".fits");
-							//modelImg->writeToFile	(dir + "img_mod_" + to_string(i) + "_" + to_string(j) +".fits");
+							resImg	->writeToFile  	(dir + "img_res_" + to_string(i) + "_" + to_string(j) +".fits");
+							modelImg->writeToFile	(dir + "img_mod_" + to_string(i) + "_" + to_string(j) +".fits");
 							//model1	->writeSrcImage	(dir + "img_src_" + to_string(i) + "_" + to_string(j) +".fits", conf);
 							srcImg -> writeToFile (dir + "img_src_" + to_string(i) + "_" + to_string(j) +".fits");
 

@@ -15,10 +15,11 @@
 #include <Eigen/Sparse>
 #include <fstream>
 #include <sstream>
-#define NUM_PTMASS_PARAM 3
-#define NUM_SIE_PARAM 5
-#define NUM_NFW_PARAM 6
-#define NUM_SPEMD_PARAM 6
+#define NUM_PTMASS_PARAM 	3
+#define NUM_SIE_PARAM 		5
+#define NUM_NFW_PARAM 		6
+#define NUM_SPEMD_PARAM 	6
+#define NUM_SERSIC_PARAM 	7
 
 typedef Eigen::SparseMatrix<double> sp_mat;
 typedef Eigen::VectorXd vec;
@@ -27,19 +28,27 @@ using namespace std;
 
 struct SingleModelParam {
 	string name;
+	double mass;
+	double nParam;
+	// All shared parameters: 
 	double centerX, centerXFrom, centerXTo, centerXInc;
 	double centerY, centerYFrom, centerYTo, centerYInc;
-	double critRad, critRadFrom, critRadTo, critRadInc;
-	double massScale, massScaleFrom, massScaleTo, massScaleInc;   // For NFW model; 
-	double radScale, radScaleFrom, radScaleTo, radScaleInc; 	// For NFW model; 
-
+	
 	double e, eFrom, eTo, eInc;
 	double q, qFrom, qTo, qInc;
 	double PA, PAFrom, PATo, PAInc;
+
+	// For PTMASS model and SIE model: 
+	double critRad, critRadFrom, critRadTo, critRadInc;
 	double power, powerFrom, powerTo, powerInc; 
-	double mass;
 	double core, coreFrom, coreTo, coreInc;
-	double nParam;
+	// For NFW model
+	double massScale, massScaleFrom, massScaleTo, massScaleInc;   
+	double radScale, radScaleFrom, radScaleTo, radScaleInc; 	
+	// For sersic model: 
+	double kap, kapFrom, kapTo, kapInc; 
+	double sersicScale, sersicScaleFrom, sersicScaleTo, sersicScaleInc; 
+	double m, mFrom, mTo, mInc; 
 };
 
 class MultModelParam{
@@ -52,10 +61,48 @@ public:
 
 	MultModelParam(map<string,string> confMap) {
 		nLens = 0;
-		map<string, string>::iterator itPTMASS = confMap.find("PTMASS") ;
-		map<string, string>::iterator itSIE   = confMap.find("SIE");
-		map<string, string>::iterator itNFW   = confMap.find("NFW");
-		map<string, string>::iterator itSPEMD   = confMap.find("SPEMD");
+		map<string, string>::iterator itPTMASS	= confMap.find("PTMASS") ;
+		map<string, string>::iterator itSIE    	= confMap.find("SIE");
+		map<string, string>::iterator itNFW   	= confMap.find("NFW");
+		map<string, string>::iterator itSPEMD 	= confMap.find("SPEMD");
+		map<string, string>::iterator itSERSIC 	= confMap.find("SERSIC");
+
+		if(itSERSIC != confMap.end()) {
+			vector<string> items = splitString(itSERSIC->second);
+
+			SingleModelParam tempParam;
+
+			tempParam.name = "SERSIC";
+
+			tempParam.centerXFrom 		= stof(items[0]);
+			tempParam.centerXTo 		= stof(items[1]);
+			tempParam.centerXInc 		= stof(items[2]);
+			tempParam.centerYFrom 		= stof(items[3]);
+			tempParam.centerYTo 		= stof(items[4]);
+			tempParam.centerYInc 		= stof(items[5]);
+			tempParam.kapFrom 			= stof(items[6]);
+			tempParam.kapTo   			= stof(items[7]);
+			tempParam.kapInc  			= stof(items[8]);
+			tempParam.eFrom 			= stof(items[9]);
+			tempParam.eTo   			= stof(items[10]);
+			tempParam.eInc  			= stof(items[11]);
+			tempParam.PAFrom			= stof(items[12]);
+			tempParam.PATo 				= stof(items[13]);
+			tempParam.PAInc 			= stof(items[14]);
+			tempParam.sersicScaleFrom 	= stof(items[15]);
+			tempParam.sersicScaleTo		= stof(items[16]);
+			tempParam.sersicScaleInc	= stof(items[17]);
+			tempParam.mFrom 			= stof(items[18]);
+			tempParam.mTo   			= stof(items[19]);
+			tempParam.mInc  			= stof(items[20]);
+			
+			parameter.push_back(tempParam);
+			nParam.push_back(NUM_SERSIC_PARAM);
+
+			nLens +=1;
+		}
+
+
 
 		if(itPTMASS != confMap.end()) {
 			vector<string> items = splitString(itPTMASS->second);
@@ -244,6 +291,20 @@ public:
 	vector<vector<normVec> > normV;
 	vector<normVec> meanNormV;
 	map<pair<int, int>,int> posMap;
+
+
+
+typedef	struct	_lmDeflCache {
+	short			iType;
+	double			param[3];		/* axratio, scale, r_power */
+	double			pix_size;
+	double			dimension[2];
+	double			*pValsX;
+	double			*pValsY;
+	double			*pDeflX;
+	double			*pDeflY;
+	struct  _lmDeflCache *pNext;
+}	lmDeflCache;
 
 
 

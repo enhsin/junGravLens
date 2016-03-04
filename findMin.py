@@ -47,7 +47,7 @@ def main():
     n = 2 # gradient;
     n = 3 # curvature;
 
-    n = 5
+    n = 3
 
     index = cols[n].index(max(cols[n]))
     for i in range(len(cols)):
