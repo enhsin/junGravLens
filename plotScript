@@ -1,0 +1,9 @@
+#!/usr/local/bin/gnuplot
+fileName="output.txt"
+set title fileName
+column=system("echo $column")
+plot fileName using 5:6 with linespoints title "zeroth order", \
+	 fileName using 5:7 with linespoints title "first order ", \
+	 fileName using 5:8 with linespoints title "cubic order "
+pause -1
+EOF

@@ -30,3 +30,6 @@ void gridSearch(Conf* conf, MultModelParam param, Image* dataImage, vec d, strin
 
 
 #endif /* PARAFIT_H_ */
+
+
+

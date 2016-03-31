@@ -225,9 +225,6 @@ void gridSearch(Conf* conf, MultModelParam param, Image* dataImage, vec d, strin
 	if(param.parameter[0].name=="SIE") {
 		ofstream output; 
 		output.open("output.txt"); 
-
-
-
 		for (param.parameter[0].critRad=param.parameter[0].critRadFrom ;
 			param.parameter[0].critRad <=param.parameter[0].critRadTo;
 			param.parameter[0].critRad += param.parameter[0].critRadInc) {   // elliptictiy // Critical radius

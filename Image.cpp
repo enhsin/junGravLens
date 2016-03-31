@@ -12,7 +12,6 @@
 #include <iostream>
 #include "commons.h"
 #include <iomanip>
-//#include <armadillo>
 #include <cmath>
 //using namespace arma;
 using namespace std;

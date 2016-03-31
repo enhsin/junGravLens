@@ -40,9 +40,12 @@ all: $(COMMON_HDRS) fastell_example.o
 fastell_example.o: 
 	$(FC) -c fastell_example.f 
 	$(CC) -c testFastEll.cpp 
-	
-#fastell.o: 
 
+plot:
+	#@export column=5
+	#@export fileName=output.txt
+	./plotScript
+#fastell.o: 
 #Model.o: 
 #	$(CC) $(CFLAGS) $(LDFLAGS) -c Model.cpp 
 
