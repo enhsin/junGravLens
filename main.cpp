@@ -31,7 +31,8 @@ int main() {
 	//string dir("nfw_test/"); 
 	//string dir("sersic_test/"); 
 	//string dir("sie_test/");
-	string dir("horseshoe_test/");
+	//string dir("horseshoe_test/");
+	string dir("spemd_test/"); 
 	//string dir("blind_test/");
 	string confFileName = dir+ "conf.txt";
 	map<string, string> mapConf = parseConfigure(confFileName);

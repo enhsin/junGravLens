@@ -7,12 +7,12 @@ INC_EIGEN=-I/Users/cheng109/eigen-eigen-c58038c56923/
 endif
 ifeq ($(NAME), LAPTOP)
 INC=-I/usr/local/Cellar/boost/1.58.0/include -I/Users/juncheng/work/cfitsio -I/usr/local/include -I/usr/local/Cellar/gsl/1.16/include
-LIB=-L/usr/local/Cellar/boost/1.58.0/lib -L/Users/juncheng/work/cfitsio -L/opt/local/lib -L/usr/local/Cellar/gsl/1.16/lib
+LIB=-L/usr/local/Cellar/boost/1.58.0/lib -L/Users/juncheng/work/cfitsio -L/opt/local/lib -L/usr/local/Cellar/gsl/1.16/lib -L/usr/local/Cellar/gcc/5.2.0/lib/gcc/5
 INC_EIGEN=-I/Users/juncheng/work/eigen-eigen-b30b87236a1b
 endif
 CC=g++ #clang++
 CFLAGS=-Wall -O3 $(INC) $(INC_EIGEN) $(LIB)
-LDFLAGS=-lcfitsio -lgsl -L. -lfortranstuff 
+LDFLAGS=-lcfitsio -lgsl -L. -lfortranstuff -lgfortran
 #-lgfortran 
 #-lg2c
 # -larmadillo -lboost_iostreams -lboost_system #-fopenmp 
@@ -26,28 +26,20 @@ OBJS= commons.o junGL.o Image.o Model.o gl_crit.o parafit.o
 #all: main.o Image.o commons.o Model.o
 #	g++ $(INC) $(LIB) $(CFLAG) $(LDFLAGS) commons.cpp main.cpp Image.cpp Model.cpp -o junGL 
 #	./junGL
-all: $(COMMON_HDRS) fastell_example.o
+all:  $(COMMON_HDRS) libfortranstuff.a
 
-	$(CC) $(CFLAGS) -o junGL $(LDFLAGS) commons.cpp main.cpp Image.cpp Model.cpp gl_crit.cpp parafit.cpp #-mmacosx-version-min=10.8
+	$(CC) $(CFLAGS) -o junGL $(LDFLAGS) libfortranstuff.a commons.cpp main.cpp Image.cpp Model.cpp gl_crit.cpp parafit.cpp
+	#-mmacosx-version-min=10.8
 	#valgrind --tool=memcheck --leak-check=full --verbose --log-file=memcheck.log --track-origins=yes ./junGL
 	./junGL
 
-#libfortranstuff.a: 
-#	$(FC) -O -c slatec/src/*.f fastell.f
-#	ar -r libfortranstuff.a *.o
-#	rm *.o
-
-fastell_example.o: 
-	$(FC) -c fastell_example.f 
-	$(CC) -c testFastEll.cpp 
+libfortranstuff.a:
+	$(FC) -O -c slatec/src/*.f fastell.f
+	ar -r libfortranstuff.a *.o
+	rm *.o
 
 plot:
-	#@export column=5
-	#@export fileName=output.txt
 	./plotScript
-#fastell.o: 
-#Model.o: 
-#	$(CC) $(CFLAGS) $(LDFLAGS) -c Model.cpp 
 
 
 #test:
