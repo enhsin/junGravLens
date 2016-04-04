@@ -12,7 +12,8 @@ INC_EIGEN=-I/Users/juncheng/work/eigen-eigen-b30b87236a1b
 endif
 CC=g++ #clang++
 CFLAGS=-Wall -O3 $(INC) $(INC_EIGEN) $(LIB)
-LDFLAGS=-lcfitsio -lgsl -L. -lfortranstuff -lgfortran
+LDFLAGS=-lcfitsio -lgsl 
+#-L. -lfortranstuff -lgfortran
 #-lgfortran 
 #-lg2c
 # -larmadillo -lboost_iostreams -lboost_system #-fopenmp 

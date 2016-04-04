@@ -276,7 +276,7 @@ vector<double> Model::getDeflectionAngle(Conf* conf, int imgX, int imgY, double 
 			fTempKappa = 0.5 * param.parameter[i].critRad * pow((2.0-2.0*fTempGamma)/fTempAxratio,fTempGamma);
 			//extern  void fastelldefl_(double *x1, double *x2, double *q, double *gamma, double *axisratio, double *coreradsqu, double deflection[2]);
 			
-			fastelldefl_(&x1,&y1,&fTempKappa,&fTempGamma,&fTempAxratio,&fTempCoreSqu,fTempDefl);
+			//fastelldefl_(&x1,&y1,&fTempKappa,&fTempGamma,&fTempAxratio,&fTempCoreSqu,fTempDefl);
 
 			*pDeltaX = fTempDefl[0]*fCosTheta - fTempDefl[1]*fSinTheta;
 			*pDeltaY = fTempDefl[1]*fCosTheta + fTempDefl[0]*fSinTheta;  
@@ -544,6 +544,8 @@ void Model::updatePenalty(sp_mat* invC, vec d) {
 
 }
 
+
+
 void Model::updateCritCaustic(Image* dataImage,  Conf* conf) {
 
 	map<pair<int, int>,int>::iterator left, right, up, down;
@@ -601,6 +603,7 @@ void Model::updateCritCaustic(Image* dataImage,  Conf* conf) {
 				critical.push_back(1);
 			else
 				critical.push_back(0);
+			cout << critical[i] << endl; 
 	}
 }
 
@@ -609,6 +612,9 @@ void Model::updateReducedResidual(Image* dataImage) {
 	for(int i=0; i<length; ++i) {
 		red_res_img[i] = res_img[i]/dataImage->varList[i];
 	}
+
+
+
 
 }
 
@@ -739,256 +745,6 @@ double Model::getCurvatureOrderReg(Conf* conf, vector<double> briList) {
 
 #if 0
 
-/***************************
-Function:	lm_CalcSersicDefl
-Description: Entry point for calculation of a Sersic profile deflection
-Arguments:
-Returns:
-****************************/
-int	lm_CalcSersicDefl(double fx,double fy,double fAxRatio,double fScale,double fM, double *pDeflx,double *pDefly) {
 
-	static	double	fLastM=-1;
-	static	gsl_integration_workspace   *workspace=NULL;
-
-	gsl_function    gfuncx,gfuncy;
-	double	res=0, abserr=0;
-    double params[1];
-	int iResult = 0;
-
-	TRACE_IN(lm_CalcSersicDefl);
-
-	if (fx ==0 && fy==0) {
-		*pDeflx=0;
-		*pDefly=0;
-		goto EXIT;
-	}
-
-	gfuncx.function = &lm_SersicDeflX_gsl;
-	gfuncx.params = (void *)params;
-	gfuncy.function = &lm_SersicDeflY_gsl;
-	gfuncy.params = (void *)params;
-	if (workspace==NULL) {
-		workspace = gsl_integration_workspace_alloc(1000);
-	}
-
-	/* check for special case of circularly symmetric deVauc which
-	 * has an analytical solution */
-	if (fAxRatio == 1. && fM ==4.) {
-		double	r,fCircDefl;
-
-		r=sqrt(fx*fx + fy*fy);
-		fCircDefl = lm_CalcDeVaucCircDefl(r,fScale);
-		*pDeflx = fx/r*fCircDefl;
-		*pDefly = fy/r*fCircDefl;
-		goto EXIT;
-	}
-
-	if(fM != fLastM) {
-		g_sersic_b = lm_calc_sersic_b(fM);
-		fLastM = fM;
-	}
-    params[0] = 1./fM;
-
-	g_axratio = fAxRatio;
-	g_scale = fScale;
-	g_tempx = fx;
-	g_tempy = fy;
-
-	iResult = gsl_integration_qag(&gfuncx,0.0,1.0,0.0,1e-6,1000,GSL_INTEG_GAUSS61,workspace,&res,&abserr);
-    if (iResult != 0) {
-        //sprintf(strMessage,"ERROR: integration problems. return val: %d, x: %g, y:%g, axratio: %g, scale: %g, res: %g, abserr: %g\n",
-          //  iResult,fx,fy,fAxRatio,fScale,res,abserr);
-        //LOG_ERR(strMessage);
-		goto EXIT;
-    }
-	*pDeflx = fx*res;
-
-	iResult = gsl_integration_qag(&gfuncy,0.0,1.0,0.0,1e-6,1000,GSL_INTEG_GAUSS61,workspace,&res,&abserr);
-    if (iResult != 0) {
-        /*sprintf(strMessage,"ERROR: integration problems. return val: %d, x: %g, y:%g, axratio: %g, scale: %g, res: %g, abserr: %g\n",
-            iResult,fx,fy,fAxRatio,fScale,res,abserr);
-        LOG_ERR(strMessage); */
-		goto EXIT;
-    }
-	*pDefly = fy*res;
-/*
-*	*pDeflx = fx*(qromo(lm_SersicDeflX,0,.01,midpnt)+qromo(lm_SersicDeflX,0.01,1,midpnt));
-*	*pDefly = fy*(qromo(lm_SersicDeflY,0,.01,midpnt)+qromo(lm_SersicDeflY,0.01,1,midpnt));
-*/
-
-/*
-printf("x,y: %g,%g. axratio: %g, scale: %g. defl: %g,%g.\n",fx,fy,fAxRatio,fScale,*pDeflx,*pDefly);
-*/
-EXIT:
-	return iResult;
-}
-
-
-
-/***************************
-Function:
-Description:
-Arguments:
-Returns:
-****************************/
-static	int	lm_deflCacheLookup(short iType, lmDeflCache *pCacheList, double x, double y, double fAxratio, double fScale, double fM, double *pDeflx, double *pDefly) {
-
-	int	iRes = 0,iFound = FALSE,i,j;
-	int	iDeltaX=0,iDeltaY=0;
-	lmDeflCache	*pTemp=NULL,*pCache=NULL;
-	double	fTempx, fTempy,t,u,xgrid,ygrid,fResx,fResy;
-	int		x1,x2,y1,y2;
-
-	TRACE_IN(lm_deflCacheLookup);
-
-	/* find the cache for the current parameters */
-	pTemp = pCacheList;
-	if ( pTemp->pNext != NULL) {
-		do {
-			pTemp = pTemp->pNext;
-			if(pTemp->param[0]==fAxratio && pTemp->param[1]==fScale && pTemp->param[2]==fM) {
-				iFound=TRUE;
-				pCache = pTemp;
-				break;
-			}
-		} while (pTemp->pNext != NULL);
-	}
-
-	/* if there wasn't a cache for the current params, then we must make one */
-	if (iFound==FALSE) {
-		sprintf(strMessage,"Creating new cache for mass dist %d with params axratio %g and scale %g",iType,fAxratio,fScale);
-		TRACE(LOG_HIGH_PRI,strMessage);
-
-		/* first call to new cache params. Set things up */
-		pCache = (lmDeflCache *) malloc(sizeof(lmDeflCache));
-		if (pCache == NULL) {
-			LOG_ERR("No malloc for new cache struct");
-			iRes = 1;
-			goto EXIT;
-		}
-		pTemp->pNext = pCache;
-		pCache->pNext = NULL;
-		pCache->iType = iType;
-		pCache->pix_size = g_PixelResn;
-		pCache->param[0] = fAxratio;
-		pCache->param[1] = fScale;
-		pCache->param[2] = fM;
-		/* make the cache the size of a grid rotated 45 deg plus some extra space */
-		pCache->dimension[0] = g_iSzImgx*1.41+20;
-		pCache->dimension[1] = g_iSzImgy*1.41+20;
-		/* make the cache an odd sized array so that zero is in the middle */
-		if (pCache->dimension[0]%2==0) pCache->dimension[0] +=1;
-		if (pCache->dimension[1]%2==0) pCache->dimension[1] +=1;
-		/* make space for the x,y ordinate values */
-		pCache->pValsX = calloc(pCache->dimension[0],sizeof(double));
-		pCache->pValsY = calloc(pCache->dimension[1],sizeof(double));
-		for (i=0; i<pCache->dimension[0]; i++)	pCache->pValsX[i] = (i-pCache->dimension[0]/2)*g_PixelResn;
-		for (i=0; i<pCache->dimension[1]; i++)	pCache->pValsY[i] = (i-pCache->dimension[1]/2)*g_PixelResn;
-		/* make space for the x,y deflection values */
-		pCache->pDeflX = calloc(pCache->dimension[0]*pCache->dimension[1],sizeof(double));
-		pCache->pDeflY = calloc(pCache->dimension[0]*pCache->dimension[1],sizeof(double));
-		if (pCache->pValsX == NULL || pCache->pValsY ==NULL || pCache->pDeflX==NULL || pCache->pDeflY==NULL){
-			LOG_ERR("No malloc");
-			iRes = -1;
-			goto EXIT;
-		}
-		/* fill up the cache! */
-		sprintf(strMessage,"Filling %dx%d cache.",(int)pCache->dimension[0],(int)pCache->dimension[1]);
-		TRACE(LOG_MED_PRI,strMessage);
-		for (j=0; j<=pCache->dimension[1]/2; j++) {
-
-			fTempy=(j-pCache->dimension[1]/2)*pCache->pix_size;
-
-			for (i=0; i<=pCache->dimension[0]/2; i++) {
-
-				fTempx = (i-pCache->dimension[0]/2)*pCache->pix_size;
-
-				switch (iType) {
-					case	LM_SERSIC:
-						iRes = lm_CalcSersicDefl(fTempx,fTempy,fAxratio,fScale,fM,&fResx,&fResy);
-						break;
-					case	LM_EXPDISC:
-						fResx = lm_expdiscdeflx(fTempx,fTempy,fAxratio,fScale);
-						fResy = lm_expdiscdefly(fTempx,fTempy,fAxratio,fScale);
-						break;
-					default:
-						sprintf(strMessage,"ERROR: Unknown lens type %d",iType);
-						LOG_ERR(strMessage)
-						iRes = 1;
-						goto EXIT;
-						break;
-				}
-				/* assume that the deflections are symmetric around both axes */
-				pCache->pDeflX[j*(pCache->dimension[0]) + i] = fResx;
-				pCache->pDeflX[j*(pCache->dimension[0]) + (pCache->dimension[0]-i-1)] = -fResx;
-				pCache->pDeflX[(pCache->dimension[1]-j-1)*(pCache->dimension[0]) + (pCache->dimension[0]-i-1)] = -fResx;
-				pCache->pDeflX[(pCache->dimension[1]-j-1)*(pCache->dimension[0]) + i] = fResx;
-				pCache->pDeflY[j*(pCache->dimension[0]) + i] = fResy;
-				pCache->pDeflY[j*(pCache->dimension[0]) + (pCache->dimension[0]-i-1)] = fResy;
-				pCache->pDeflY[(pCache->dimension[1]-j-1)*(pCache->dimension[0]) + (pCache->dimension[0]-i-1)] = -fResy;
-				pCache->pDeflY[(pCache->dimension[1]-j-1)*(pCache->dimension[0]) + i] = -fResy;
-			}
-		}
-		TRACE(LOG_MED_PRI,"Done filling cache.");
-/*
-		img_DumpImage(pCache->pDeflX,pCache->dimension,"deflX");
-		img_DumpImage(pCache->pDeflY,pCache->dimension,"deflY");
-*/
-	}
-
-	/* change x and y into grid units in the cache which has same angular size as image pix */
-	xgrid = x/pCache->pix_size+pCache->dimension[0]/2;
-	ygrid = y/pCache->pix_size+pCache->dimension[1]/2;
-	x1 = floor(xgrid);
-	x2 = ceil(xgrid);
-	if (x1==x2) {
-		x2 +=1;
-	}
-	y1 = floor(ygrid);
-	y2 = ceil(ygrid);
-	if (y1==y2) {
-		y2 +=1;
-	}
-
-	/* we now have the 4 points in the grid closest to the desired point */
-	/* if these are outside the grid, then we have a small problem... */
-	if(x1 < 0) {
-		iDeltaX=-x1;
-		x1=0;
-	}
-	if(x2 >= pCache->dimension[0]) {
-		iDeltaX = (x2 - pCache->dimension[0]+1);
-		x2=pCache->dimension[0]-1;
-	}
-	if(y1 < 0) {
-		iDeltaY=-y1;
-		y1=0;
-	}
-	if(y2 >= pCache->dimension[1]) {
-		iDeltaY = (y2 - pCache->dimension[1]+1);
-		y2=pCache->dimension[1]-1;
-	}
-
-	if (iDeltaX >0 || iDeltaY >0) {
-		sprintf(strMessage,"====Warning: point exceeds range of cache. Desired: (%g,%g), size: (%d,%d)",xgrid,ygrid,(int)pCache->dimension[0],(int)pCache->dimension[1]);
-		LOG_ERR(strMessage);
-	}
-
-	/* now interpolate between the closest points */
-	t = (xgrid-x1)/(double)(x2-x1);
-	u = (ygrid-y1)/(double)(y2-y1);
-	*pDeflx = (1.0-t)*(1.0-u)*pCache->pDeflX[y1*pCache->dimension[0]+x1]
-			+ t*(1.0-u)*pCache->pDeflX[y1*pCache->dimension[0]+x2]
-			+ t*u*pCache->pDeflX[y2*pCache->dimension[0]+x2]
-			+ (1.0-t)*u*pCache->pDeflX[y2*pCache->dimension[0]+x1];
-	*pDefly = (1.0-t)*(1.0-u)*pCache->pDeflY[y1*pCache->dimension[0]+x1]
-			+ t*(1.0-u)*pCache->pDeflY[y1*pCache->dimension[0]+x2]
-			+ t*u*pCache->pDeflY[y2*pCache->dimension[0]+x2]
-			+ (1.0-t)*u*pCache->pDeflY[y2*pCache->dimension[0]+x1];
-
-EXIT:
-	#TRACE_OUT;
-	return iRes;
-}
 #endif 
 

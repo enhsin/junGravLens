@@ -250,7 +250,8 @@ public:
 	vector<double> dSy1; 
 	vector<double> dSy2; 
 
-	vector<double> res_img;    // Residual brightness.
+	vector<double> res_img;    // Residual brightness
+	vector<double> res_full_img;  //  the full residual map; 
 	vector<double> simple_res_img;
 
 

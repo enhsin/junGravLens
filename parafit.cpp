@@ -247,9 +247,9 @@ void gridSearch(Conf* conf, MultModelParam param, Image* dataImage, vec d, strin
 				  			//param.parameter[0].PA = 90; 
 					  		model1 = new Model(conf, param, lambdaS);
 							model1->updatePosMapping(dataImage, conf);
-							//model1->updateLensAndRegularMatrix(dataImage, conf);
-							//model1->updateGradient(dataImage);
-							//model1->updatePenalty(&dataImage->invC, d);
+							model1->updateLensAndRegularMatrix(dataImage, conf);
+							model1->updateGradient(dataImage);
+							model1->updatePenalty(&dataImage->invC, d);
 
 							// Write residual image:
 							//model1->updateReducedResidual(dataImage);
@@ -268,9 +268,19 @@ void gridSearch(Conf* conf, MultModelParam param, Image* dataImage, vec d, strin
 							Image* modelImg = new Image(dataImage->xList, dataImage->yList, &model1->mod_img, conf->imgSize[0], conf->imgSize[1], conf->bitpix);
 							Image* srcImg 	= new Image(model1->srcPosXListPixel, model1->srcPosYListPixel, &sBright, conf->srcSize[0], conf->srcSize[1], conf->bitpix);
 
+							if(1) {
+								model1->updateCritCaustic(dataImage, conf);
+								Image* critImg = new Image(dataImage->xList, dataImage->yList, &model1->critical, conf->imgSize[0], conf->imgSize[1], conf->bitpix);
+								
 
-							//resImg	->writeToFile  	(dir + "img_res_" + to_string(i) + "_" + to_string(j) +".fits");
-							//modelImg->writeToFile	(dir + "img_mod_" + to_string(i) + "_" + to_string(j) +".fits");
+								critImg->writeToFile(dir + "critCurve.fits");
+								Image* causticImg = new Image(model1->srcPosXList, model1->srcPosYList, &model1->critical, conf->srcSize[0], conf->srcSize[1], conf->bitpix);
+								causticImg->writeToFile( dir + "causticCurve.fits");
+							}	
+
+
+							resImg	->writeToFile  	(dir + "img_res_" + to_string(i) + "_" + to_string(j) +".fits");
+							modelImg->writeToFile	(dir + "img_mod_" + to_string(i) + "_" + to_string(j) +".fits");
 							//model1	->writeSrcImage	(dir + "img_src_" + to_string(i) + "_" + to_string(j) +".fits", conf);
 							srcImg -> writeToFile (dir + "img_src_" + to_string(i) + "_" + to_string(j) +".fits");
 
@@ -282,6 +292,7 @@ void gridSearch(Conf* conf, MultModelParam param, Image* dataImage, vec d, strin
 							cout << model1->param.parameter[0].PA  << "\t" ;
 					
 
+
 							//cout << vegetiiReg << "\t" ; 
 							cout << zerothOrder << "\t" ;
 							cout << gradientOrder << "\t" ;
@@ -290,8 +301,8 @@ void gridSearch(Conf* conf, MultModelParam param, Image* dataImage, vec d, strin
 							cout << endl;
 
 							// output to file; 
-							output << model1->param.parameter[0].centerX  << "\t" ;
-							output << model1->param.parameter[0].centerY  << "\t" ;
+							//output << model1->param.parameter[0].centerX  << "\t" ;
+							//output << model1->param.parameter[0].centerY  << "\t" ;
 							output << model1->param.parameter[0].critRad  << "\t" ;
 							output << model1->param.parameter[0].e  << "\t" ;
 							output << model1->param.parameter[0].PA  << "\t" ;
