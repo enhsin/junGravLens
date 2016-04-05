@@ -1,5 +1,5 @@
-NAME=PC
-#NAME=LAPTOP
+#NAME=PC
+NAME=LAPTOP
 ifeq ($(NAME), PC)
 INC=-I/usr/local/Cellar/boost/1.58.0/include -I/Users/cheng109/toberemoved/phosim/phosim_core/source/cfitsio/include -I/usr/local/include -I/Users/juncheng/work/phosim_core/source/cfitsio/include -I/usr/include/python2.7/
 LIB=-L/usr/local/Cellar/boost/1.58.0/lib -L/usr/local/lib -L/Users/cheng109/toberemoved/phosim/phosim_core/source/cfitsio/lib -L/opt/local/lib
@@ -42,7 +42,9 @@ libfortranstuff.a:
 plot:
 	./plotScript
 
-
+imfit: 
+	cd imfit-1.3; 
+	scons imfit-1.3/imfit; 
 #test:
 #	$(FC) slatec/src/*.f fastell_example.f -o testFastEll
 #	./testFastEll

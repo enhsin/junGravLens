@@ -385,6 +385,16 @@ void gridSearch(Conf* conf, MultModelParam param, Image* dataImage, vec d, strin
 							Image* modelImg = new Image(dataImage->xList, dataImage->yList, &model1->mod_img, conf->imgSize[0], conf->imgSize[1], conf->bitpix);
 							Image* srcImg 	= new Image(model1->srcPosXListPixel, model1->srcPosYListPixel, &sBright, conf->srcSize[0], conf->srcSize[1], conf->bitpix);
 
+							if(1) {
+								model1->updateCritCaustic(dataImage, conf);
+								Image* critImg = new Image(dataImage->xList, dataImage->yList, &model1->critical, conf->imgSize[0], conf->imgSize[1], conf->bitpix);
+								
+
+								critImg->writeToFile(dir + "CurveCritical.fits");
+								Image* causticImg = new Image(model1->srcPosXListPixel, model1->srcPosYListPixel, &model1->critical, conf->srcSize[0], conf->srcSize[1], conf->bitpix);
+								causticImg->writeToFile( dir + "CurveCaustic.fits");
+							}	
+
 
 							resImg	->writeToFile  	(dir + "img_res_" + to_string(i) + "_" + to_string(j) +".fits");
 							modelImg->writeToFile	(dir + "img_mod_" + to_string(i) + "_" + to_string(j) +".fits");
