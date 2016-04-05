@@ -17,6 +17,8 @@ imageFileName	horseshoe_test/HorseShoe_new.fits
 regionFileName	horseshoe_test/mask_horseshoe_full.reg
 varFileName	  jun_var.fits
 psfFileName		horseshoe_test/HorseShoe_psf.fits
+criticalName	horseshoe_test/critical.reg
+causticName	horseshoe_test/caustic.reg
 
 
 ## Source plane size

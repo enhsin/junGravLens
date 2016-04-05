@@ -274,7 +274,7 @@ void gridSearch(Conf* conf, MultModelParam param, Image* dataImage, vec d, strin
 								
 
 								critImg->writeToFile(dir + "critCurve.fits");
-								Image* causticImg = new Image(model1->srcPosXList, model1->srcPosYList, &model1->critical, conf->srcSize[0], conf->srcSize[1], conf->bitpix);
+								Image* causticImg = new Image(model1->srcPosXListPixel, model1->srcPosYListPixel, &model1->critical, conf->srcSize[0], conf->srcSize[1], conf->bitpix);
 								causticImg->writeToFile( dir + "causticCurve.fits");
 							}	
 

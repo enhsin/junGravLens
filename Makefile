@@ -1,9 +1,9 @@
-#NAME=PC
-NAME=LAPTOP
+NAME=PC
+#NAME=LAPTOP
 ifeq ($(NAME), PC)
 INC=-I/usr/local/Cellar/boost/1.58.0/include -I/Users/cheng109/toberemoved/phosim/phosim_core/source/cfitsio/include -I/usr/local/include -I/Users/juncheng/work/phosim_core/source/cfitsio/include -I/usr/include/python2.7/
 LIB=-L/usr/local/Cellar/boost/1.58.0/lib -L/usr/local/lib -L/Users/cheng109/toberemoved/phosim/phosim_core/source/cfitsio/lib -L/opt/local/lib
-INC_EIGEN=-I/Users/cheng109/eigen-eigen-c58038c56923/
+INC_EIGEN=-I/Users/cheng109/eigen-eigen-07105f7124f9
 endif
 ifeq ($(NAME), LAPTOP)
 INC=-I/usr/local/Cellar/boost/1.58.0/include -I/Users/juncheng/work/cfitsio -I/usr/local/include -I/usr/local/Cellar/gsl/1.16/include

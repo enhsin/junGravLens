@@ -66,6 +66,9 @@ public:
 	long potN;
 	int bitpix;
 
+	string criticalName; 
+	string causticName; 
+
 	Conf(Image* image, map<string, string> confMap);
 	void printConfList();
 };

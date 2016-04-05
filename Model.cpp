@@ -329,6 +329,7 @@ void Model::updatePosMapping(Image* image, Conf* conf) {
 
 		srcPosXList.push_back(srcPos[0]);
 		srcPosYList.push_back(srcPos[1]);
+		
 
 		srcPosXListPixel.push_back(srcPos[0]/conf->srcRes+conf->srcXCenter);
 		srcPosYListPixel.push_back(srcPos[1]/conf->srcRes+conf->srcYCenter);
@@ -552,7 +553,7 @@ void Model::updateCritCaustic(Image* dataImage,  Conf* conf) {
 	vector<double> w, w5;
 
 	vector<double> a11, a12, a21, a22;
-	double h = 0.2; //conf->res;
+	double h = conf->imgRes;
 	for (int i=0; i<conf->length; ++i) {
 		left  = posMap.find(make_pair(dataImage->xList[i]-1, dataImage->yList[i]));
 		right = posMap.find(make_pair(dataImage->xList[i]+1, dataImage->yList[i]));
@@ -582,6 +583,14 @@ void Model::updateCritCaustic(Image* dataImage,  Conf* conf) {
 	// update inverse magnification
 	int sign_t = 0;
 
+	string header = "# Region file format: DS9 version 4.1\n\
+					# Filename: horseshoe_test/HorseShoe_new.fits\n\
+					global color=green dashlist=8 3 width=1 font=\"helvetica 10 normal roman\" select=1 highlite=1 dash=0 fixed=0 edit=1 move=1 delete=1 include=1 source=1\n\
+					image\n"; 
+	//ofstream criticalFile; 
+	//criticalFile.open(conf->criticalName); 
+	//criticalFile << header; 
+
 	for (int i=0; i<conf->length; ++i) {
 			left  = posMap.find(make_pair(dataImage->xList[i]-1, dataImage->yList[i]));
 			right = posMap.find(make_pair(dataImage->xList[i]+1, dataImage->yList[i]));
@@ -599,12 +608,20 @@ void Model::updateCritCaustic(Image* dataImage,  Conf* conf) {
 			else
 				sign_t = 5;  // Assign a value bigger than 4;
 
-			if(sign_t<4)
+
+			double distSqure = (dataImage->xList[i]-150)*(dataImage->xList[i]-150) + (dataImage->yList[i]-150)*(dataImage->yList[i]-150); 
+
+			if(sign_t<4 && distSqure > 50*50) {
+				// Distance from center; 
+				
 				critical.push_back(1);
+				//criticalFile << "point(" << to_string(dataImage->xList[i]) << "," << to_string(dataImage->yList[i]) << ")\n" ; 
+			}
 			else
 				critical.push_back(0);
-			cout << critical[i] << endl; 
 	}
+
+	//criticalFile.close(); 
 }
 
 void Model::updateReducedResidual(Image* dataImage) {
