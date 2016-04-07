@@ -32,14 +32,14 @@ http://www.ictp.trieste.it/~manuals/programming/sun/fortran/prog_guide/11_cfort.
 
 /* calculate the deflection angle using straight integration
  * and the fast way */
-extern  void ellipdefl_(double *x1, double *x2, double *q, double *gamma, double *axisratio, double *coreradsqu, double deflection[2]);
-extern  void fastelldefl_(double *x1, double *x2, double *q, double *gamma, double *axisratio, double *coreradsqu, double deflection[2]);
+extern "C" void ellipdefl_(double *x1, double *x2, double *q, double *gamma, double *axisratio, double *coreradsqu, double deflection[2]);
+extern "C" void fastelldefl_(double *x1, double *x2, double *q, double *gamma, double *axisratio, double *coreradsqu, double deflection[2]);
 
 /* calculate the magnification and deflection using straight integration
  * and the fast way
  */
-extern  void ellipmag_(double *x1, double *x2, double *q, double *gamma, double *axisratio, double *coreradsqu, double deflection[2],double mag[2][2]);
-extern  void fastellmag_(double *x1, double *x2, double *q, double *gamma, double *axisratio, double *coreradsqu, double deflection[2],double mag[2][2]);
+extern "C" void ellipmag_(double *x1, double *x2, double *q, double *gamma, double *axisratio, double *coreradsqu, double deflection[2],double mag[2][2]);
+extern "C" void fastellmag_(double *x1, double *x2, double *q, double *gamma, double *axisratio, double *coreradsqu, double deflection[2],double mag[2][2]);
 
 /* calculate the lens potential phi */
-extern  void ellipphi_(double *x1, double *x2, double *q, double *gamma, double *axisratio, double *coreradsqu, double *phi);
+extern "C" void ellipphi_(double *x1, double *x2, double *q, double *gamma, double *axisratio, double *coreradsqu, double *phi);

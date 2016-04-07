@@ -14,7 +14,7 @@ potRes	0.1
 
 ## Files
 imageFileName	horseshoe_test/HorseShoe_new.fits
-regionFileName	horseshoe_test/mask_horseshoe_full.reg
+regionFileName	horseshoe_test/mask_horseshoe.reg
 varFileName	  jun_var.fits
 psfFileName		horseshoe_test/HorseShoe_psf.fits
 criticalName	horseshoe_test/critical.reg
