@@ -25,10 +25,11 @@ obs_ncomb      1
 #wcs_dec0       30.000000
 
 ## define lenses and sources
-startup 1 1 0 
+startup 2 1 0 
 #lens point 5.0e12 0.0 0.0 0.0 0.0 0.0  0.0
 #lens sie 540 0.0 0.0 0.0 0.0 0.0  0.0
-lens sie 600 0.6 0.0 0.1 38.0 0.0  0.0
+lens sie 400 0.0 0.0 0.0 0.0 0.0  0.0
+lens sie 400 -2.0 -2.0 0.0 0.0 0.0  0.0
 extend gauss 2.379 2.5  0.0  0.0 0.0 0.0 0.2 0.0
 
 #point 2.379  2.0e8 0.0 10.0

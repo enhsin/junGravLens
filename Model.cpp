@@ -127,7 +127,10 @@ vector<double> Model::getDeflectionAngle(Conf* conf, int imgX, int imgY, double 
 	double pfX = 0; 
 	double pfY = 0;
 	vector<double> srcPos;
+	//cout << "nLens: " << nLens << endl; 
 	for(int i=0; i<nLens; ++i) {
+
+
 		// Unit:  aresecond.
 		fX = (imgX - conf->imgXCenter-param.parameter[i].centerX ) * conf->imgRes;   // lens center frame, 
 		fY = (imgY - conf->imgYCenter-param.parameter[i].centerY ) * conf->imgRes;
@@ -152,7 +155,9 @@ vector<double> Model::getDeflectionAngle(Conf* conf, int imgX, int imgY, double 
 
 			double phi,root1mq,fq,fac,fCore=0,fCosTheta,fSinTheta,x1,y1,deltax1,deltay1;
 			if (fX == 0 && fY == 0)
-				*pDeltaX = *pDeltaY = param.parameter[i].critRad; // pLensComp->fParameter[0];
+				*pDeltaX += param.parameter[i].critRad; // pLensComp->fParameter[0];
+				*pDeltaY += param.parameter[i].critRad;
+
 
 			//pre-calculate constants
 			fCosTheta = cos(param.parameter[i].PA*M_PI/180 + 0.5*M_PI);
@@ -172,8 +177,8 @@ vector<double> Model::getDeflectionAngle(Conf* conf, int imgX, int imgY, double 
 			deltay1 = fac*lm_arctanh(root1mq*y1/(phi+ fCore*fq*fq));
 
 
-			*pDeltaX = deltax1*fCosTheta - deltay1*fSinTheta;
-			*pDeltaY = deltay1*fCosTheta + deltax1*fSinTheta;
+			*pDeltaX += deltax1*fCosTheta - deltay1*fSinTheta;
+			*pDeltaY += deltay1*fCosTheta + deltax1*fSinTheta;
 		}
 		
 
@@ -207,12 +212,12 @@ vector<double> Model::getDeflectionAngle(Conf* conf, int imgX, int imgY, double 
 				//cout << param.parameter[i].radScale << "\t" << fScale << "\t" << fAngRadius << "\t" << fTempResult  << endl; 
 				deflx = sqrt(1.-fEllip)*fTempResult*fCosPhi;
 				defly = sqrt(1.+fEllip)*fTempResult*fSinPhi;
-				*pDeltaX = (deflx*fCosTheta - defly*fSinTheta);
-				*pDeltaY = (deflx*fSinTheta + defly*fCosTheta);
+				*pDeltaX += (deflx*fCosTheta - defly*fSinTheta);
+				*pDeltaY += (deflx*fSinTheta + defly*fCosTheta);
 			}
 			else {
-				*pDeltaX = 0.0;
-				*pDeltaY = 0.0;
+				*pDeltaX += 0.0;
+				*pDeltaY += 0.0;
 			} 
 		}
 		
@@ -587,9 +592,9 @@ void Model::updateCritCaustic(Image* dataImage,  Conf* conf) {
 					# Filename: horseshoe_test/HorseShoe_new.fits\n\
 					global color=green dashlist=8 3 width=1 font=\"helvetica 10 normal roman\" select=1 highlite=1 dash=0 fixed=0 edit=1 move=1 delete=1 include=1 source=1\n\
 					image\n"; 
-	//ofstream criticalFile; 
-	//criticalFile.open(conf->criticalName); 
-	//criticalFile << header; 
+	ofstream criticalFile; 
+	criticalFile.open(conf->criticalName); 
+	criticalFile << header; 
 
 	for (int i=0; i<conf->length; ++i) {
 			left  = posMap.find(make_pair(dataImage->xList[i]-1, dataImage->yList[i]));
@@ -615,13 +620,13 @@ void Model::updateCritCaustic(Image* dataImage,  Conf* conf) {
 				// Distance from center; 
 				
 				critical.push_back(1);
-				//criticalFile << "point(" << to_string(dataImage->xList[i]) << "," << to_string(dataImage->yList[i]) << ")\n" ; 
+				criticalFile << "point(" << to_string(dataImage->xList[i]) << "," << to_string(dataImage->yList[i]) << ")\n" ; 
 			}
 			else
 				critical.push_back(0);
 	}
 
-	//criticalFile.close(); 
+	criticalFile.close(); 
 }
 
 void Model::updateReducedResidual(Image* dataImage) {
@@ -760,6 +765,303 @@ double Model::getCurvatureOrderReg(Conf* conf, vector<double> briList) {
 	return sum ; 
 }
 
+MultModelParam::MultModelParam(map<string,string> confMap) {
+		
+
+		nLens = 0;
+		map<string, string>::iterator itPTMASS	= confMap.find("PTMASS") ;
+		map<string, string>::iterator itSIE    	= confMap.find("SIE");
+		map<string, string>::iterator itNFW   	= confMap.find("NFW");
+		map<string, string>::iterator itSPEMD 	= confMap.find("SPEMD");
+		map<string, string>::iterator itSERSIC 	= confMap.find("SERSIC");
+
+		if(itSERSIC != confMap.end()) {
+			vector<string> items = splitString(itSERSIC->second);
+
+			SingleModelParam tempParam;
+
+			tempParam.name = "SERSIC";
+
+			tempParam.centerXFrom 		= stof(items[0]);
+			tempParam.centerXTo 		= stof(items[1]);
+			tempParam.centerXInc 		= stof(items[2]);
+			tempParam.centerYFrom 		= stof(items[3]);
+			tempParam.centerYTo 		= stof(items[4]);
+			tempParam.centerYInc 		= stof(items[5]);
+			tempParam.kapFrom 			= stof(items[6]);
+			tempParam.kapTo   			= stof(items[7]);
+			tempParam.kapInc  			= stof(items[8]);
+			tempParam.eFrom 			= stof(items[9]);
+			tempParam.eTo   			= stof(items[10]);
+			tempParam.eInc  			= stof(items[11]);
+			tempParam.PAFrom			= stof(items[12]);
+			tempParam.PATo 				= stof(items[13]);
+			tempParam.PAInc 			= stof(items[14]);
+			tempParam.sersicScaleFrom 	= stof(items[15]);
+			tempParam.sersicScaleTo		= stof(items[16]);
+			tempParam.sersicScaleInc	= stof(items[17]);
+			tempParam.mFrom 			= stof(items[18]);
+			tempParam.mTo   			= stof(items[19]);
+			tempParam.mInc  			= stof(items[20]);
+			
+			parameter.push_back(tempParam);
+			nParam.push_back(NUM_SERSIC_PARAM);
+
+			nLens +=1;
+		}
+
+
+
+		if(itPTMASS != confMap.end()) {
+			vector<string> items = splitString(itPTMASS->second);
+			SingleModelParam tempParam;
+			tempParam.name = "PTMASS";
+			tempParam.centerXFrom   = stof(items[0]);
+			tempParam.centerXTo 	= stof(items[1]);
+			tempParam.centerXInc 	= stof(items[2]);
+			tempParam.centerYFrom 	= stof(items[3]);
+			tempParam.centerYTo 	= stof(items[4]);
+			tempParam.centerYInc 	= stof(items[5]);
+			tempParam.critRadFrom	= stof(items[6]);
+			tempParam.critRadTo   	= stof(items[7]);
+			tempParam.critRadInc  	= stof(items[8]);
+
+			parameter.push_back(tempParam);
+			nParam.push_back(NUM_PTMASS_PARAM);
+			nLens +=1;
+
+
+		}
+		if(itSIE != confMap.end()) {
+			
+			vector<string> strs;
+
+			std::string s = itSIE->second; 
+			string delimiter = "_&&_";
+			//std::string token = s.substr(0, s.find(delimiter));
+			//strs.push_back(token);  
+
+			cout << "oh, shit" << endl; 
+			size_t pos = s.find(delimiter) ; 
+			while( pos!=std::string::npos) {
+				strs.push_back(s.substr(0, pos)); 
+				s = s.substr(pos+4); 
+				pos = s.find(delimiter);
+				break; 
+			}; 
+			strs.push_back(s); 
+			//strs = vector<string> &split(&s, delimiter, &strs); 
+			//std::cout << s << std::endl;
+
+
+			for(int i=0; i<strs.size(); ++i) {
+
+				vector<string> items = splitString(strs[i]);
+				SingleModelParam tempParam;
+
+				tempParam.name = "SIE";
+
+				tempParam.centerXFrom 	= stof(items[0]);
+				tempParam.centerXTo 	= stof(items[1]);
+				tempParam.centerXInc 	= stof(items[2]);
+				tempParam.centerYFrom 	= stof(items[3]);
+				tempParam.centerYTo 	= stof(items[4]);
+				tempParam.centerYInc 	= stof(items[5]);
+				tempParam.critRadFrom 	= stof(items[6]);
+				tempParam.critRadTo   	= stof(items[7]);
+				tempParam.critRadInc  	= stof(items[8]);
+				tempParam.eFrom			= stof(items[9]);
+				tempParam.eTo 			= stof(items[10]);
+				tempParam.eInc 			= stof(items[11]);
+				tempParam.PAFrom 		= stof(items[12]);
+				tempParam.PATo			= stof(items[13]);
+				tempParam.PAInc			= stof(items[14]);
+				parameter.push_back(tempParam);
+				nParam.push_back(NUM_SIE_PARAM);
+
+				nLens +=1;
+			}
+		}
+		if(itNFW != confMap.end()) {
+			vector<string> items = splitString(itNFW->second);
+
+			SingleModelParam tempParam;
+
+			tempParam.name = "NFW";
+
+			tempParam.centerXFrom 	= stof(items[0]);
+			tempParam.centerXTo 	= stof(items[1]);
+			tempParam.centerXInc 	= stof(items[2]);
+			tempParam.centerYFrom 	= stof(items[3]);
+			tempParam.centerYTo 	= stof(items[4]);
+			tempParam.centerYInc 	= stof(items[5]);
+			tempParam.massScaleFrom = stof(items[6]);
+			tempParam.massScaleTo   = stof(items[7]);
+			tempParam.massScaleInc  = stof(items[8]);
+			tempParam.radScaleFrom 	= stof(items[9]);
+			tempParam.radScaleTo   	= stof(items[10]);
+			tempParam.radScaleInc  	= stof(items[11]);
+			tempParam.eFrom			= stof(items[12]);
+			tempParam.eTo 			= stof(items[13]);
+			tempParam.eInc 			= stof(items[14]);
+			tempParam.PAFrom 		= stof(items[15]);
+			tempParam.PATo			= stof(items[16]);
+			tempParam.PAInc			= stof(items[17]);
+			parameter.push_back(tempParam);
+			nParam.push_back(NUM_NFW_PARAM);
+
+			nLens +=1;
+		}
+
+		if(itSPEMD != confMap.end()) {
+			vector<string> items = splitString(itSPEMD->second);
+
+			SingleModelParam tempParam;
+
+			tempParam.name = "SPEMD";
+
+			tempParam.centerXFrom 	= stof(items[0]);
+			tempParam.centerXTo 	= stof(items[1]);
+			tempParam.centerXInc 	= stof(items[2]);
+			tempParam.centerYFrom 	= stof(items[3]);
+			tempParam.centerYTo 	= stof(items[4]);
+			tempParam.centerYInc 	= stof(items[5]);
+			tempParam.critRadFrom 	= stof(items[6]);
+			tempParam.critRadTo   	= stof(items[7]);
+			tempParam.critRadInc  	= stof(items[8]);
+			tempParam.eFrom			= stof(items[9]);
+			tempParam.eTo 			= stof(items[10]);
+			tempParam.eInc 			= stof(items[11]);
+			tempParam.PAFrom 		= stof(items[12]);
+			tempParam.PATo			= stof(items[13]);
+			tempParam.PAInc			= stof(items[14]);
+			tempParam.powerFrom		= stof(items[15]);
+			tempParam.powerTo 		= stof(items[16]);
+			tempParam.powerInc 		= stof(items[17]);
+			tempParam.coreFrom 		= stof(items[18]);
+			tempParam.coreTo		= stof(items[19]);
+			tempParam.coreInc		= stof(items[20]);
+
+			parameter.push_back(tempParam);
+			nParam.push_back(NUM_SPEMD_PARAM);
+			nLens +=1;
+		}
+
+
+
+	}
+
+
+void MultModelParam::printModels() {
+	/*
+	string name;
+	double mass;
+	double nParam;
+	// All shared parameters: 
+	double centerX, centerXFrom, centerXTo, centerXInc;
+	double centerY, centerYFrom, centerYTo, centerYInc;
+	
+	double e, eFrom, eTo, eInc;
+	double q, qFrom, qTo, qInc;
+	double PA, PAFrom, PATo, PAInc;
+
+	// For PTMASS model and SIE model: 
+	double critRad, critRadFrom, critRadTo, critRadInc;
+	double power, powerFrom, powerTo, powerInc; 
+	double core, coreFrom, coreTo, coreInc;
+	// For NFW model
+	double massScale, massScaleFrom, massScaleTo, massScaleInc;   
+	double radScale, radScaleFrom, radScaleTo, radScaleInc; 	
+	// For sersic model: 
+	double kap, kapFrom, kapTo, kapInc; 
+	double sersicScale, sersicScaleFrom, sersicScaleTo, sersicScaleInc; 
+	double m, mFrom, mTo, mInc; 
+
+	int nLens ;
+	vector<int> nParam;
+
+	*/
+
+	cout << "\n*********** Models *********" << endl;
+	cout << "numModel: 	 " << nLens << endl; 
+	for(int i=0; i<nLens; ++i) {
+		if (parameter[i].name=="SIE") {
+
+			cout << "[" << parameter[i].name  << "]:" 
+				<< "\n_From\t"
+				<< parameter[i].centerXFrom << "\t" 
+				<< parameter[i].centerYFrom << "\t"
+				<< parameter[i].critRadFrom << "\t"
+				<< parameter[i].eFrom << "\t" 
+				<< parameter[i].PAFrom << "\t"
+				<< "\n_To\t"
+				<< parameter[i].centerXTo<< "\t" 
+				<< parameter[i].centerYTo << "\t"
+				<< parameter[i].critRadTo << "\t"
+				<< parameter[i].eTo << "\t" 
+				<< parameter[i].PATo << "\t" 
+				<< "\n_Inc\t"
+				<< parameter[i].centerXInc << "\t" 
+				<< parameter[i].centerYInc << "\t"
+				<< parameter[i].critRadInc << "\t"
+				<< parameter[i].eInc << "\t" 
+				<< parameter[i].PAInc << "\t"
+				<< endl; 
+				
+		}
+
+		if (parameter[i].name=="NFW") {
+
+			cout << "[" << parameter[i].name  << "]:" 
+				<< "\n_From\t"
+				<< parameter[i].centerXFrom << "\t" 
+				<< parameter[i].centerYFrom << "\t"
+				<< parameter[i].massScaleFrom << "\t"
+				<< parameter[i].radScaleFrom << "\t"
+				<< parameter[i].eFrom << "\t" 
+				<< parameter[i].PAFrom << "\t" 
+				<< "\n_To\t"
+				<< parameter[i].centerXTo<< "\t" 
+				<< parameter[i].centerYTo << "\t"
+				<< parameter[i].massScaleTo << "\t"
+				<< parameter[i].radScaleTo << "\t"
+				<< parameter[i].eTo << "\t" 
+				<< parameter[i].PATo << "\t" 
+				<< "\n_Inc\t"
+				<< parameter[i].centerXInc << "\t" 
+				<< parameter[i].centerYInc << "\t"
+				<< parameter[i].massScaleInc << "\t"
+				<< parameter[i].radScaleInc << "\t"
+				<< parameter[i].eInc << "\t" 
+				<< parameter[i].PAInc << "\t" 
+				<< endl; 
+
+		}
+
+
+	}
+
+
+
+	cout << "*******************************" << endl;
+
+	/* 
+	cout << "srcSize:    " << srcSize[0] << ",\t"<< srcSize[1] << endl;
+	cout << "imgSize:    " << imgSize[0] << ",\t"<<imgSize[1]  << endl;
+	cout << "potSize:    " << potSize[0] << ",\t"<<potSize[1]  << endl;
+	cout << "srcRes:     " << srcRes << endl;
+	cout << "imgRes:     " << imgRes << endl;
+	cout << "potRes:     " << potRes << endl;
+	cout << "srcCenter:  " << srcXCenter << ",\t"<<srcYCenter << endl;
+	cout << "imgCenter:  " << imgXCenter << ",\t"<<imgYCenter << endl;
+	cout << "potCenter:  " << potXCenter << ",\t"<<potYCenter << endl;
+	cout << "length:     " << length << endl;		cout << "*******************************" << endl;
+	*/
+
+
+
+
+}
 #if 0
 
 

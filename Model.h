@@ -15,6 +15,7 @@
 #include <Eigen/Sparse>
 #include <fstream>
 #include <sstream>
+//#include <boost/algorithm/string.hpp>
 #define NUM_PTMASS_PARAM 	3
 #define NUM_SIE_PARAM 		5
 #define NUM_NFW_PARAM 		6
@@ -59,166 +60,10 @@ public:
 	int nLens ;
 	vector<int> nParam;
 
-	MultModelParam(map<string,string> confMap) {
-		nLens = 0;
-		map<string, string>::iterator itPTMASS	= confMap.find("PTMASS") ;
-		map<string, string>::iterator itSIE    	= confMap.find("SIE");
-		map<string, string>::iterator itNFW   	= confMap.find("NFW");
-		map<string, string>::iterator itSPEMD 	= confMap.find("SPEMD");
-		map<string, string>::iterator itSERSIC 	= confMap.find("SERSIC");
-
-		if(itSERSIC != confMap.end()) {
-			vector<string> items = splitString(itSERSIC->second);
-
-			SingleModelParam tempParam;
-
-			tempParam.name = "SERSIC";
-
-			tempParam.centerXFrom 		= stof(items[0]);
-			tempParam.centerXTo 		= stof(items[1]);
-			tempParam.centerXInc 		= stof(items[2]);
-			tempParam.centerYFrom 		= stof(items[3]);
-			tempParam.centerYTo 		= stof(items[4]);
-			tempParam.centerYInc 		= stof(items[5]);
-			tempParam.kapFrom 			= stof(items[6]);
-			tempParam.kapTo   			= stof(items[7]);
-			tempParam.kapInc  			= stof(items[8]);
-			tempParam.eFrom 			= stof(items[9]);
-			tempParam.eTo   			= stof(items[10]);
-			tempParam.eInc  			= stof(items[11]);
-			tempParam.PAFrom			= stof(items[12]);
-			tempParam.PATo 				= stof(items[13]);
-			tempParam.PAInc 			= stof(items[14]);
-			tempParam.sersicScaleFrom 	= stof(items[15]);
-			tempParam.sersicScaleTo		= stof(items[16]);
-			tempParam.sersicScaleInc	= stof(items[17]);
-			tempParam.mFrom 			= stof(items[18]);
-			tempParam.mTo   			= stof(items[19]);
-			tempParam.mInc  			= stof(items[20]);
-			
-			parameter.push_back(tempParam);
-			nParam.push_back(NUM_SERSIC_PARAM);
-
-			nLens +=1;
-		}
 
 
-
-		if(itPTMASS != confMap.end()) {
-			vector<string> items = splitString(itPTMASS->second);
-			SingleModelParam tempParam;
-			tempParam.name = "PTMASS";
-			tempParam.centerXFrom   = stof(items[0]);
-			tempParam.centerXTo 	= stof(items[1]);
-			tempParam.centerXInc 	= stof(items[2]);
-			tempParam.centerYFrom 	= stof(items[3]);
-			tempParam.centerYTo 	= stof(items[4]);
-			tempParam.centerYInc 	= stof(items[5]);
-			tempParam.critRadFrom	= stof(items[6]);
-			tempParam.critRadTo   	= stof(items[7]);
-			tempParam.critRadInc  	= stof(items[8]);
-
-			parameter.push_back(tempParam);
-			nParam.push_back(NUM_PTMASS_PARAM);
-			nLens +=1;
-
-
-		}
-		if(itSIE != confMap.end()) {
-			vector<string> items = splitString(itSIE->second);
-
-			SingleModelParam tempParam;
-
-			tempParam.name = "SIE";
-
-			tempParam.centerXFrom 	= stof(items[0]);
-			tempParam.centerXTo 	= stof(items[1]);
-			tempParam.centerXInc 	= stof(items[2]);
-			tempParam.centerYFrom 	= stof(items[3]);
-			tempParam.centerYTo 	= stof(items[4]);
-			tempParam.centerYInc 	= stof(items[5]);
-			tempParam.critRadFrom 	= stof(items[6]);
-			tempParam.critRadTo   	= stof(items[7]);
-			tempParam.critRadInc  	= stof(items[8]);
-			tempParam.eFrom			= stof(items[9]);
-			tempParam.eTo 			= stof(items[10]);
-			tempParam.eInc 			= stof(items[11]);
-			tempParam.PAFrom 		= stof(items[12]);
-			tempParam.PATo			= stof(items[13]);
-			tempParam.PAInc			= stof(items[14]);
-			parameter.push_back(tempParam);
-			nParam.push_back(NUM_SIE_PARAM);
-
-			nLens +=1;
-		}
-		if(itNFW != confMap.end()) {
-			vector<string> items = splitString(itNFW->second);
-
-			SingleModelParam tempParam;
-
-			tempParam.name = "NFW";
-
-			tempParam.centerXFrom 	= stof(items[0]);
-			tempParam.centerXTo 	= stof(items[1]);
-			tempParam.centerXInc 	= stof(items[2]);
-			tempParam.centerYFrom 	= stof(items[3]);
-			tempParam.centerYTo 	= stof(items[4]);
-			tempParam.centerYInc 	= stof(items[5]);
-			tempParam.massScaleFrom = stof(items[6]);
-			tempParam.massScaleTo   = stof(items[7]);
-			tempParam.massScaleInc  = stof(items[8]);
-			tempParam.radScaleFrom 	= stof(items[9]);
-			tempParam.radScaleTo   	= stof(items[10]);
-			tempParam.radScaleInc  	= stof(items[11]);
-			tempParam.eFrom			= stof(items[12]);
-			tempParam.eTo 			= stof(items[13]);
-			tempParam.eInc 			= stof(items[14]);
-			tempParam.PAFrom 		= stof(items[15]);
-			tempParam.PATo			= stof(items[16]);
-			tempParam.PAInc			= stof(items[17]);
-			parameter.push_back(tempParam);
-			nParam.push_back(NUM_NFW_PARAM);
-
-			nLens +=1;
-		}
-
-		if(itSPEMD != confMap.end()) {
-			vector<string> items = splitString(itSPEMD->second);
-
-			SingleModelParam tempParam;
-
-			tempParam.name = "SPEMD";
-
-			tempParam.centerXFrom 	= stof(items[0]);
-			tempParam.centerXTo 	= stof(items[1]);
-			tempParam.centerXInc 	= stof(items[2]);
-			tempParam.centerYFrom 	= stof(items[3]);
-			tempParam.centerYTo 	= stof(items[4]);
-			tempParam.centerYInc 	= stof(items[5]);
-			tempParam.critRadFrom 	= stof(items[6]);
-			tempParam.critRadTo   	= stof(items[7]);
-			tempParam.critRadInc  	= stof(items[8]);
-			tempParam.eFrom			= stof(items[9]);
-			tempParam.eTo 			= stof(items[10]);
-			tempParam.eInc 			= stof(items[11]);
-			tempParam.PAFrom 		= stof(items[12]);
-			tempParam.PATo			= stof(items[13]);
-			tempParam.PAInc			= stof(items[14]);
-			tempParam.powerFrom		= stof(items[15]);
-			tempParam.powerTo 		= stof(items[16]);
-			tempParam.powerInc 		= stof(items[17]);
-			tempParam.coreFrom 		= stof(items[18]);
-			tempParam.coreTo		= stof(items[19]);
-			tempParam.coreInc		= stof(items[20]);
-
-			parameter.push_back(tempParam);
-			nParam.push_back(NUM_SPEMD_PARAM);
-			nLens +=1;
-		}
-
-
-
-	}
+	MultModelParam(map<string,string> confMap) ; 
+	void printModels() ; 
 
 };
 
@@ -330,6 +175,7 @@ public:
 	double getZerothOrderReg  	(Conf* conf, vector<double> briList);
 	double getGradientOrderReg	(Conf* conf, vector<double> briList); 
 	double getCurvatureOrderReg	(Conf* conf, vector<double> briList); 
+	//vector<string> &split(string &s, char delim, vector<string> &elems) ; 
 
 	void clearMatrix();
 };

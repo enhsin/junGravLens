@@ -18,6 +18,7 @@
 #include <Eigen/Sparse>
 #include <map>
 #include <ctime>
+
 typedef Eigen::SparseMatrix<double> sp_mat;
 typedef Eigen::VectorXd vec;
 
@@ -151,7 +152,12 @@ map<string,string> parseConfigure(string confFileName) {
 				for(int i=1; i<items.size(); ++i) {
 					modelString += ( items[i] + "\t") ;
 				}
-				confMap[items[0]] = modelString;
+				if (confMap.find(items[0])!= confMap.end()) {
+					string newAdd = "_&&_" + modelString; 
+					confMap[items[0]] += newAdd; 
+				} 
+				else 
+					confMap[items[0]] = modelString;
 
 			}
 

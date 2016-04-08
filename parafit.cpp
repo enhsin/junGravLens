@@ -222,6 +222,8 @@ void gridSearch(Conf* conf, MultModelParam param, Image* dataImage, vec d, strin
 
 	// SIE model:
 
+
+
 	if(param.parameter[0].name=="SIE") {
 		ofstream output; 
 		output.open("output.txt"); 
@@ -244,6 +246,26 @@ void gridSearch(Conf* conf, MultModelParam param, Image* dataImage, vec d, strin
 			  			for (param.parameter[0].centerY=param.parameter[0].centerYFrom ;
 			  				param.parameter[0].centerY <=param.parameter[0].centerYTo;
 			  				param.parameter[0].centerY += param.parameter[0].centerYInc) {   
+
+		for (param.parameter[1].critRad=param.parameter[1].critRadFrom ;
+			param.parameter[1].critRad <=param.parameter[1].critRadTo;
+			param.parameter[1].critRad += param.parameter[1].critRadInc) { 
+
+			 for (param.parameter[1].e=param.parameter[1].eFrom ; 
+		  		param.parameter[1].e <=param.parameter[1].eTo;
+		  		param.parameter[1].e += param.parameter[1].eInc) {
+			  	
+			  	for (param.parameter[1].PA=param.parameter[1].PAFrom ;
+			  		param.parameter[1].PA <=param.parameter[1].PATo;
+			  		param.parameter[1].PA += param.parameter[1].PAInc) {   
+
+			  		for (param.parameter[1].centerX=param.parameter[1].centerXFrom ;
+			  			param.parameter[1].centerX <=param.parameter[1].centerXTo;
+			  			param.parameter[1].centerX += param.parameter[1].centerXInc) {  
+
+			  			for (param.parameter[1].centerY=param.parameter[1].centerYFrom ;
+			  				param.parameter[1].centerY <=param.parameter[1].centerYTo;
+			  				param.parameter[1].centerY += param.parameter[1].centerYInc) {   
 				  			//param.parameter[0].PA = 90; 
 					  		model1 = new Model(conf, param, lambdaS);
 							model1->updatePosMapping(dataImage, conf);
@@ -316,6 +338,11 @@ void gridSearch(Conf* conf, MultModelParam param, Image* dataImage, vec d, strin
 							output << endl;
 					
 							delete model1;
+							}
+						}
+					}
+				}
+			}
 							}
 						}
 					}
