@@ -31,25 +31,24 @@ OBJS= commons.o main.o Image.o Model.o gl_crit.o parafit.o
 #	./junGL
 all:  $(COMMON_HDRS) $(OBJS) libfortranstuff.a
 
-	#$(CC) $(CFLAGS) -o junGL commons.cpp main.cpp Image.cpp Model.cpp gl_crit.cpp parafit.cpp $(LDFLAGS)
-	$(CC) $(CFLAGS) -o junGL $(OBJS) $(LDFLAGS)
-	#-mmacosx-version-min=10.8
-	#valgrind --tool=memcheck --leak-check=full --verbose --log-file=memcheck.log --track-origins=yes ./junGL
-	./junGL
+	@#$(CC) $(CFLAGS) -o junGL commons.cpp main.cpp Image.cpp Model.cpp gl_crit.cpp parafit.cpp $(LDFLAGS)
+	@$(CC) $(CFLAGS) -o junGL $(OBJS) $(LDFLAGS)
+	@#valgrind --tool=memcheck --leak-check=full --verbose --log-file=memcheck.log --track-origins=yes ./junGL
+	@./junGL
 commons.o: commons.cpp
-	$(CC) -c -o commons.o commons.cpp $(CFLAGS)
+	@$(CC) -c -o commons.o commons.cpp $(CFLAGS)
 
 main.o:  main.cpp
-	$(CC) -c -o main.o main.cpp $(CFLAGS)
+	@$(CC) -c -o main.o main.cpp $(CFLAGS)
 
 Image.o:  Image.cpp Image.h
-	$(CC) -c -o Image.o Image.cpp $(CFLAGS)
+	@$(CC) -c -o Image.o Image.cpp $(CFLAGS)
 
 Model.o: Model.cpp
-	$(CC) -c -o Model.o Model.cpp $(CFLAGS)
+	@$(CC) -c -o Model.o Model.cpp $(CFLAGS)
 
 parafit.o: parafit.cpp
-	$(CC) -c -o parafit.o parafit.cpp $(CFLAGS)
+	@$(CC) -c -o parafit.o parafit.cpp $(CFLAGS)
 
 
 
@@ -59,7 +58,7 @@ libfortranstuff.a:
 	#rm *.o
 
 plot:
-	./plotScript
+	@./plotScript
 
 clean: 
 	rm *.o
