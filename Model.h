@@ -60,8 +60,6 @@ public:
 	int nLens ;
 	vector<int> nParam;
 
-
-
 	MultModelParam(map<string,string> confMap) ; 
 	void printModels() ; 
 

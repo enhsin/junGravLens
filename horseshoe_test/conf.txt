@@ -13,8 +13,8 @@ imgRes	0.04
 potRes	0.1
 
 ## Files
-imageFileName	horseshoe_test/HorseShoe_new.fits
-regionFileName	horseshoe_test/mask_horseshoe_full.reg
+imageFileName	horseshoe_test/HorseShoe_temp1.fits
+regionFileName	horseshoe_test/mask_horseshoe_large_3.reg
 varFileName	  jun_var.fits
 psfFileName		horseshoe_test/HorseShoe_psf.fits
 criticalName	horseshoe_test/critical.reg
@@ -22,14 +22,19 @@ causticName	horseshoe_test/caustic.reg
 
 
 ## Source plane size
-srcX	200
-srcY	200
+srcX	100
+srcY	100
 
 
 ## Model_PTMASS {xfrom, xto, xinc, yfrom, yto, yinc, critfrom, critto, critinc}
 #PTMASS 0.0 0.0 0.0 0.0 0.0 0.0 4.6 5.6 0.05 
 ## Model_PTMASS {xfrom, xto, xinc, yfrom, yto, yinc, critfrom, critto, critinc, ellfrom, ellto, ellinc, pafrom, pato, painc, corefrom, coreto, coreinc}
-SIE 0.0 0.0 0.2 0.0 0.0 0.2 5.17 5.17 0.02 0.17 0.17 0.01 141.0 141.0 2.0 0.0 0.0 0.0 
+##
+##
+SIE 0.0 0.0 0.2 0.0 0.0 0.2 3.57 3.57 0.1 0.17 0.17 0.01 141.0 141.0 2.0 0.0 0.0 0.2
+SIE -100.0 -100.0 5.0 20.0 20.0 2.0 2.6 2.6 0.1 0.0 0.0 0.01 0.0 0.0 2.0 0.0 0.0 0.2
+##
+##
 ## 	Model_NFW {xfrom, xto, xinc, yfrom, yto, yinc,mass_scalefrom,mass_scaleto,mass_scaleinc,rad_scalefrom,rad_scaleto,rad_scaleinc,ellfrom, ellto, ellinc, pafrom, pato, painc}
 ##NFW 0.0 0.0 0.1 0.0 0.0 0.1 0.305 0.305 0.01 20.0 20.0 0.5 0.05 0.05 0.02 140.0 140.0 2.0
 #PTMASS 0.0 0.0 0.1 0.0 0.0 0.1 4.6 5.6 0.02 

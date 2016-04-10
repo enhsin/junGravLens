@@ -25,10 +25,11 @@ obs_ncomb      1
 #wcs_dec0       30.000000
 
 ## define lenses and sources
-startup 1 1 0 
-lens point 5.0e12 0.0 0.0 0.0 0.0 0.0  0.0
+startup 2 1 0 
+lens point 2.5e12 0.0 0.0 0.0 0.0 0.0  0.0
+lens point 2.5e12 2.0 2.0 0.0 0.0 0.0  0.0
 #lens sie 540 0.0 0.0 0.0 0.0 0.0  0.0
-extend gauss 2.379 2.5  0.0  0.0 0.0 0.0 0.05 0.0
+extend gauss 2.379 2.5  0.0  0.0 0.0 0.0 0.2 0.0
 
 #point 2.379  2.0e8 0.0 10.0
 #extend point  2.379 2.0e8  0.0 0.0  0.0   0.0 0.0 0.0
@@ -48,8 +49,8 @@ start_command
 calcimage 2.379 1.0 -1.5
 calcein 2.379
 
-writeimage_ori 20.0 0.1 
-writeimage 20.0 0.1 
+writeimage_ori 0.0 0.0
+writeimage 0.0 0.0 
 writecrit 2.379
 writelens 2.379
 #writepsf

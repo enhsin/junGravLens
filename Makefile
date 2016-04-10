@@ -43,7 +43,7 @@ main.o:  main.cpp
 	$(CC) -c -o main.o main.cpp $(CFLAGS)
 
 Image.o:  Image.cpp Image.h
-	$(CC) -c -o Image.o Image.cpp Image.h $(CFLAGS)
+	$(CC) -c -o Image.o Image.cpp $(CFLAGS)
 
 Model.o: Model.cpp
 	$(CC) -c -o Model.o Model.cpp $(CFLAGS)
@@ -56,10 +56,13 @@ parafit.o: parafit.cpp
 libfortranstuff.a:
 	$(FC) -O -c slatec/src/*.f fastell.f 
 	ar -r libfortranstuff.a *.o
-	rm *.o
+	#rm *.o
 
 plot:
 	./plotScript
+
+clean: 
+	rm *.o
 
 imfit: 
 	cd imfit-1.3; 

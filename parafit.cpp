@@ -167,14 +167,34 @@ void gridSearch(Conf* conf, MultModelParam param, Image* dataImage, vec d, strin
 	if(param.parameter[0].name=="PTMASS") {
 		for (param.parameter[0].critRad=param.parameter[0].critRadFrom ;
 				param.parameter[0].critRad <= param.parameter[0].critRadTo;
-				param.parameter[0].critRad += param.parameter[0].critRadInc) {   // elliptictiy // Critical radius
+				param.parameter[0].critRad += param.parameter[0].critRadInc) {  
+
+				for (param.parameter[0].centerX=param.parameter[0].centerXFrom ;
+			  			param.parameter[0].centerX <=param.parameter[0].centerXTo;
+			  			param.parameter[0].centerX += param.parameter[0].centerXInc) {  
+
+			  			for (param.parameter[0].centerY=param.parameter[0].centerYFrom ;
+			  				param.parameter[0].centerY <=param.parameter[0].centerYTo;
+			  				param.parameter[0].centerY += param.parameter[0].centerYInc) {  
+
+		for (param.parameter[1].critRad=param.parameter[1].critRadFrom ;
+				param.parameter[1].critRad <= param.parameter[1].critRadTo;
+				param.parameter[1].critRad += param.parameter[1].critRadInc) { 
+
+			  	for (param.parameter[1].centerX=param.parameter[1].centerXFrom ;
+			  			param.parameter[1].centerX <=param.parameter[1].centerXTo;
+			  			param.parameter[1].centerX += param.parameter[1].centerXInc) {  
+
+			  			for (param.parameter[1].centerY=param.parameter[1].centerYFrom ;
+			  				param.parameter[1].centerY <=param.parameter[1].centerYTo;
+			  				param.parameter[1].centerY += param.parameter[1].centerYInc) {     // elliptictiy // Critical radius
 			model1 = new Model(conf, param, lambdaS);
 			model1->updatePosMapping(dataImage, conf);
-			//model1->updateLensAndRegularMatrix(dataImage, conf);
-			//model1->updateGradient(dataImage);
-			//model1->updatePenalty(&dataImage->invC, d);
+			model1->updateLensAndRegularMatrix(dataImage, conf);
+			model1->updateGradient(dataImage);
+			model1->updatePenalty(&dataImage->invC, d);
 			// Write residual image:
-			//model1->updateReducedResidual(dataImage);
+			model1->updateReducedResidual(dataImage);
 
 			//vector<double> sBright = eigenV_to_cV(model1->s);
 			vector<double> sBright = dataImage->dataList; 
@@ -216,7 +236,11 @@ void gridSearch(Conf* conf, MultModelParam param, Image* dataImage, vec d, strin
 			//cout << model1->chi2 << "\t" << model1->srcR << "\t" << model1->penalty ; 
 			cout << endl;
 			delete model1;
-
+}
+}
+}
+}
+}
 		}
 	}
 
@@ -266,12 +290,12 @@ void gridSearch(Conf* conf, MultModelParam param, Image* dataImage, vec d, strin
 			  			for (param.parameter[1].centerY=param.parameter[1].centerYFrom ;
 			  				param.parameter[1].centerY <=param.parameter[1].centerYTo;
 			  				param.parameter[1].centerY += param.parameter[1].centerYInc) {   
-				  			//param.parameter[0].PA = 90; 
+
 					  		model1 = new Model(conf, param, lambdaS);
 							model1->updatePosMapping(dataImage, conf);
-							model1->updateLensAndRegularMatrix(dataImage, conf);
-							model1->updateGradient(dataImage);
-							model1->updatePenalty(&dataImage->invC, d);
+							//model1->updateLensAndRegularMatrix(dataImage, conf);
+							//model1->updateGradient(dataImage);
+							//model1->updatePenalty(&dataImage->invC, d);
 
 							// Write residual image:
 							//model1->updateReducedResidual(dataImage);
@@ -290,7 +314,7 @@ void gridSearch(Conf* conf, MultModelParam param, Image* dataImage, vec d, strin
 							Image* modelImg = new Image(dataImage->xList, dataImage->yList, &model1->mod_img, conf->imgSize[0], conf->imgSize[1], conf->bitpix);
 							Image* srcImg 	= new Image(model1->srcPosXListPixel, model1->srcPosYListPixel, &sBright, conf->srcSize[0], conf->srcSize[1], conf->bitpix);
 
-							if(1) {
+							if(0) {
 								model1->updateCritCaustic(dataImage, conf);
 								Image* critImg = new Image(dataImage->xList, dataImage->yList, &model1->critical, conf->imgSize[0], conf->imgSize[1], conf->bitpix);
 								
@@ -301,18 +325,21 @@ void gridSearch(Conf* conf, MultModelParam param, Image* dataImage, vec d, strin
 							}	
 
 
-							resImg	->writeToFile  	(dir + "img_res_" + to_string(i) + "_" + to_string(j) +".fits");
-							modelImg->writeToFile	(dir + "img_mod_" + to_string(i) + "_" + to_string(j) +".fits");
+							//resImg	->writeToFile  	(dir + "img_res_" + to_string(i) + "_" + to_string(j) +".fits");
+							//modelImg->writeToFile	(dir + "img_mod_" + to_string(i) + "_" + to_string(j) +".fits");
 							//model1	->writeSrcImage	(dir + "img_src_" + to_string(i) + "_" + to_string(j) +".fits", conf);
-							srcImg -> writeToFile (dir + "img_src_" + to_string(i) + "_" + to_string(j) +".fits");
+							srcImg -> writeToFile (dir + "img_src_" + to_string(param.parameter[1].centerX)  \
+													+ "_" + to_string(param.parameter[1].centerY) +".fits");
 
 							// output to console; 
 							//cout << model1->param.parameter[0].centerX  << "\t" ;
 							//cout << model1->param.parameter[0].centerY  << "\t" ;
 							cout << model1->param.parameter[0].critRad  << "\t" ;
-							cout << model1->param.parameter[0].e  << "\t" ;
-							cout << model1->param.parameter[0].PA  << "\t" ;
+							//cout << model1->param.parameter[0].e  << "\t" ;
+							//cout << model1->param.parameter[0].PA  << "\t" ;
 					
+							//cout << model1->param.parameter[1].centerX  << "\t" ;
+							//cout << model1->param.parameter[1].centerY  << "\t" ;
 
 
 							//cout << vegetiiReg << "\t" ; 
@@ -326,9 +353,13 @@ void gridSearch(Conf* conf, MultModelParam param, Image* dataImage, vec d, strin
 							//output << model1->param.parameter[0].centerX  << "\t" ;
 							//output << model1->param.parameter[0].centerY  << "\t" ;
 							output << model1->param.parameter[0].critRad  << "\t" ;
-							output << model1->param.parameter[0].e  << "\t" ;
-							output << model1->param.parameter[0].PA  << "\t" ;
+							//output << model1->param.parameter[0].e  << "\t" ;
+							//output << model1->param.parameter[0].PA  << "\t" ;
 					
+							output << model1->param.parameter[1].critRad  << "\t" ;
+							//output << model1->param.parameter[1].centerX  << "\t" ;
+							output << model1->param.parameter[1].centerY  << "\t" ;
+
 
 							//output << vegetiiReg << "\t" ; 
 							output << zerothOrder << "\t" ;
@@ -338,6 +369,7 @@ void gridSearch(Conf* conf, MultModelParam param, Image* dataImage, vec d, strin
 							output << endl;
 					
 							delete model1;
+						
 							}
 						}
 					}

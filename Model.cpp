@@ -127,41 +127,40 @@ vector<double> Model::getDeflectionAngle(Conf* conf, int imgX, int imgY, double 
 	double pfX = 0; 
 	double pfY = 0;
 	vector<double> srcPos;
+
+	
+
+	pfX = (imgX - conf->imgXCenter ) * conf->imgRes; 			// image center frame;
+	pfY = (imgY - conf->imgYCenter ) * conf->imgRes;
+
+
 	//cout << "nLens: " << nLens << endl; 
 	for(int i=0; i<nLens; ++i) {
-
-
+		fX =  (imgX - conf->imgXCenter - param.parameter[i].centerX ) * conf->imgRes;   // lens center frame, 
+		fY =  (imgY - conf->imgYCenter - param.parameter[i].centerY ) * conf->imgRes;
 		// Unit:  aresecond.
-		fX = (imgX - conf->imgXCenter-param.parameter[i].centerX ) * conf->imgRes;   // lens center frame, 
-		fY = (imgY - conf->imgYCenter-param.parameter[i].centerY ) * conf->imgRes;
-
-		pfX = (imgX-conf->imgXCenter)*conf->imgRes; 			// image center frame;
-		pfY = (imgY-conf->imgYCenter)*conf->imgRes;
-
-		//double pDeltaX = 0;
-		//double pDeltaY = 0;
 
 		if(param.parameter[i].name.compare("PTMASS")==0) {
 			fDenom = fX*fX+fY*fY;
 			double fMult = param.parameter[i].critRad*param.parameter[i].critRad/fDenom;
 			*pDeltaX +=  fX*fMult;
 			*pDeltaY +=  fY*fMult;
-
-
 		}
 
 
 		if(param.parameter[i].name.compare("SIE")==0) {
 
 			double phi,root1mq,fq,fac,fCore=0,fCosTheta,fSinTheta,x1,y1,deltax1,deltay1;
-			if (fX == 0 && fY == 0)
-				*pDeltaX += param.parameter[i].critRad; // pLensComp->fParameter[0];
+			if (fX == 0 && fY == 0)  {
+				*pDeltaX += param.parameter[i].critRad; 
 				*pDeltaY += param.parameter[i].critRad;
 
+			}
+			
 
 			//pre-calculate constants
-			fCosTheta = cos(param.parameter[i].PA*M_PI/180 + 0.5*M_PI);
-			fSinTheta = sin(param.parameter[i].PA*M_PI/180 + 0.5*M_PI);
+			fCosTheta = cos(param.parameter[i].PA*M_PI/180 + 0.5* M_PI);
+			fSinTheta = sin(param.parameter[i].PA*M_PI/180 + 0.5* M_PI);
 			fq = 1-param.parameter[i].e;
 			if (fq>1.0) cout << "Axis ratio should be smaller than 1. " << endl;
 			if (fq==1.0) fq = 0.999;
@@ -176,9 +175,12 @@ vector<double> Model::getDeflectionAngle(Conf* conf, int imgX, int imgY, double 
 			deltax1 = fac*atan(root1mq*x1/(phi + fCore));
 			deltay1 = fac*lm_arctanh(root1mq*y1/(phi+ fCore*fq*fq));
 
+			//cout << root1mq << "\t" << y1 << "\t " << phi << "\t" << fq << "\t" << deltay1 << endl; 
+			*pDeltaX += (deltax1*fCosTheta - deltay1*fSinTheta);
+			*pDeltaY += (deltay1*fCosTheta + deltax1*fSinTheta);
+			
 
-			*pDeltaX += deltax1*fCosTheta - deltay1*fSinTheta;
-			*pDeltaY += deltay1*fCosTheta + deltax1*fSinTheta;
+
 		}
 		
 
@@ -248,7 +250,7 @@ vector<double> Model::getDeflectionAngle(Conf* conf, int imgX, int imgY, double 
 			*pDeltaX = (deflx*fCosTheta - defly*fSinTheta)*param.parameter[i].kap;
 			*pDeltaY = (defly*fCosTheta + deflx*fSinTheta)*param.parameter[i].kap;
 
-
+			
 
 		}
 
@@ -288,10 +290,6 @@ vector<double> Model::getDeflectionAngle(Conf* conf, int imgX, int imgY, double 
 			
 
 			}
-
-
-
-
 		}
 
 	// SrcX and SrcY are in unit aresec;   
@@ -299,12 +297,15 @@ vector<double> Model::getDeflectionAngle(Conf* conf, int imgX, int imgY, double 
 	srcX = pfX - (*pDeltaX);     
 	srcY = pfY - (*pDeltaY);
 
+
 	/*   
 	ofstream debug("debug.txt" , ios::out | ios::app  );
-
+	
 	debug << imgX << "\t" << imgY  << "\t" <<*pDeltaX<< "\t" << *pDeltaY << "\t"<<  srcX << "\t" << srcY << endl;
 	debug.close();
 	*/
+
+	// In arcsecond
 	srcPos.push_back(srcX);
 	srcPos.push_back(srcY);
 	return srcPos;
@@ -322,6 +323,19 @@ void Model::updatePosMapping(Image* image, Conf* conf) {
 
 	length = conf->length;
 	vector<double> srcPos;
+
+	vector<double> test_srcPos; 
+	//getDeflectionAngle(Conf* conf, int imgX, int imgY, double *pDeltaX, double *pDeltaY)
+
+	double testDx =0; 
+	double testDy = 0; 
+	double testImgX = 136; 
+	double testImgY = 136; 
+	test_srcPos = getDeflectionAngle(conf, testImgX, testImgY, &testDx, &testDy); 
+
+	//cout << testImgX << "\t" << testImgY << "\t" << test_srcPos[0]/conf->srcRes+conf->srcXCenter << "\t" 
+	//<< test_srcPos[1]/conf->srcRes+conf->srcYCenter << "\t" << testDx << "\t" << testDy << "\t" <<endl; 
+
 	for(int i=0; i<length; ++i) {
 		int imgX = image->xList[i];
 		int imgY = image->yList[i];
@@ -335,6 +349,10 @@ void Model::updatePosMapping(Image* image, Conf* conf) {
 		srcPosXList.push_back(srcPos[0]);
 		srcPosYList.push_back(srcPos[1]);
 		
+
+		//cout << "dx: \t" << srcPos[0]/conf->srcRes
+		 //<< "\tdy: " << srcPos[1]/conf->srcRes << endl; 
+
 
 		srcPosXListPixel.push_back(srcPos[0]/conf->srcRes+conf->srcXCenter);
 		srcPosYListPixel.push_back(srcPos[1]/conf->srcRes+conf->srcYCenter);
@@ -813,23 +831,39 @@ MultModelParam::MultModelParam(map<string,string> confMap) {
 
 
 		if(itPTMASS != confMap.end()) {
-			vector<string> items = splitString(itPTMASS->second);
-			SingleModelParam tempParam;
-			tempParam.name = "PTMASS";
-			tempParam.centerXFrom   = stof(items[0]);
-			tempParam.centerXTo 	= stof(items[1]);
-			tempParam.centerXInc 	= stof(items[2]);
-			tempParam.centerYFrom 	= stof(items[3]);
-			tempParam.centerYTo 	= stof(items[4]);
-			tempParam.centerYInc 	= stof(items[5]);
-			tempParam.critRadFrom	= stof(items[6]);
-			tempParam.critRadTo   	= stof(items[7]);
-			tempParam.critRadInc  	= stof(items[8]);
 
-			parameter.push_back(tempParam);
-			nParam.push_back(NUM_PTMASS_PARAM);
-			nLens +=1;
+			vector<string> strs;
 
+			std::string s = itPTMASS->second; 
+			string delimiter = "_&&_";
+
+			size_t pos = s.find(delimiter) ; 
+			while( pos!=std::string::npos) {
+				strs.push_back(s.substr(0, pos)); 
+				s = s.substr(pos+4); 
+				pos = s.find(delimiter);
+				break; 
+			}; 
+			strs.push_back(s); 
+
+			for(int i=0; i<strs.size(); ++i) {
+				vector<string> items = splitString(strs[i]);
+				SingleModelParam tempParam;
+				tempParam.name = "PTMASS";
+				tempParam.centerXFrom   = stof(items[0]);
+				tempParam.centerXTo 	= stof(items[1]);
+				tempParam.centerXInc 	= stof(items[2]);
+				tempParam.centerYFrom 	= stof(items[3]);
+				tempParam.centerYTo 	= stof(items[4]);
+				tempParam.centerYInc 	= stof(items[5]);
+				tempParam.critRadFrom	= stof(items[6]);
+				tempParam.critRadTo   	= stof(items[7]);
+				tempParam.critRadInc  	= stof(items[8]);
+
+				parameter.push_back(tempParam);
+				nParam.push_back(NUM_PTMASS_PARAM);
+				nLens +=1;
+			}
 
 		}
 		if(itSIE != confMap.end()) {
@@ -838,10 +872,7 @@ MultModelParam::MultModelParam(map<string,string> confMap) {
 
 			std::string s = itSIE->second; 
 			string delimiter = "_&&_";
-			//std::string token = s.substr(0, s.find(delimiter));
-			//strs.push_back(token);  
 
-			cout << "oh, shit" << endl; 
 			size_t pos = s.find(delimiter) ; 
 			while( pos!=std::string::npos) {
 				strs.push_back(s.substr(0, pos)); 
@@ -985,6 +1016,25 @@ void MultModelParam::printModels() {
 	cout << "\n*********** Models *********" << endl;
 	cout << "numModel: 	 " << nLens << endl; 
 	for(int i=0; i<nLens; ++i) {
+		if (parameter[i].name=="PTMASS") {
+
+			cout << "[" << parameter[i].name  << "]:" 
+				<< "\n_From\t"
+				<< parameter[i].centerXFrom << "\t" 
+				<< parameter[i].centerYFrom << "\t"
+				<< parameter[i].critRadFrom << "\t"
+				<< "\n_To\t"
+				<< parameter[i].centerXTo<< "\t" 
+				<< parameter[i].centerYTo << "\t"
+				<< parameter[i].critRadTo << "\t"
+				<< "\n_Inc\t"
+				<< parameter[i].centerXInc << "\t" 
+				<< parameter[i].centerYInc << "\t"
+				<< parameter[i].critRadInc << "\t"
+				<< endl; 
+				
+		}
+
 		if (parameter[i].name=="SIE") {
 
 			cout << "[" << parameter[i].name  << "]:" 

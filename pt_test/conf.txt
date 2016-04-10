@@ -14,7 +14,7 @@ potRes	0.1
 
 ## Files
 imageFileName	pt_test/jun_image.fits
-regionFileName	pt_test/mask_narrow.reg
+regionFileName	pt_test/multiple_0.1.reg
 varFileName	  jun_var.fits
 psfFileName		PSF_test/cut_psf.fits
 
@@ -25,8 +25,8 @@ srcY	200
 
 
 ## Model_PTMASS {xfrom, xto, xinc, yfrom, yto, yinc, critfrom, critto, critinc}
-PTMASS 0.0 0.0 0.0 0.0 0.0 0.0 5.6 6.2 0.03 
-## Model_PTMASS {xfrom, xto, xinc, yfrom, yto, yinc, critfrom, critto, critinc, ellfrom, ellto, ellinc, pafrom, pato, painc, corefrom, coreto, coreinc}
-##SIE 0.0 0.0 0.0 0.0 0.0 0.0 5.4 6.4 0.1 0.2 0.8 0.01 60 90 2 0.5 0.8 0.01 
+PTMASS 0.0 0.0 0.1 0.0 0.0 0.1 4.14 4.14 0.03
+PTMASS 20.0 20.0 0.1 20.0 20.0 0.1 4.14 4.14 0.03
+
 
  

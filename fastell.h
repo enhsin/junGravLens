@@ -32,7 +32,7 @@ http://www.ictp.trieste.it/~manuals/programming/sun/fortran/prog_guide/11_cfort.
 
 /* calculate the deflection angle using straight integration
  * and the fast way */
-extern "C" void ellipdefl_(double *x1, double *x2, double *q, double *gamma, double *axisratio, double *coreradsqu, double deflection[2]);
+extern "C"  void ellipdefl_(double *x1, double *x2, double *q, double *gamma, double *axisratio, double *coreradsqu, double deflection[2]);
 extern "C" void fastelldefl_(double *x1, double *x2, double *q, double *gamma, double *axisratio, double *coreradsqu, double deflection[2]);
 
 /* calculate the magnification and deflection using straight integration
