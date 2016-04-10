@@ -9,7 +9,7 @@ ifeq ($(NAME), LAPTOP)
 INC=-I/usr/local/Cellar/boost/1.58.0/include -I/Users/juncheng/work/cfitsio -I/usr/local/include -I/usr/local/Cellar/gsl/1.16/include
 LIB=-L/usr/local/Cellar/boost/1.58.0/lib -L/Users/juncheng/work/cfitsio -L/opt/local/lib -L/usr/local/Cellar/gsl/1.16/lib -L/usr/local/gfortran/lib
 #-L/usr/local/Cellar/gcc/5.2.0/lib/gcc/5
-INC_EIGEN=-I/Users/juncheng/work/eigen-eigen-b30b87236a1b
+INC_EIGEN=-I/Users/juncheng/work/eigen_include
 endif
 CC=g++
 #gcc

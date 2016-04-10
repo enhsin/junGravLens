@@ -328,8 +328,8 @@ void gridSearch(Conf* conf, MultModelParam param, Image* dataImage, vec d, strin
 							//resImg	->writeToFile  	(dir + "img_res_" + to_string(i) + "_" + to_string(j) +".fits");
 							//modelImg->writeToFile	(dir + "img_mod_" + to_string(i) + "_" + to_string(j) +".fits");
 							//model1	->writeSrcImage	(dir + "img_src_" + to_string(i) + "_" + to_string(j) +".fits", conf);
-							srcImg -> writeToFile (dir + "img_src_" + to_string(param.parameter[1].centerX)  \
-													+ "_" + to_string(param.parameter[1].centerY) +".fits");
+							srcImg -> writeToFile (dir + "img_src_" + to_string(param.parameter[0].critRad)  \
+													+ "_" + to_string(param.parameter[0].critRad) +".fits");
 
 							// output to console; 
 							//cout << model1->param.parameter[0].centerX  << "\t" ;
