@@ -783,6 +783,8 @@ double Model::getCurvatureOrderReg(Conf* conf, vector<double> briList) {
 	return sum ; 
 }
 
+
+
 MultModelParam::MultModelParam(map<string,string> confMap) {
 		
 

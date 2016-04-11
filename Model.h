@@ -97,7 +97,6 @@ public:
 	vector<int> nParam;
 	vector<vector<mixModels> > mixAllModels; 
 
-	MultModelParam() ; 
 	MultModelParam(map<string,string> confMap) ; 
 	void printModels() ; 
 	void mix(); 
