@@ -647,11 +647,22 @@ void Model::updateCritCaustic(Image* dataImage,  Conf* conf) {
 	criticalFile.close(); 
 }
 
-void Model::updateReducedResidual(Image* dataImage) {
+Image Model::getFullResidual(Image* dataImage) {
+	// Assume "mod_image" is known; 
 
+	Image fullResidualImage(* dataImage); 
+	map<pair<int, int>, double> modMap; 
+	for(int i=0; i< mod_img.size(); ++i)  {
+		int pos = dataImage->yList[i] * dataImage->naxis1 + dataImage->xList[i]; 
+		fullResidualImage.data[pos] -= mod_img[i]; 
+	}
+
+	return fullResidualImage; 	
+
+	/*
 	for(int i=0; i<length; ++i) {
 		red_res_img[i] = res_img[i]/dataImage->varList[i];
-	}
+	} */
 
 
 
@@ -660,7 +671,6 @@ void Model::updateReducedResidual(Image* dataImage) {
 
 void Model::writeSrcImage(string outFileName, Conf* conList) {
 	vector<double> sBright = eigenV_to_cV(s);
-
 	Image* srcImg = new Image(srcPosXListPixel, srcPosYListPixel, &sBright, conList->srcSize[0], conList->srcSize[1], conList->bitpix);
 	srcImg->writeToFile(outFileName);
 	delete srcImg;
@@ -774,11 +784,8 @@ double Model::getCurvatureOrderReg(Conf* conf, vector<double> briList) {
 			index3 = index2 + 1; 
 			diff = srcImg->data[index1] - 2* srcImg->data[index2] + srcImg->data[index3]; 
 			sum += diff * diff; 
-
 		}
-
 	}	
-
 	delete srcImg; 
 	return sum ; 
 }
@@ -1091,12 +1098,17 @@ void MultModelParam::mix() {
 		}
 
 		if (parameter[i].name=="SIE") {
+
 			vector<mixModels> v1; 
 			for (double critRad = parameter[i].critRadFrom;	critRad <= parameter[i].critRadTo; critRad += parameter[i].critRadInc) {
 				for (double centerX = parameter[i].centerXFrom;	centerX <= parameter[i].centerXTo; centerX += parameter[i].centerXInc) {
+
 					for (double centerY = parameter[i].centerYFrom;	centerY <= parameter[i].centerYTo; centerY += parameter[i].centerYInc) {
+
 						for (double e = parameter[i].eFrom;	e <= parameter[i].eTo; e += parameter[i].eInc) {
-							for (double PA = parameter[i].PAFrom;	PA <= parameter[i].eTo; PA += parameter[i].PAInc) {
+
+							for (double PA = parameter[i].PAFrom;	PA <= parameter[i].PATo; PA += parameter[i].PAInc) {
+
 								mixModels sModel("SIE");
 								
 								sModel.paraList[0] = critRad; 

@@ -57,6 +57,7 @@ public:
 	Image(string imgFileName);
 	void getConstants(long *filterPixelNum, long* naxis1, long* naxis2, double *res, int* bit);
 	void printImageInfo(int x1, int y1, int x2, int y2);
+	void updateBackSubtract(double back_mean, double back_std); 
 	void updateFilterImage(string regionFileName,int flag) ;
 	void updateGridPointType();
 	void writeFilterImage(string imgFileName);

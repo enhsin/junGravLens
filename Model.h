@@ -206,7 +206,7 @@ public:
 	void writeSrcImage(string outFileName, Conf* conList);
 	void updateCritCaustic(Image* dataImage,  Conf* constList);
 	virtual ~Model();
-	void updateReducedResidual(Image* dataImage);
+	Image getFullResidual(Image* dataImage);
 	double getRegularizationSrcValue (vec d);
 
 	double getZerothOrderReg  	(Conf* conf, vector<double> briList);

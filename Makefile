@@ -3,7 +3,7 @@ NAME=PC
 ifeq ($(NAME), PC)
 INC=-I/usr/local/Cellar/boost/1.60.0_1/include -I/Users/cheng109/toberemoved/phosim/phosim_core/source/cfitsio/include -I/usr/local/include -I/usr/include/python2.7/
 LIB=-L/usr/local/Cellar/boost/1.60.0_1/lib -L/usr/local/lib -L/Users/cheng109/toberemoved/phosim/phosim_core/source/cfitsio/lib -L/opt/local/lib -L/usr/local/gfortran/lib
-INC_EIGEN=-I/Users/cheng109/eigen-eigen-07105f7124f9
+INC_EIGEN=-I/Users/cheng109/eigen_include
 endif
 ifeq ($(NAME), LAPTOP)
 INC=-I/usr/local/Cellar/boost/1.58.0/include -I/Users/juncheng/work/cfitsio -I/usr/local/include -I/usr/local/Cellar/gsl/1.16/include
@@ -37,33 +37,22 @@ all:  $(COMMON_HDRS) $(OBJS) libfortranstuff.a
 	@./junGL
 commons.o: commons.cpp
 	@$(CC) -c -o commons.o commons.cpp $(CFLAGS)
-
 main.o:  main.cpp
 	@$(CC) -c -o main.o main.cpp $(CFLAGS)
-
 Image.o:  Image.cpp Image.h
 	@$(CC) -c -o Image.o Image.cpp $(CFLAGS)
-
 Model.o: Model.cpp
 	@$(CC) -c -o Model.o Model.cpp $(CFLAGS)
-
 parafit.o: parafit.cpp
 	@$(CC) -c -o parafit.o parafit.cpp $(CFLAGS)
-
-
-
 libfortranstuff.a:
 	$(FC) -O -c slatec/src/*.f fastell.f 
 	ar -r libfortranstuff.a *.o
 	#rm *.o
-
 plot:
 	@./plotScript
-
 clean: 
-	rm -f *.o junGL
-
-
+	rm -f *.o junGL output.txt
 imfit: 
 	cd imfit-1.3; 
 	scons imfit-1.3/imfit; 

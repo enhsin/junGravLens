@@ -13,6 +13,7 @@
 #include "commons.h"
 #include <iomanip>
 #include <cmath>
+#include <random>
 //using namespace arma;
 using namespace std;
 #define buffsize 100000
@@ -254,7 +255,24 @@ void Image::writeToFile(string imgFileName) {
 		printerror( status );
 }
 
+/***************************
+Function:   	updateBackSubtract
+Description:    subtract background from the regioin filtered image. 
+Arguments:		(1): Mean of background; 
+				(2): STD of background; 
+Returns:		void
+Notes: 			
+****************************/
 
+void Image::updateBackSubtract(double back_mean, double back_std) {
+
+	std::default_random_engine generator; 
+	std::normal_distribution<double> distribution(back_mean, back_std); 
+	for (int i=0; i<dataList.size(); ++i ) {
+		double number = distribution(generator); 
+		dataList[i] -= number ; 
+	}
+}
 
 /***************************
 Function:   	updateFilterImage
@@ -272,21 +290,6 @@ void Image::updateFilterImage(string regionFileName, int flag) {
 	int lenRegionList= parseReagionFile(regionFileName, &xpos, &ypos);
 	cout << "naxis1: " << naxis1 << endl;
 	cout << "naxis2: " << naxis2 << endl;
-/*	if(flag==1) {
-		for(int x=0; x<naxis1; ++x) {
-			for (int y=0; y<naxis2; ++y) {
-				if(flag==1) {
-					lenRegionList =parseReagionFile(regionFileName, &xpos, &ypos);
-					if(pnpoly(lenRegionList, &xpos, &ypos,  double(x+0.5) ,  double(y+0.5))) {
-						dataList.push_back(data[naxis1*y+x]);
-						xList.push_back(x);
-						yList.push_back(y);
-					}
-				}
-			}
-		}
-	}*/
-
 	if(flag==1) {
 		for(int i=0; i<naxis1*naxis2; ++i) {
 			int y=i/naxis1;
@@ -313,14 +316,11 @@ void Image::updateFilterImage(string regionFileName, int flag) {
 
 	}
 
-
-
 	length = dataList.size() ;
 	//cout << "length = " << length << endl;
 	for(int i=0; i<dataList.size(); ++i) {
 		iList.push_back(i);
 	}
-	//cout << "length" << "\t" << length<<endl;
 }
 
 

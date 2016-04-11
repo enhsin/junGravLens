@@ -30,8 +30,8 @@ int main() {
 	//string dir("pt_test/");
 	//string dir("nfw_test/"); 
 	//string dir("sersic_test/"); 
-	string dir("sie_test/");
-	//string dir("horseshoe_test/");
+	//string dir("sie_test/");
+	string dir("horseshoe_test/");
 	//string dir("spemd_test/"); 
 	//string dir("blind_test/");
 	string confFileName = dir+ "conf.txt";
@@ -40,6 +40,7 @@ int main() {
 
 	Image* dataImage = new Image(mapConf["imageFileName"]);
 	dataImage->updateFilterImage(mapConf["regionFileName"], 1);
+	dataImage->updateBackSubtract(stof(mapConf["back_mean"]), stof(mapConf["back_std"])); 
 	dataImage->updateGridPointType();
 	dataImage->updateVarList(1, 0.1); // (threshold, var);
 	dataImage->invC = dataImage->getVarMatrix();
@@ -56,12 +57,6 @@ int main() {
 	param.mix(); 	 // update 'AllMixModels'; 
 
 
-
-
-
-
-
-
 	double lambdaS = 0.001;
 
 	minimiser_params *min_params = new minimiser_params();
@@ -74,10 +69,6 @@ int main() {
 
 	gridSearch(conf, param,  dataImage, d, dir, lambdaS);	
 
-
-	//int status = gsl_min_wrap(min_params);
-
-	//int test = Ameoba_test();
 	delete conf; 
 	delete dataImage; 
 	delete min_params->model; 
