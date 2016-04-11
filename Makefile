@@ -61,7 +61,8 @@ plot:
 	@./plotScript
 
 clean: 
-	rm *.o
+	rm -f *.o junGL
+
 
 imfit: 
 	cd imfit-1.3; 

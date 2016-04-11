@@ -634,7 +634,7 @@ void Model::updateCritCaustic(Image* dataImage,  Conf* conf) {
 
 			double distSqure = (dataImage->xList[i]-150)*(dataImage->xList[i]-150) + (dataImage->yList[i]-150)*(dataImage->yList[i]-150); 
 
-			if(sign_t<4 && distSqure > 50*50) {
+			if(sign_t<4 ) { //} && distSqure > 50*50) {
 				// Distance from center; 
 				
 				critical.push_back(1);
@@ -980,35 +980,6 @@ MultModelParam::MultModelParam(map<string,string> confMap) {
 
 
 void MultModelParam::printModels() {
-	/*
-	string name;
-	double mass;
-	double nParam;
-	// All shared parameters: 
-	double centerX, centerXFrom, centerXTo, centerXInc;
-	double centerY, centerYFrom, centerYTo, centerYInc;
-	
-	double e, eFrom, eTo, eInc;
-	double q, qFrom, qTo, qInc;
-	double PA, PAFrom, PATo, PAInc;
-
-	// For PTMASS model and SIE model: 
-	double critRad, critRadFrom, critRadTo, critRadInc;
-	double power, powerFrom, powerTo, powerInc; 
-	double core, coreFrom, coreTo, coreInc;
-	// For NFW model
-	double massScale, massScaleFrom, massScaleTo, massScaleInc;   
-	double radScale, radScaleFrom, radScaleTo, radScaleInc; 	
-	// For sersic model: 
-	double kap, kapFrom, kapTo, kapInc; 
-	double sersicScale, sersicScaleFrom, sersicScaleTo, sersicScaleInc; 
-	double m, mFrom, mTo, mInc; 
-
-	int nLens ;
-	vector<int> nParam;
-
-	*/
-
 	cout << "\n*********** Models *********" << endl;
 	cout << "nLens: 	 " << nLens << endl; 
 	for(int i=0; i<nLens; ++i) {
@@ -1096,6 +1067,29 @@ void MultModelParam::mix() {
 
 	vector<vector<mixModels> > mix; 
 	for(int i=0; i<nLens; ++i) {
+
+		if (parameter[i].name=="PTMASS") {
+			vector<mixModels> v1; 
+			for (double critRad = parameter[i].critRadFrom;	critRad <= parameter[i].critRadTo; critRad += parameter[i].critRadInc) {
+				for (double centerX = parameter[i].centerXFrom;	centerX <= parameter[i].centerXTo; centerX += parameter[i].centerXInc) {
+					for (double centerY = parameter[i].centerYFrom;	centerY <= parameter[i].centerYTo; centerY += parameter[i].centerYInc) {
+						
+								mixModels sModel("PTMASS");
+								
+								sModel.paraList[0] = critRad; 
+								sModel.paraList[1] = centerX; 
+								sModel.paraList[2] = centerY; 
+								sModel.paraList[3] = 0;
+								sModel.paraList[4] = 0;
+								sModel.paraList[5] = 0;  //parameter[i].core;
+								v1.push_back(sModel); 
+					}
+				}
+			}
+		
+			mix.push_back(v1); 
+		}
+
 		if (parameter[i].name=="SIE") {
 			vector<mixModels> v1; 
 			for (double critRad = parameter[i].critRadFrom;	critRad <= parameter[i].critRadTo; critRad += parameter[i].critRadInc) {
@@ -1120,6 +1114,9 @@ void MultModelParam::mix() {
 		
 			mix.push_back(v1); 
 		}
+
+
+
 	}
 	mix.resize(3); 
 	/* for maximum 3 models:  j, k, m */

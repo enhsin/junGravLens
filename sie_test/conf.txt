@@ -14,7 +14,7 @@ potRes	0.1
 
 ## Files
 imageFileName	sie_test/jun_image.fits
-regionFileName	sie_test/2models_0.10.reg
+regionFileName	sie_test/full.reg
 varFileName	  jun_var.fits
 psfFileName		PSF_test/cut_psf.fits
 
@@ -26,9 +26,9 @@ srcY	200
 
 ## Model_SIE {xfrom, xto, xinc, yfrom, yto, yinc, critfrom, critto, critinc, ellfrom, ellto, ellinc, pafrom, pato, painc, corefrom, coreto, coreinc}
 ##SIE 0.0 0.0 0.5 -10.0 10.0 0.2 7.26 7.26 0.01 0.1 0.1 0.01 38.0 38.0 1.0 0.0 0.0 0.0 
-SIE 0.0 0.0 0.5 0.0 0.0 0.5 3.0 4.23 0.1 0.0 0.0 0.01 0.0 0.0 1.0 0.0 0.0 0.1 
+SIE 0.0 0.0 0.5 0.0 0.0 0.5 3.23 3.23 0.1 0.0 0.0 0.01 0.0 0.0 1.0 0.0 0.0 0.1 
 SIE -20.0 -20.0 0.5 -20.0 -20.0 0.5 3.23 3.23 0.01 0.0 0.0 0.01 0.0 0.0 1.0 0.0 0.0 0.1 
-SIE -20.0 -20.0 0.5 -20.0 -20.0 0.5 0.0 0.0 0.01 0.0 0.0 0.01 0.0 0.0 1.0 0.0 0.0 0.1 
+PTMASS 0.0 0.0 0.1 0.0 0.0 0.1 0.0 0.0 0.03
 
 
 

@@ -24,7 +24,7 @@ void gridSearch(Conf* conf, MultModelParam param, Image* dataImage, vec d, strin
 	output.open("output.txt"); 
 	for(int i=0 ; i< param.nComb ; ++i) {
 		MultModelParam newParam (param);  
-		
+	 
 		newParam.parameter.clear(); 
 		newParam.parameter.resize(param.nLens); 
 

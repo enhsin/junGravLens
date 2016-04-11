@@ -13,7 +13,7 @@ ymin	  -10.000000
 xmax	  10.000000
 ymax	  10.000000
 pix_ext   0.10000
-pix_poi   3.000000
+pix_poi   1.000000
 maxlev	  5
 
 ## some examples of secondary parameters
