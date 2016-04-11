@@ -246,14 +246,90 @@ void gridSearch(Conf* conf, MultModelParam param, Image* dataImage, vec d, strin
 
 	// SIE model:
 
+	//vector<vector<mixModels> > mixAllModels;
+	ofstream output; 
+	output.open("output.txt"); 
+	for(int i=0 ; i< para.nComb ; ++i) {
+		MultModelParam newPara();  
+		for(int j=0; j<para.nLens; ++j) {   // max of j is 3; 
+			SingleModelParam s; 
+			s.name = para.mixAllModels[i][j].name; 
+			if(s.name=="SIE"): 
+				s.critRad = para.mixAllModels[i][j][0]; 
+				s.centerX = para.mixAllModels[i][j][1]; 
+				s.centery = para.mixAllModels[i][j][2]; 
+				s.e       = para.mixAllModels[i][j][3]; 
+				s.PA 	  = para.mixAllModels[i][j][4];
+				s.core 	  = para.mixAllModels[i][j][5];  
+				newPara.push_back(s); 
+		}
+		// Do work; 
+		para.printCurrentModels
+		model1 = new Model(conf, param, lambdaS);
+		model1->updatePosMapping(dataImage, conf);
+		//model1->updateLensAndRegularMatrix(dataImage, conf);
+		//model1->updateGradient(dataImage);
+		//model1->updatePenalty(&dataImage->invC, d);
+
+							// Write residual image:
+		model1->updateReducedResidual(dataImage);
+		//vector<double> sBright = eigenV_to_cV(model1->s);
+		vector<double> sBright = dataImage->dataList; 
+		//double srcReg = model1->getRegularizationSrcValue(d);
+		//double vegetiiReg = d.transpose()*model1->HtH*d;
+		double zerothOrder 		= model1->getZerothOrderReg   (conf, sBright);
+	  	double gradientOrder 	= model1->getGradientOrderReg (conf, sBright); 
+		double curvatureOrder 	= model1->getCurvatureOrderReg(conf, sBright);
+
+		++i;
+		int j=0;
+		Image* resImg 	= new Image(dataImage->xList, dataImage->yList, &model1->simple_res_img, conf->imgSize[0], conf->imgSize[1], conf->bitpix);
+		Image* modelImg = new Image(dataImage->xList, dataImage->yList, &model1->mod_img, conf->imgSize[0], conf->imgSize[1], conf->bitpix);
+		Image* srcImg 	= new Image(model1->srcPosXListPixel, model1->srcPosYListPixel, &sBright, conf->srcSize[0], conf->srcSize[1], conf->bitpix);
+
+		if(1) {
+			model1->updateCritCaustic(dataImage, conf);
+			Image* critImg = new Image(dataImage->xList, dataImage->yList, &model1->critical, conf->imgSize[0], conf->imgSize[1], conf->bitpix);
+								
+
+		 	critImg->writeToFile(dir + "img_crit.fits");
+			Image* causticImg = new Image(model1->srcPosXListPixel, model1->srcPosYListPixel, &model1->critical, conf->srcSize[0], conf->srcSize[1], conf->bitpix);
+			causticImg->writeToFile( dir + "img_caustic.fits");
+		}	
 
 
-	if(param.parameter[0].name=="SIE") {
+		//resImg	->writeToFile  	(dir + "img_res_" + to_string(i) + "_" + to_string(j) +".fits");
+		//modelImg->writeToFile	(dir + "img_mod_" + to_string(i) + "_" + to_string(j) +".fits");
+		//model1	->writeSrcImage	(dir + "img_src_" + to_string(i) + "_" + to_string(j) +".fits", conf);
+		srcImg -> writeToFile (dir + "img_src_" + to_string(param.parameter[0].critRad)  \
+		cout << zerothOrder << "\t" ;
+		cout << gradientOrder << "\t" ;
+		cout << curvatureOrder << "\t"; 
+							//cout << model1->chi2 << "\t" << model1->srcR << "\t" << model1->penalty ; 
+		cout << endl;
+
+		output << zerothOrder << "\t" ;
+		output << gradientOrder << "\t" ;
+		output << curvatureOrder << "\t"; 
+		output << endl;
+					
+		delete model1;
+
+
+
+
+
+	}
+	
+
+	if(param.parameter[0].name=="0SIE") {
 		ofstream output; 
 		output.open("output.txt"); 
 		for (param.parameter[0].critRad=param.parameter[0].critRadFrom ;
 			param.parameter[0].critRad <=param.parameter[0].critRadTo;
 			param.parameter[0].critRad += param.parameter[0].critRadInc) {   // elliptictiy // Critical radius
+
+
 
 		 	for (param.parameter[0].e=param.parameter[0].eFrom ; 
 		  		param.parameter[0].e <=param.parameter[0].eTo;
@@ -266,6 +342,7 @@ void gridSearch(Conf* conf, MultModelParam param, Image* dataImage, vec d, strin
 			  		for (param.parameter[0].centerX=param.parameter[0].centerXFrom ;
 			  			param.parameter[0].centerX <=param.parameter[0].centerXTo;
 			  			param.parameter[0].centerX += param.parameter[0].centerXInc) {  
+
 
 			  			for (param.parameter[0].centerY=param.parameter[0].centerYFrom ;
 			  				param.parameter[0].centerY <=param.parameter[0].centerYTo;
@@ -286,7 +363,7 @@ void gridSearch(Conf* conf, MultModelParam param, Image* dataImage, vec d, strin
 			  		for (param.parameter[1].centerX=param.parameter[1].centerXFrom ;
 			  			param.parameter[1].centerX <=param.parameter[1].centerXTo;
 			  			param.parameter[1].centerX += param.parameter[1].centerXInc) {  
-
+	
 			  			for (param.parameter[1].centerY=param.parameter[1].centerYFrom ;
 			  				param.parameter[1].centerY <=param.parameter[1].centerYTo;
 			  				param.parameter[1].centerY += param.parameter[1].centerYInc) {   
@@ -314,14 +391,14 @@ void gridSearch(Conf* conf, MultModelParam param, Image* dataImage, vec d, strin
 							Image* modelImg = new Image(dataImage->xList, dataImage->yList, &model1->mod_img, conf->imgSize[0], conf->imgSize[1], conf->bitpix);
 							Image* srcImg 	= new Image(model1->srcPosXListPixel, model1->srcPosYListPixel, &sBright, conf->srcSize[0], conf->srcSize[1], conf->bitpix);
 
-							if(0) {
+							if(1) {
 								model1->updateCritCaustic(dataImage, conf);
 								Image* critImg = new Image(dataImage->xList, dataImage->yList, &model1->critical, conf->imgSize[0], conf->imgSize[1], conf->bitpix);
 								
 
-								critImg->writeToFile(dir + "critCurve.fits");
+								critImg->writeToFile(dir + "img_crit.fits");
 								Image* causticImg = new Image(model1->srcPosXListPixel, model1->srcPosYListPixel, &model1->critical, conf->srcSize[0], conf->srcSize[1], conf->bitpix);
-								causticImg->writeToFile( dir + "causticCurve.fits");
+								causticImg->writeToFile( dir + "img_caustic.fits");
 							}	
 
 
@@ -386,6 +463,8 @@ void gridSearch(Conf* conf, MultModelParam param, Image* dataImage, vec d, strin
 		
 	}
 
+
+	
 
 
 	// NFW model:

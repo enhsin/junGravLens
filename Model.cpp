@@ -869,7 +869,6 @@ MultModelParam::MultModelParam(map<string,string> confMap) {
 		if(itSIE != confMap.end()) {
 			
 			vector<string> strs;
-
 			std::string s = itSIE->second; 
 			string delimiter = "_&&_";
 
@@ -878,13 +877,8 @@ MultModelParam::MultModelParam(map<string,string> confMap) {
 				strs.push_back(s.substr(0, pos)); 
 				s = s.substr(pos+4); 
 				pos = s.find(delimiter);
-				break; 
 			}; 
 			strs.push_back(s); 
-			//strs = vector<string> &split(&s, delimiter, &strs); 
-			//std::cout << s << std::endl;
-
-
 			for(int i=0; i<strs.size(); ++i) {
 
 				vector<string> items = splitString(strs[i]);
@@ -1014,7 +1008,7 @@ void MultModelParam::printModels() {
 	*/
 
 	cout << "\n*********** Models *********" << endl;
-	cout << "numModel: 	 " << nLens << endl; 
+	cout << "nLens: 	 " << nLens << endl; 
 	for(int i=0; i<nLens; ++i) {
 		if (parameter[i].name=="PTMASS") {
 
@@ -1085,35 +1079,81 @@ void MultModelParam::printModels() {
 				<< parameter[i].eInc << "\t" 
 				<< parameter[i].PAInc << "\t" 
 				<< endl; 
-
 		}
-
-
 	}
-
-
-
 	cout << "*******************************" << endl;
+}
 
-	/* 
-	cout << "srcSize:    " << srcSize[0] << ",\t"<< srcSize[1] << endl;
-	cout << "imgSize:    " << imgSize[0] << ",\t"<<imgSize[1]  << endl;
-	cout << "potSize:    " << potSize[0] << ",\t"<<potSize[1]  << endl;
-	cout << "srcRes:     " << srcRes << endl;
-	cout << "imgRes:     " << imgRes << endl;
-	cout << "potRes:     " << potRes << endl;
-	cout << "srcCenter:  " << srcXCenter << ",\t"<<srcYCenter << endl;
-	cout << "imgCenter:  " << imgXCenter << ",\t"<<imgYCenter << endl;
-	cout << "potCenter:  " << potXCenter << ",\t"<<potYCenter << endl;
-	cout << "length:     " << length << endl;		cout << "*******************************" << endl;
+
+void MultModelParam::mix() { 
+	
+	
+	/*	mixModel structure:    {name, paraList[0, 0, 0, 0, 0, 0, 0, 0]}
+	*
 	*/
 
+	vector<vector<mixModels> > mix; 
+	for(int i=0; i<nLens; ++i) {
+		if (parameter[i].name=="SIE") {
+			vector<mixModels> v1; 
+			for (double critRad = parameter[i].critRadFrom;	critRad <= parameter[i].critRadTo; critRad += parameter[i].critRadInc) {
+				for (double centerX = parameter[i].centerXFrom;	centerX <= parameter[i].centerXTo; centerX += parameter[i].centerXInc) {
+					for (double centerY = parameter[i].centerYFrom;	centerY <= parameter[i].centerYTo; centerY += parameter[i].centerYInc) {
+						for (double e = parameter[i].eFrom;	e <= parameter[i].eTo; e += parameter[i].eInc) {
+							for (double PA = parameter[i].PAFrom;	PA <= parameter[i].eTo; PA += parameter[i].PAInc) {
+								mixModels sModel("SIE");
+								
+								sModel.paraList[0] = critRad; 
+								sModel.paraList[1] = centerX; 
+								sModel.paraList[2] = centerY; 
+								sModel.paraList[3] = e;
+								sModel.paraList[4] = PA;
+								sModel.paraList[5] = 0;  //parameter[i].core;
+								v1.push_back(sModel); 
+							}
+						}
+					}
+				}
+			}
+		
+			mix.push_back(v1); 
+		}
+	}
+	mix.resize(3); 
+	/* for maximum 3 models:  j, k, m */
 
+		for(int j=0; j<mix[0].size(); ++j) {
+			for(int k=0; k<mix[1].size(); ++k ) {
+				for(int m=0; m<mix[2].size(); ++m) {
+					vector<mixModels> v2; 
+					v2.push_back(mix[0][j]); 
+					v2.push_back(mix[1][k]); 
+					v2.push_back(mix[2][m]); 
+					mixAllModels.push_back(v2); 
+				}
 
+			}
 
+		}
+	nComb = mixAllModels.size(); 
 }
+
+
+void MultModelParam::printCurrentModels(int curr) {
+		
+	//cout <<  mixAllModels[curr].size() << endl; 
+	cout << "[" << curr+1 << "/" <<  nComb << "]" << endl; 
+	for(int i=0; i<mixAllModels[curr].size(); ++i) {
+		cout << mixAllModels[curr][i].name << ":\t" ; 
+		for (int j=0; j< 8; ++j) {
+			cout << mixAllModels[curr][i].paraList[j] << "\t" ; 
+		}
+		cout << "\n"; 
+	} 
+	cout << endl; 
+}
+
+
 #if 0
-
-
 #endif 
 

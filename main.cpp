@@ -30,8 +30,8 @@ int main() {
 	//string dir("pt_test/");
 	//string dir("nfw_test/"); 
 	//string dir("sersic_test/"); 
-	//string dir("sie_test/");
-	string dir("horseshoe_test/");
+	string dir("sie_test/");
+	//string dir("horseshoe_test/");
 	//string dir("spemd_test/"); 
 	//string dir("blind_test/");
 	string confFileName = dir+ "conf.txt";
@@ -51,7 +51,16 @@ int main() {
 
 	//cout << "start " << endl; 
 	MultModelParam param = MultModelParam(mapConf);
+	
 	param.printModels();
+	param.mix(); 	 // update 'AllMixModels'; 
+
+
+
+
+
+
+
 
 	double lambdaS = 0.001;
 

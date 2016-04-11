@@ -27,6 +27,15 @@ typedef Eigen::VectorXd vec;
 
 using namespace std;
 
+struct mixModels {
+	string name; 
+	vector<double> paraList; 
+	mixModels(string name): name(name), paraList(8, 0.0) {
+
+	}
+}; 
+
+
 struct SingleModelParam {
 	string name;
 	double mass;
@@ -50,6 +59,32 @@ struct SingleModelParam {
 	double kap, kapFrom, kapTo, kapInc; 
 	double sersicScale, sersicScaleFrom, sersicScaleTo, sersicScaleInc; 
 	double m, mFrom, mTo, mInc; 
+
+	
+
+
+	SingleModelParam() { 
+		name = "none"; 
+		mass = 0;  nParam = 0; 
+		centerX = centerXFrom = centerXTo = centerXInc = 0 ;
+		centerY = centerYFrom = centerYTo = centerYInc = 0 ;
+
+		e =  eFrom =  eTo =  eInc = 0 ; 
+	 	q =  qFrom =  qTo =  qInc = 0 ; 
+	 	PA =  PAFrom =  PATo =  PAInc = 0 ; 
+
+	
+	 	critRad =  critRadFrom =  critRadTo =  critRadInc = 0 ; 
+	 	power =  powerFrom =  powerTo =  powerInc = 0 ;  
+	 	core =  coreFrom =  coreTo =  coreInc = 0 ; 
+	
+	 	massScale =  massScaleFrom =  massScaleTo =  massScaleInc = 0 ;    
+	 	radScale =  radScaleFrom =  radScaleTo =  radScaleInc = 0 ;  	
+	
+	 	kap =  kapFrom =  kapTo =  kapInc = 0 ;  
+	 	sersicScale =  sersicScaleFrom =  sersicScaleTo =  sersicScaleInc = 0 ;  
+	 	m =  mFrom =  mTo =  mInc = 0 ;  
+	}
 };
 
 class MultModelParam{
@@ -58,10 +93,15 @@ class MultModelParam{
 public:
 	vector<SingleModelParam> parameter;
 	int nLens ;
+	int nComb ; 
 	vector<int> nParam;
+	vector<vector<mixModels> > mixAllModels; 
 
+	MultModelParam() ; 
 	MultModelParam(map<string,string> confMap) ; 
 	void printModels() ; 
+	void mix(); 
+	void printCurrentModels(int curr); 
 
 };
 
@@ -173,6 +213,8 @@ public:
 	double getZerothOrderReg  	(Conf* conf, vector<double> briList);
 	double getGradientOrderReg	(Conf* conf, vector<double> briList); 
 	double getCurvatureOrderReg	(Conf* conf, vector<double> briList); 
+
+	
 	//vector<string> &split(string &s, char delim, vector<string> &elems) ; 
 
 	void clearMatrix();
