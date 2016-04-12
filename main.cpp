@@ -46,7 +46,7 @@ int main() {
 	dataImage->invC = dataImage->getVarMatrix();
 	Conf *conf = new Conf(dataImage, mapConf);
 
-
+	cout << "bitpix: " << conf->bitpix << endl; 
 	vec d =dataImage->getMatrixD();
 	conf->printConfList();
 

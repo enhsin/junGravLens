@@ -23,10 +23,10 @@ void gridSearch(Conf* conf, MultModelParam param, Image* dataImage, vec d, strin
 	//vector<vector<mixModels> > mixAllModels;
 	ofstream output; 
 	output.open("output.txt"); 
-
+	MultModelParam newParam (param);  
 	for(int i=0 ; i< param.nComb ; ++i) {
-		MultModelParam newParam (param);  
-	 
+		
+
 		newParam.parameter.clear(); 
 		//newParam.parameter.resize(param.nLens); 
 
@@ -63,22 +63,27 @@ void gridSearch(Conf* conf, MultModelParam param, Image* dataImage, vec d, strin
 		model1 = new Model(conf, newParam, lambdaS);
 		model1->updatePosMapping(dataImage, conf);
 
-		if (1) {
+		srcImg 	= new Image(model1->srcPosXListPixel, model1->srcPosYListPixel, &sBright, conf->srcSize[0], conf->srcSize[1], conf->bitpix);		
+
+
+		if (0) {
 			model1->updateLensAndRegularMatrix(dataImage, conf);
 			model1->updateGradient(dataImage);
 			model1->updatePenalty(&dataImage->invC, d);
 			Image fullResidualImage = model1->getFullResidual(dataImage);
 			Image* modelImg = new Image(dataImage->xList, dataImage->yList, &model1->mod_img, conf->imgSize[0], conf->imgSize[1], conf->bitpix);
-			srcImg 	= new Image(model1->srcPosXListPixel, model1->srcPosYListPixel, &sBright, conf->srcSize[0], conf->srcSize[1], conf->bitpix);		
 			fullResidualImage.writeToFile(dir + "img_res_" + to_string(i) + ".fits");
 			modelImg->writeToFile	(dir + "img_mod_" + to_string(i) +".fits");
 			delete modelImg; 
 			
 		}
 
-		srcImg -> writeToFile   (dir + "img_src_" + to_string(i) +".fits" ) ; 
+		srcImg -> writeToFile(dir + "img_src_" + to_string(i) +".fits" ) ; 
+		
+
 		delete srcImg; 
 		 
+
 		//vector<double> sBright = eigenV_to_cV(model1->s);
 		
 		//double srcReg = model1->getRegularizationSrcValue(d);

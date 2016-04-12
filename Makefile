@@ -1,5 +1,5 @@
-NAME=PC
-#NAME=LAPTOP
+#NAME=PC
+NAME=LAPTOP
 ifeq ($(NAME), PC)
 INC=-I/usr/local/Cellar/boost/1.60.0_1/include -I/Users/cheng109/toberemoved/phosim/phosim_core/source/cfitsio/include -I/usr/local/include -I/usr/include/python2.7/
 LIB=-L/usr/local/Cellar/boost/1.60.0_1/lib -L/usr/local/lib -L/Users/cheng109/toberemoved/phosim/phosim_core/source/cfitsio/lib -L/opt/local/lib -L/usr/local/gfortran/lib

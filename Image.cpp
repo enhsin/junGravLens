@@ -25,8 +25,6 @@ Image::Image() {
 }
 
 
-
-
 Image::Image(vector<double> xpos, vector<double> ypos, vector<double> *briList, long naxis1, long naxis2, int bitpix):
 			naxis(2), naxis1(naxis1), naxis2(naxis2), bitpix(bitpix), data(naxis1*naxis2, 0) {
 	npixels = naxis1*naxis2;
