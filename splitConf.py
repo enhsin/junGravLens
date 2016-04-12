@@ -98,7 +98,7 @@ def writeConf(path, header, fMixConf):
 def splitCombs (mCombs):
     mix = []
     # assume all of them are SIE models;
-    nLimit = 80
+    nLimit = 40
     for model in mCombs:   ## 3 models
         items = model.split()
         i = 1
@@ -117,11 +117,15 @@ def splitCombs (mCombs):
 
 
 def  createRun(runFileName,confFileNameList):
-
+    ind = 0
     f = open(runFileName,'w')
     for fileName in confFileNameList:
         outputFileName = "output_" + fileName
-        f.write("./junGL horseshoe_test/ " + fileName + " " + outputFileName + " & \n"  )
+        ind += 1
+        if ind%20 == 0 :
+            f.write("./junGL horseshoe_test/ " + fileName + " " + outputFileName + " \n"  )
+        else:
+            f.write("./junGL horseshoe_test/ " + fileName + " " + outputFileName + " &\n"  )
     f.close()
     subprocess.call("chmod +x " + runFileName, shell=True)
 
