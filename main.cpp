@@ -25,7 +25,16 @@ using namespace std;
 //using namespace arma;
 
 
-int main() {
+int main(int argc, char* argv[]) {
+
+
+	
+	if (argc<3)  { 
+		cout << "***************Usage***************" << endl; 
+		cout << "2 arguements are required. For example: " << endl; 
+		cout << "./junGL horseshoe_test/ conf.txt" << endl; 
+		return 1; 
+	}
 	/***** prepare*****/
 	//string dir("pt_test/");
 	//string dir("nfw_test/"); 

@@ -1,7 +1,7 @@
 NAME=PC
 #NAME=LAPTOP
 ifeq ($(NAME), PC)
-INC=-I/usr/local/Cellar/boost/1.60.0_1/include -I/Users/cheng109/toberemoved/phosim/phosim_core/source/cfitsio/include -I/usr/local/include -I/usr/include/python2.7/
+INC=-I/usr/local/Cellar/boost/1.60.0_1/include -I/Users/cheng109/toberemoved/phosim/phosim_core/source/cfitsio/include -I/usr/local/include 
 LIB=-L/usr/local/Cellar/boost/1.60.0_1/lib -L/usr/local/lib -L/Users/cheng109/toberemoved/phosim/phosim_core/source/cfitsio/lib -L/opt/local/lib -L/usr/local/gfortran/lib
 INC_EIGEN=-I/Users/cheng109/eigen_include
 endif
@@ -29,12 +29,20 @@ OBJS= commons.o main.o Image.o Model.o gl_crit.o parafit.o
 #all: main.o Image.o commons.o Model.o
 #	g++ $(INC) $(LIB) $(CFLAG) $(LDFLAGS) commons.cpp main.cpp Image.cpp Model.cpp -o junGL 
 #	./junGL
+
+
+## ARG1:   working directory. 
+## ARG2:   configuration file. 
+ARG1=horseshoe_test/
+ARG2=conf.txt
+
+
 all:  $(COMMON_HDRS) $(OBJS) libfortranstuff.a
 
 	@#$(CC) $(CFLAGS) -o junGL commons.cpp main.cpp Image.cpp Model.cpp gl_crit.cpp parafit.cpp $(LDFLAGS)
 	@$(CC) $(CFLAGS) -o junGL $(OBJS) $(LDFLAGS)
 	@#valgrind --tool=memcheck --leak-check=full --verbose --log-file=memcheck.log --track-origins=yes ./junGL
-	@./junGL
+	@./junGL $(ARG1) $(ARG2)
 commons.o: commons.cpp
 	@$(CC) -c -o commons.o commons.cpp $(CFLAGS)
 main.o:  main.cpp
