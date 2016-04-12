@@ -64,9 +64,11 @@ void gridSearch(Conf* conf, MultModelParam param, Image* dataImage, vec d, strin
 		model1->updatePosMapping(dataImage, conf);
 
 		srcImg 	= new Image(model1->srcPosXListPixel, model1->srcPosYListPixel, &sBright, conf->srcSize[0], conf->srcSize[1], conf->bitpix);		
-
-
+		srcImg -> writeToFile(dir + "img_src_" + to_string(i) +".fits" ) ; 
+		delete srcImg; 
+	
 		if (0) {
+			//  Output model and residual image: 
 			model1->updateLensAndRegularMatrix(dataImage, conf);
 			model1->updateGradient(dataImage);
 			model1->updatePenalty(&dataImage->invC, d);
@@ -75,14 +77,18 @@ void gridSearch(Conf* conf, MultModelParam param, Image* dataImage, vec d, strin
 			fullResidualImage.writeToFile(dir + "img_res_" + to_string(i) + ".fits");
 			modelImg->writeToFile	(dir + "img_mod_" + to_string(i) +".fits");
 			delete modelImg; 
+
+			// Output critical and caustic image: 
+			model1->updateCritCaustic(dataImage, conf);
+			Image* critImg = new Image(dataImage->xList, dataImage->yList, &model1->critical, conf->imgSize[0], conf->imgSize[1], conf->bitpix);
+		 	critImg->writeToFile(dir + "img_crit.fits");
+			Image* causticImg = new Image(model1->srcPosXListPixel, model1->srcPosYListPixel, &model1->critical, conf->srcSize[0], conf->srcSize[1], conf->bitpix);
+			causticImg->writeToFile( dir + "img_caustic.fits");
+			delete critImg; 
 			
 		}
 
-		srcImg -> writeToFile(dir + "img_src_" + to_string(i) +".fits" ) ; 
-		
-
-		delete srcImg; 
-		 
+	
 
 		//vector<double> sBright = eigenV_to_cV(model1->s);
 		
@@ -107,20 +113,6 @@ void gridSearch(Conf* conf, MultModelParam param, Image* dataImage, vec d, strin
 			maxIndex[2] = i; 
 		}
 
-	
-		
-		
-
-		if(0) {
-			model1->updateCritCaustic(dataImage, conf);
-			Image* critImg = new Image(dataImage->xList, dataImage->yList, &model1->critical, conf->imgSize[0], conf->imgSize[1], conf->bitpix);
-		 	critImg->writeToFile(dir + "img_crit.fits");
-			Image* causticImg = new Image(model1->srcPosXListPixel, model1->srcPosYListPixel, &model1->critical, conf->srcSize[0], conf->srcSize[1], conf->bitpix);
-			causticImg->writeToFile( dir + "img_caustic.fits");
-		}	
-
-
-		
 
 		string pStatus = "[" + to_string(i+1) + "/" + to_string(param.nComb) + "]\t" ; 
 		string outString =  to_string(newParam.parameter[2].centerY)  + "\t"

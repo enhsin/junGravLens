@@ -1,5 +1,11 @@
 NAME=PC
 #NAME=LAPTOP
+#NAME=RCAC
+ifeq ($(NAME), RCAC)   # Hansen
+INC=/home/cheng109/work/phosim_DES/phosim/phosim_core/source/cfitsio/include
+LIB=/home/cheng109/work/phosim_DES/phosim/phosim_core/source/cfitsio/lib
+INC_EIGEN=/home/cheng109/share/eigen_include/
+endif
 ifeq ($(NAME), PC)
 INC=-I/usr/local/Cellar/boost/1.60.0_1/include -I/Users/cheng109/toberemoved/phosim/phosim_core/source/cfitsio/include -I/usr/local/include 
 LIB=-L/usr/local/Cellar/boost/1.60.0_1/lib -L/usr/local/lib -L/Users/cheng109/toberemoved/phosim/phosim_core/source/cfitsio/lib -L/opt/local/lib -L/usr/local/gfortran/lib
