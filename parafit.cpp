@@ -128,10 +128,7 @@ void gridSearch(Conf* conf, MultModelParam param, Image* dataImage, vec d, strin
 				+ to_string(gradientOrder) + "\t" 
 				+ to_string(curvatureOrder) + "\n"; 
 		cout 	<< pStatus << outString ; 
-		output  << pStatus << outString ; 
-
-	
-		
+		output  << pStatus << outString ; 		
 		
 
 		delete model1;
