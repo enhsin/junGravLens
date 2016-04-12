@@ -29,21 +29,28 @@ int main(int argc, char* argv[]) {
 
 
 	
-	if (argc<3)  { 
+	if (argc<4)  { 
 		cout << "***************Usage***************" << endl; 
-		cout << "2 arguements are required. For example: " << endl; 
-		cout << "./junGL horseshoe_test/ conf.txt" << endl; 
+		cout << "3 arguements are required. For example: " << endl; 
+		cout << "./junGL horseshoe_test/ conf.txt output.txt" << endl; 
 		return 1; 
 	}
+
+
+	// Assign arguments: 
+
+	string dir = argv[1]; 
+	string strConf = argv[2]; 
+	string output = argv[3]; 
 	/***** prepare*****/
 	//string dir("pt_test/");
 	//string dir("nfw_test/"); 
 	//string dir("sersic_test/"); 
 	//string dir("sie_test/");
-	string dir("horseshoe_test/");
+	//("horseshoe_test/");
 	//string dir("spemd_test/"); 
 	//string dir("blind_test/");
-	string confFileName = dir+ "conf.txt";
+	string confFileName = dir+ strConf; 
 	map<string, string> mapConf = parseConfigure(confFileName);
 
 
@@ -66,22 +73,10 @@ int main(int argc, char* argv[]) {
 	param.mix(); 	 // update 'AllMixModels'; 
 
 
-	double lambdaS = 0.001;
-
-	minimiser_params *min_params = new minimiser_params();
-
-	//params->model = model1;
-	min_params->dataImage = dataImage;
-	min_params->conf = conf;
-	min_params->model = new Model(conf, param, lambdaS); 
-
-
-	gridSearch(conf, param,  dataImage, d, dir, lambdaS);	
+	gridSearch(conf, param,  dataImage, d, dir, output);	
 
 	delete conf; 
 	delete dataImage; 
-	delete min_params->model; 
-	delete min_params; 
 	return 0;
 }
 

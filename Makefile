@@ -39,8 +39,11 @@ OBJS= commons.o main.o Image.o Model.o gl_crit.o parafit.o
 
 ## ARG1:   working directory. 
 ## ARG2:   configuration file. 
+## ARG3:   output files. 
 ARG1=horseshoe_test/
 ARG2=conf.txt
+ARG3=output.txt
+
 
 
 all:  $(COMMON_HDRS) $(OBJS) libfortranstuff.a
@@ -48,7 +51,7 @@ all:  $(COMMON_HDRS) $(OBJS) libfortranstuff.a
 	@#$(CC) $(CFLAGS) -o junGL commons.cpp main.cpp Image.cpp Model.cpp gl_crit.cpp parafit.cpp $(LDFLAGS)
 	@$(CC) $(CFLAGS) -o junGL $(OBJS) $(LDFLAGS)
 	@#valgrind --tool=memcheck --leak-check=full --verbose --log-file=memcheck.log --track-origins=yes ./junGL
-	@./junGL $(ARG1) $(ARG2)
+	@./junGL $(ARG1) $(ARG2) $(ARG3)
 commons.o: commons.cpp
 	@$(CC) -c -o commons.o commons.cpp $(CFLAGS)
 main.o:  main.cpp

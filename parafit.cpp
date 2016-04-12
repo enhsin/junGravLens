@@ -6,7 +6,7 @@
  */
 
 
-#include "gsl/gsl_multimin.h"
+//#include "gsl/gsl_multimin.h"
 #include "Model.h"
 #include "Image.h"
 #include <iostream>
@@ -14,15 +14,15 @@
 #include <fstream>
 using namespace std;
 //
-void gridSearch(Conf* conf, MultModelParam param, Image* dataImage, vec d, string dir, double lambdaS) {
-	Model *model1 = new Model(conf, param, lambdaS);
+void gridSearch(Conf* conf, MultModelParam param, Image* dataImage, vec d, string dir, string outputFileName) {
+	Model *model1 = new Model(conf, param, 0.1);
 	
 
 	vector<int> maxIndex(3,0); 
 	vector<double> maxObjFunc(3, -1.0); //maximum of a double value; 
 	//vector<vector<mixModels> > mixAllModels;
 	ofstream output; 
-	output.open("output.txt"); 
+	output.open(outputFileName); 
 	MultModelParam newParam (param);  
 	for(int i=0 ; i< param.nComb ; ++i) {
 		
@@ -60,7 +60,7 @@ void gridSearch(Conf* conf, MultModelParam param, Image* dataImage, vec d, strin
 		vector<double> sBright = dataImage->dataList; 
 
 		Image* srcImg; 
-		model1 = new Model(conf, newParam, lambdaS);
+		model1 = new Model(conf, newParam, 0.1);
 		model1->updatePosMapping(dataImage, conf);
 
 		srcImg 	= new Image(model1->srcPosXListPixel, model1->srcPosYListPixel, &sBright, conf->srcSize[0], conf->srcSize[1], conf->bitpix);		
@@ -102,18 +102,14 @@ void gridSearch(Conf* conf, MultModelParam param, Image* dataImage, vec d, strin
 			maxObjFunc[0] = zerothOrder; 
 			maxIndex[0] = i; 
 		}
-
 		if(gradientOrder > maxObjFunc[1])  {
 			maxObjFunc[1] = gradientOrder; 
 			maxIndex[1] = i; 
 		}
-
 		if(curvatureOrder > maxObjFunc[2])  {
 			maxObjFunc[2] = curvatureOrder; 
 			maxIndex[2] = i; 
 		}
-
-
 		string pStatus = "[" + to_string(i+1) + "/" + to_string(param.nComb) + "]\t" ; 
 		string outString =  to_string(newParam.parameter[2].centerY)  + "\t"
 				+ to_string(zerothOrder) + "\t" 
@@ -121,8 +117,6 @@ void gridSearch(Conf* conf, MultModelParam param, Image* dataImage, vec d, strin
 				+ to_string(curvatureOrder) + "\n"; 
 		cout 	<< pStatus << outString ; 
 		output  << pStatus << outString ; 		
-		
-
 		delete model1;
 	}
 	output.close(); 

@@ -25,7 +25,7 @@ typedef struct minimiser_params {
 
 static double penalty_func(const gsl_vector *v, void *voidparams);
 int	gsl_min_wrap(minimiser_params *params);
-void gridSearch(Conf* conf, MultModelParam param, Image* dataImage, vec d, string dir, double lambdaS);
+void gridSearch(Conf* conf, MultModelParam param, Image* dataImage, vec d, string dir, string outputFileName);
 
 
 
