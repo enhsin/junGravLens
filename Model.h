@@ -100,7 +100,7 @@ public:
 	MultModelParam(map<string,string> confMap) ; 
 	void printModels() ; 
 	void mix(); 
-	void printCurrentModels(int curr); 
+	vector<string> printCurrentModels(int curr); 
 
 };
 

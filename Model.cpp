@@ -1150,18 +1150,30 @@ void MultModelParam::mix() {
 }
 
 
-void MultModelParam::printCurrentModels(int curr) {
+vector<string> MultModelParam::printCurrentModels(int curr) {
 		
 	//cout <<  mixAllModels[curr].size() << endl; 
-	cout << "[" << curr+1 << "/" <<  nComb << "]" << endl; 
+	vector<string> ret; 
+	string modelsInRow; 
+	string modelsInCol; 
+
+	// return a string for "output.txt"; 
+	modelsInCol += ( "[" + to_string(curr+1)+"/"+to_string(nComb)  + "]\n" ); 
 	for(int i=0; i<mixAllModels[curr].size(); ++i) {
-		cout << mixAllModels[curr][i].name << ":\t" ; 
+		modelsInCol += (mixAllModels[curr][i].name  + ":\t") ; 
 		for (int j=0; j< 8; ++j) {
-			cout << mixAllModels[curr][i].paraList[j] << "\t" ; 
+			modelsInCol += (to_string(mixAllModels[curr][i].paraList[j]) + "\t") ; 
+			modelsInRow += (to_string(mixAllModels[curr][i].paraList[j]) + "\t")  ; 
+
 		}
-		cout << "\n"; 
+		modelsInCol += "\n";  
 	} 
-	cout << endl; 
+	modelsInCol += "\n";
+	modelsInRow += "\n"; 
+	ret.push_back(modelsInRow); 
+	ret.push_back(modelsInCol); 
+
+	return ret; 
 }
 
 

@@ -111,22 +111,27 @@ void gridSearch(Conf* conf, MultModelParam param, Image* dataImage, vec d, strin
 			maxIndex[2] = i; 
 		}
 		string pStatus = "[" + to_string(i+1) + "/" + to_string(param.nComb) + "]\t" ; 
-		string outString =  to_string(newParam.parameter[2].centerY)  + "\t"
+		string resultStatus =  to_string(newParam.parameter[2].centerY)  + "\t"
 				+ to_string(zerothOrder) + "\t" 
 				+ to_string(gradientOrder) + "\t" 
 				+ to_string(curvatureOrder) + "\n"; 
-		cout 	<< pStatus << outString ; 
-		output  << pStatus << outString ; 		
+
+
+		cout 	<< pStatus << resultStatus ; 
+		output  << pStatus << param.printCurrentModels(i).at(0) << resultStatus ; 		
 		delete model1;
 	}
 	output.close(); 
 
 
+
+
+
 	// Print out the best model : 
 	cout << "************************\nThe best models : " << endl;
-	param.printCurrentModels(maxIndex[0]); 
-	param.printCurrentModels(maxIndex[1]);
-	param.printCurrentModels(maxIndex[2]); 
+	cout << param.printCurrentModels(maxIndex[0]).at(1); 
+	cout << param.printCurrentModels(maxIndex[1]).at(1);
+	cout << param.printCurrentModels(maxIndex[2]).at(1); 
 	cout << "************************\n" << endl;
  
 
