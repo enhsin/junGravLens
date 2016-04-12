@@ -32,9 +32,9 @@ back_std 0.0019
 ## Model_PTMASS {xfrom, xto, xinc, yfrom, yto, yinc, critfrom, critto, critinc, ellfrom, ellto, ellinc, pafrom, pato, painc, corefrom, coreto, coreinc}
 ##
 ##
-SIE 0.0 0.0 1.0 0.0 0.0 0.2 4.17 6.17 0.1 0.17 0.17 0.01 141.0 141.0 2.0 0.0 0.0 0.2
-SIE -100.0 -100.0 10.0 0.0 0.0 0.2 0.0 0.0 2.0 0.0 0.0 0.01 141.0 141.0 2.0 0.0 0.0 0.2
-SIE 100.0 100.0 10.0 0.0 0.0 10.0 0.0 0.0 2.0 0.0 0.0 0.01 141.0 141.0 2.0 0.0 0.0 0.2
+SIE 0.0 0.0 1.0 0.0 0.0 0.2 0.5 5.5 0.2 0.0 0.0 0.01 141.0 141.0 2.0 0.0 0.0 0.2
+SIE -150.0 0.0 5.0 0.0 0.0 10.0 0.5 5.5 0.2 0.0 0.0 0.01 0.0 0.0 2.0 0.0 0.0 0.2
+SIE 100.0 100.0 10.0 0.0 0.0 10.0 0.0 0.0 2.0 0.0 0.0 0.01 0.0 0.0 2.0 0.0 0.0 0.2
 ##
 ##
 ## 	Model_NFW {xfrom, xto, xinc, yfrom, yto, yinc,mass_scalefrom,mass_scaleto,mass_scaleinc,rad_scalefrom,rad_scaleto,rad_scaleinc,ellfrom, ellto, ellinc, pafrom, pato, painc}

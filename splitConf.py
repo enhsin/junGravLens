@@ -1,5 +1,6 @@
 import numpy as np
 import pprint
+import subprocess
 
 
 def readOriginalConf(confName):
@@ -24,14 +25,14 @@ def expand(paraFrom, paraTo, paraInc, quota) :
 
 
     n = int(np.floor((paraTo - paraFrom)/paraInc))
-    nAvail = min(n, quota)
 
-    if n<2:
-        ret.append((paraFrom, paraFrom, paraInc))
+
+    if n > quota or quota==0 or n==0:
+        ret.append((paraFrom, paraTo, paraInc))
     else:
-        for i in range(nAvail-1):
+        for i in range(n):
             ret.append((paraFrom +i*paraInc, paraFrom + (i+1)*paraInc, paraInc))
-        ret.append((paraFrom+(nAvail)*paraInc, paraTo, paraInc))
+        #ret.append((paraFrom+(nAvail)*paraInc, paraTo, paraInc))
 
     quota = int(quota/(n+1))
 
@@ -84,23 +85,27 @@ def convertStr(fMix):
 
 def writeConf(path, header, fMixConf):
     i=0
+    fileNameList = []
     for conf in fMixConf:
-        fileName = path + "conf_" + str(i)+".txt"
+        fileName =  path + "testConf_" + str(i)+".txt"
+        fileNameList.append(fileName)
         f = open(fileName, 'w')
         f.write(header + "\n" + conf )
         f.close()
         i+=1
+    return fileNameList
 
 def splitCombs (mCombs):
     mix = []
     # assume all of them are SIE models;
-    nLimit = 1000
+    nLimit = 80
     for model in mCombs:   ## 3 models
         items = model.split()
         i = 1
         para = []
         while i<len(items):
             nLimit, paraList = expand(float(items[i]), float(items[i+1]), float(items[i+2]), nLimit)
+
             para.append(paraList)
             i += 3
         singlePara = singleMix(para)
@@ -110,13 +115,26 @@ def splitCombs (mCombs):
     fMixConf = convertStr(fMix)
     return fMixConf
 
+
+def  createRun(runFileName,confFileNameList):
+
+    f = open(runFileName,'w')
+    for fileName in confFileNameList:
+        outputFileName = "output_" + fileName
+        f.write("./junGL horseshoe_test/ " + fileName + " " + outputFileName + " & \n"  )
+    f.close()
+    subprocess.call("chmod +x " + runFileName, shell=True)
+
 def main():
 
     confName="horseshoe_test/conf.txt"
 
     header, mCombs = readOriginalConf(confName)
     fMixConf = splitCombs(mCombs)
-    writeConf("run_files/", header, fMixConf)
+    confFileNameList = writeConf("horseshoe_test/", header, fMixConf)
+
+    createRun("combRun", confFileNameList)
+
 
 if __name__=="__main__": 
     main()

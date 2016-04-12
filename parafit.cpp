@@ -63,10 +63,14 @@ void gridSearch(Conf* conf, MultModelParam param, Image* dataImage, vec d, strin
 		model1 = new Model(conf, newParam, 0.1);
 		model1->updatePosMapping(dataImage, conf);
 
-		srcImg 	= new Image(model1->srcPosXListPixel, model1->srcPosYListPixel, &sBright, conf->srcSize[0], conf->srcSize[1], conf->bitpix);		
-		srcImg -> writeToFile(dir + "img_src_" + to_string(i) +".fits" ) ; 
-		delete srcImg; 
-	
+		if(0) {
+			// Output src image: 
+			srcImg 	= new Image(model1->srcPosXListPixel, model1->srcPosYListPixel, &sBright, conf->srcSize[0], conf->srcSize[1], conf->bitpix);		
+			srcImg -> writeToFile(dir + "img_src_" + to_string(i) +".fits" ) ; 
+			delete srcImg; 
+		}
+		
+
 		if (0) {
 			//  Output model and residual image: 
 			model1->updateLensAndRegularMatrix(dataImage, conf);
@@ -122,10 +126,6 @@ void gridSearch(Conf* conf, MultModelParam param, Image* dataImage, vec d, strin
 		delete model1;
 	}
 	output.close(); 
-
-
-
-
 
 	// Print out the best model : 
 	cout << "************************\nThe best models : " << endl;

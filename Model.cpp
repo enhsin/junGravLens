@@ -1169,7 +1169,7 @@ vector<string> MultModelParam::printCurrentModels(int curr) {
 		modelsInCol += "\n";  
 	} 
 	modelsInCol += "\n";
-	modelsInRow += "\n"; 
+	//modelsInRow += "\n"; 
 	ret.push_back(modelsInRow); 
 	ret.push_back(modelsInCol); 
 
