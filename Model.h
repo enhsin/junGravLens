@@ -120,7 +120,7 @@ public:
 	double totalParam;
 
 	double occupation; 
-	
+
 	MultModelParam param;
 
 	vector<double> srcPosXList;	  // Source position after deflection in X direction, in arcsec;
@@ -212,6 +212,8 @@ public:
 	Image getFullResidual(Image* dataImage);
 	double getRegularizationSrcValue (vec d);
 
+
+	double getScatterReg(); 
 	double getZerothOrderReg  	(Conf* conf, vector<double> briList);
 	double getGradientOrderReg	(Conf* conf, vector<double> briList); 
 	double getCurvatureOrderReg	(Conf* conf, vector<double> briList); 

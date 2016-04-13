@@ -101,7 +101,7 @@ void gridSearch(Conf* conf, MultModelParam param, Image* dataImage, vec d, strin
 		double zerothOrder 		= model1->getZerothOrderReg   (conf, sBright);
 	  	double gradientOrder 	= model1->getGradientOrderReg (conf, sBright); 
 		double curvatureOrder 	= model1->getCurvatureOrderReg(conf, sBright);
-
+		double scatter 			= model1->getScatterReg(); 
 		if(zerothOrder > maxObjFunc[0])  {
 			maxObjFunc[0] = zerothOrder; 
 			maxIndex[0] = i; 
@@ -116,7 +116,7 @@ void gridSearch(Conf* conf, MultModelParam param, Image* dataImage, vec d, strin
 		}
 		string pStatus = "[" + to_string(i+1) + "/" + to_string(param.nComb) + "]\t" ; 
 		string resultStatus =  to_string(newParam.parameter[2].centerY)  + "\t"
-				+ to_string(model1->occupation) + "\t"
+				+ to_string(scatter*1000) + "\t"
 				+ to_string(zerothOrder) + "\t" 
 				+ to_string(gradientOrder) + "\t" 
 				+ to_string(curvatureOrder) + "\n"; 

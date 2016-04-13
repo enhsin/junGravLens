@@ -684,6 +684,29 @@ double Model::getRegularizationSrcValue (vec d) {
 }
 
 
+double Model::getScatterReg() {
+
+	// Now we know the 'srcPosXListPixel' and 'srcPosYListPixel': 
+	double scatter = 0;   // STD of position 'x' and 'y'
+	double sumX = 0; 
+	double sumY = 0;  
+	for (int i=0; i<srcPosXList.size(); ++i) {
+		sumX += srcPosXList[i]; 
+		sumY += srcPosYList[i]; 
+	}
+
+	double xPosMean = sumX / srcPosXList.size(); 
+	double yPosMean = sumY / srcPosYList.size();
+
+	for (int i=0; i<srcPosXList.size(); ++i) {
+		scatter += (srcPosXList[i]-xPosMean) * (srcPosXList[i]-xPosMean) ;
+		scatter += (srcPosYList[i]-yPosMean) * (srcPosYList[i]-yPosMean) ;
+	}
+	scatter = scatter / srcPosXList.size();  
+	return scatter; 
+	
+}
+
 
 double Model::getZerothOrderReg (Conf* conf, vector<double> briList) {
 	//s is known;
