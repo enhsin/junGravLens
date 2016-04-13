@@ -1,58 +1,85 @@
-
-
 import matplotlib.pyplot as plt
+from os import listdir
+from os.path import isfile, join
+import os
+import numpy as np
+
+def readTextFile(fileList):
+    concList = []
+    for file in fileList:
+        f = open(file, 'r')
+        for line in f.readlines():
+            temp = line.split()
+            if(len(temp) > 1):
+                concList.append(temp)
+    return concList
 
 
 
-def readTextFile(fileName):
-    f = open(fileName, 'r')
-    flag = 1
+def getFileList(path, prefix) :
+    fileList = []
+    onlyfiles = [f for f in listdir(path) if isfile(join(path, f))]
+    for file in onlyfiles:
+        if file.startswith(prefix):
+            fileList.append(file)
+    return fileList
 
 
-    for line in f.readlines():
-        temp = line.split()
-        if flag==1:
-            numCols = len(temp)
-            cols = [[] for i in range(numCols)]
-            flag =0
+def findMin(finalList):
+    maxObjFunc = [0, 0, 0]
+    maxIndex = [0, 0, 0]
 
-        for i in range(numCols):
+    curIndex = 0
+    for line in finalList:
+        if(float(line[-3]) > maxObjFunc[0]):
+            maxObjFunc[0] = float(line[-3])
+            maxIndex[0] = curIndex
+        if(float(line[-2]) > maxObjFunc[1]):
+            maxObjFunc[1] = float(line[-2])
+            maxIndex[1] = curIndex
+        if(float(line[-1]) > maxObjFunc[2]):
+            maxObjFunc[2] = float(line[-1])
+            maxIndex[2] = curIndex
 
-            cols[i].append(float(temp[i]))
-    return cols
+
+        curIndex += 1
+    return maxIndex
 
 
+def printModels(finalList, maxIndex):
+    bestZeroth = finalList[maxIndex[0]]
+    outStr = "Zeroth order: \t" + str(bestZeroth[-3]) + "\n"
+    for i in range(len(bestZeroth)):
+        outStr += (bestZeroth[i] + "\t")
+        if (i+1)%8 == 1:
+            outStr  += "\n"
+    print outStr
 
+    bestGrad = finalList[maxIndex[1]]
+    outStr = "Gradient order: \t" + str(bestGrad[-2]) + "\n"
+    for i in range(len(bestGrad)):
+        outStr += (bestGrad[i] + "\t")
+        if (i+1)%8 == 1:
+            outStr  += "\n"
+    print outStr
+
+    bestCubic = finalList[maxIndex[1]]
+    outStr = "Gradient order: \t" + str(bestCubic[-2]) + "\n"
+    for i in range(len(bestCubic)):
+        outStr += (bestCubic[i] + "\t")
+        if (i+1)%8 == 1:
+            outStr  += "\n"
+    print outStr
 
 def main():
-    fileName = "output.txt"
-    cols = readTextFile(fileName)
+    prefix = "output_testConf_"
 
-
-
-    X = cols[0]
-    Y = cols[1]
-    Z = cols[2]
-
-    uX = list(set(X))
-    uY = list(set(Y))
-    uZ = list(set(Z))
-
-    #plt.contour(X, Y, Z)
-    #plt.show()
-
-  
-    #n = 3 # vegetti regularization:
-    n = 1 # zeroth:
-    n = 2 # gradient;
-    n = 3 # curvature;
-
-    n = 3
-
-    index = cols[n].index(max(cols[n]))
-    for i in range(len(cols)):
-        print cols[i][index]
-
+    path = os.path.dirname(os.path.realpath(__file__))
+    fileList = getFileList(path, prefix)
+    finalList = readTextFile(fileList)
+    maxIndex = findMin(finalList)
+    printModels(finalList, maxIndex)
+    print maxIndex
 
 
 if __name__=='__main__':

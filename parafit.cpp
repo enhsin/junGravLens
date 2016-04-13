@@ -63,7 +63,7 @@ void gridSearch(Conf* conf, MultModelParam param, Image* dataImage, vec d, strin
 		model1 = new Model(conf, newParam, 0.1);
 		model1->updatePosMapping(dataImage, conf);
 
-		if(0) {
+		if(1) {
 			// Output src image: 
 			srcImg 	= new Image(model1->srcPosXListPixel, model1->srcPosYListPixel, &sBright, conf->srcSize[0], conf->srcSize[1], conf->bitpix);		
 			srcImg -> writeToFile(dir + "img_src_" + to_string(i) +".fits" ) ; 
@@ -116,6 +116,7 @@ void gridSearch(Conf* conf, MultModelParam param, Image* dataImage, vec d, strin
 		}
 		string pStatus = "[" + to_string(i+1) + "/" + to_string(param.nComb) + "]\t" ; 
 		string resultStatus =  to_string(newParam.parameter[2].centerY)  + "\t"
+				+ to_string(model1->occupation) + "\t"
 				+ to_string(zerothOrder) + "\t" 
 				+ to_string(gradientOrder) + "\t" 
 				+ to_string(curvatureOrder) + "\n"; 

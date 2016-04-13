@@ -118,6 +118,9 @@ public:
 	// Number of lens models;
 	double nLens;
 	double totalParam;
+
+	double occupation; 
+	
 	MultModelParam param;
 
 	vector<double> srcPosXList;	  // Source position after deflection in X direction, in arcsec;

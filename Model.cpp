@@ -61,7 +61,7 @@ Model::Model(Conf* conf, MultModelParam param, double lambdaS):
 
 		totalParam += param.nParam[i];
 	}
-
+	occupation  = 0 ; 
 	L.reserve(3*length);
 	Ds.reserve(2*length);
 	Dphi.reserve(2*length);
@@ -684,6 +684,7 @@ double Model::getRegularizationSrcValue (vec d) {
 }
 
 
+
 double Model::getZerothOrderReg (Conf* conf, vector<double> briList) {
 	//s is known;
 	double sum = 0;
@@ -694,7 +695,13 @@ double Model::getZerothOrderReg (Conf* conf, vector<double> briList) {
 	for (int i=0; i< naxis1 ; ++i) {
 		for (int j=0; j< naxis2 ; ++j) {
 			int index = i+j*naxis1;
-			sum += srcImg->data[index] * srcImg->data[index] ;
+
+			double val = srcImg->data[index] * srcImg->data[index]; 
+			if(val!=0) {
+				sum += val;
+				occupation += 1; 
+			}
+
 		}
 	}
 	delete srcImg;
