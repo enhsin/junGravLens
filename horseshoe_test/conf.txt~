@@ -1,0 +1,43 @@
+## Setting primary parameters: 
+omega     0.28600
+lambda	  0.70000
+weos	  -1.000000
+hubble	  0.696000
+srcZ	2.379
+lenZ	0.4457
+
+
+## Setting secondary parameters: 
+srcRes	0.1
+imgRes	0.04
+potRes	0.1
+
+## Files
+imageFileName	horseshoe_test/HorseShoe_large.fits
+regionFileName	horseshoe_test/mask_horseshoe_large_4.reg
+varFileName	  jun_var.fits
+psfFileName		horseshoe_test/HorseShoe_psf.fits
+criticalName	horseshoe_test/critical.reg
+causticName	horseshoe_test/caustic.reg
+
+
+## Source plane size
+srcX	100
+srcY	100
+back_mean 0.02
+back_std 0.0019
+
+## Model_PTMASS {xfrom, xto, xinc, yfrom, yto, yinc, critfrom, critto, critinc}
+#PTMASS 0.0 0.0 0.0 0.0 0.0 0.0 4.6 5.6 0.05 
+## Model_PTMASS {xfrom, xto, xinc, yfrom, yto, yinc, critfrom, critto, critinc, ellfrom, ellto, ellinc, pafrom, pato, painc, corefrom, coreto, coreinc}
+##
+##
+SIE 0.0 0.0 1.0 0.0 0.0 0.2 3.17 6.17 0.2 0.0 0.0 0.01 0.0 0.0 2.0 0.0 0.0 0.2
+SIE -20.0 -20.0 5.0 20.0 20.0 10.0 0.0 0.0 0.2 0.0 0.0 0.01 0.0 0.0 2.0 0.0 0.0 0.2
+SIE 100.0 100.0 10.0 0.0 0.0 10.0 0.0 0.0 2.0 0.0 0.0 0.01 0.0 0.0 2.0 0.0 0.0 0.2
+##
+##
+## 	Model_NFW {xfrom, xto, xinc, yfrom, yto, yinc,mass_scalefrom,mass_scaleto,mass_scaleinc,rad_scalefrom,rad_scaleto,rad_scaleinc,ellfrom, ellto, ellinc, pafrom, pato, painc}
+##NFW 0.0 0.0 0.1 0.0 0.0 0.1 0.305 0.305 0.01 20.0 20.0 0.5 0.05 0.05 0.02 140.0 140.0 2.0
+#PTMASS 0.0 0.0 0.1 0.0 0.0 0.1 4.6 5.6 0.02 
+

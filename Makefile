@@ -1,5 +1,5 @@
-#NAME=PC
-NAME=LAPTOP
+NAME=PC
+#NAME=LAPTOP
 #NAME=RCAC
 ifeq ($(NAME), RCAC)   # Hansen
 INC=/home/cheng109/work/phosim_DES/phosim/phosim_core/source/cfitsio/include
@@ -63,9 +63,9 @@ Model.o: Model.cpp
 parafit.o: parafit.cpp
 	@$(CC) -c -o parafit.o parafit.cpp $(CFLAGS)
 libfortranstuff.a:
-	$(FC) -O -c slatec/src/*.f fastell.f 
-	ar -r libfortranstuff.a *.o
-	#rm *.o
+	@$(FC) -O -c slatec/src/*.f fastell.f 
+	@ar -r libfortranstuff.a *.o
+	@#rm *.o
 plot:
 	@./plotScript
 clean: 

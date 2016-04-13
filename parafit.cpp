@@ -68,6 +68,11 @@ void gridSearch(Conf* conf, MultModelParam param, Image* dataImage, vec d, strin
 			srcImg 	= new Image(model1->srcPosXListPixel, model1->srcPosYListPixel, &sBright, conf->srcSize[0], conf->srcSize[1], conf->bitpix);		
 			srcImg -> writeToFile(dir + "img_src_" + to_string(i) +".fits" ) ; 
 			delete srcImg; 
+
+
+			Image* testImage 	= new Image(dataImage->xList, dataImage->yList, &dataImage->dataList, conf->imgSize[0], conf->imgSize[1], conf->bitpix);		
+			testImage -> writeToFile(dir + "img_test_" + to_string(i) +".fits" ) ; 
+			delete testImage; 
 		}
 		
 

@@ -280,26 +280,49 @@ Arguments:		(1): DS9 region file;
 Returns:		void
 Notes: 			Flag = 0: 'WITHOUT' filter;
 				Flag = 1: 'WITH' filter (DS9 region file);
+				regionType = 0:   Not supported yet; 
+				regionType = 1:   Polygon region;
+				regionType = 2:   Point region; 
 ****************************/
 void Image::updateFilterImage(string regionFileName, int flag) {
+	
 	// Flag = 1, use region file to filter the image;
 	// Flag = 0, no region filter.
+
+	
 	vector<double> xpos, ypos;
-	int lenRegionList= parseReagionFile(regionFileName, &xpos, &ypos);
+	int regionType = parseReagionFile(regionFileName, &xpos, &ypos);
+ 
 	cout << "naxis1: " << naxis1 << endl;
 	cout << "naxis2: " << naxis2 << endl;
-	if(flag==1) {
-		for(int i=0; i<naxis1*naxis2; ++i) {
-			int y=i/naxis1;
-			int x=i%naxis1;
-			//lenRegionList =
-			//
-			if(pnpoly(lenRegionList, &xpos, &ypos,  double(x+0.5) ,  double(y+0.5))) {
+	if(flag==1) {  // with region; 
+		
+		if(regionType == 1) {  // region type = polygon; 
 
-				dataList.push_back(data[i]);
-				xList.push_back(x);
-				yList.push_back(y);
+			for(int i=0; i<naxis1*naxis2; ++i) {
+				int y=i/naxis1;
+				int x=i%naxis1;
+				if(pnpoly(xpos.size(), &xpos, &ypos,  double(x+0.5) ,  double(y+0.5))) {
+					dataList.push_back(data[i]);
+					xList.push_back(x);
+					yList.push_back(y);
+				}
+			}	
+		}
+		
+		else if(regionType == 2 ) {
+			for(int i=0; i< xpos.size(); ++i) {
+				xList.push_back(int(xpos[i])); 
+				yList.push_back(int(ypos[i])); 
+				int index = int(ypos[i]) * naxis1 + int(xpos[i]);  
+				dataList.push_back(data[index]); 
+				
 			}
+		}		
+
+		else {
+			cout << "Region type is not supported! " << endl; 
+			//return 1; 
 		}
 	}
 	if(flag==0) {

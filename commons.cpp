@@ -110,28 +110,51 @@ bool pnpoly(size_t nvert, vector<double> *vertx, vector<double> *verty, double t
 
 
 int parseReagionFile(string regionFileName, vector<double> *xpos, vector<double> *ypos) {
+	// regionType = 0:   not supported yet; 
+	// regionType = 1:   Polygon region;
+	// regionType = 2:   Point region; 
 
 	ifstream regionFile(regionFileName.c_str());
 	string line, token;
 	size_t pos=0;
+	int regionType = 0; 
+	size_t pos1 = 0; 
+	size_t pos2 = 0; 
 	while (getline(regionFile, line)) {
 		if (line[0]!='#' && line.substr(0, 6)!="global" && line.substr(0, 5)!="image") {
-			size_t pos1 = line.find_first_of("(", pos);
-			size_t pos2 = line.find_first_of(")", pos);
+			// For polygon region file
+			if(line.substr(0,7)=="polygon") {
+				pos1 = line.find_first_of("(", pos);
+				pos2 = line.find_first_of(")", pos);
 
-			istringstream ss(line.substr(pos1+1, pos2-pos1));
-			int flag=-1;
-			while(getline(ss, token, ',' )){
-				if(flag<0) xpos->push_back(stod(token));
-				if(flag>0) ypos->push_back(stod(token));
-				//cout << token << endl;
-				flag = (-1)*flag;
-			};
+				istringstream ss(line.substr(pos1+1, pos2-pos1));
+				int flag=-1;
+				while(getline(ss, token, ',' )){
+					if(flag<0) xpos->push_back(stod(token));
+					if(flag>0) ypos->push_back(stod(token));
+					//cout << token << endl;
+					flag = (-1)*flag;
+				};
+				regionType = 1; 
+			}	
+			if(line.substr(0,5)=="point") { 
+				pos1 = line.find_first_of("(", pos);
+				pos2 = line.find_first_of(")", pos);
+
+				istringstream ss(line.substr(pos1+1, pos2-pos1));	
+				getline(ss, token, ','); 
+				xpos->push_back(stod(token));
+				getline(ss, token, ')'); 
+				ypos->push_back(stod(token)); 
+				//cout << token << endl; 
+				regionType = 2; 
+			}
 		}
+
 		if(xpos->size()!=ypos->size())
 			cout << "Error when reading region File!" << endl;
 	}
-	return xpos->size();
+	return regionType; 
 
 }
 
@@ -561,10 +584,6 @@ sp_mat generatePSFoperator(string psfFileName, Image* image) {
 		posMap[make_pair(image->xList[i], image->yList[i])] = i;
 	}
 
-	//
-	chrono::time_point<std::chrono::system_clock> start, end;
-	start = std::chrono::system_clock::now();
-
 	int dx, dy, x0, y0;
 	for(int i=0; i<image->length; ++i) {
 		x0 = image->xList[i];
@@ -585,10 +604,6 @@ sp_mat generatePSFoperator(string psfFileName, Image* image) {
 		}
 
 	}
-
-	end = std::chrono::system_clock::now();
-	std::chrono::duration<double> elapsed_seconds = end-start;
-	cout << "elapsed time_1: " << elapsed_seconds.count() << endl;
 
 
 	return blurOperator;
