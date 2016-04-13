@@ -35,7 +35,6 @@ Model::Model(Conf* conf, MultModelParam param, double lambdaS):
 		length(conf->length),
 		param(param),
 		mod_img(length),
-		red_res_img(length),
 		L(length,length),
 		r(2*length),
 		new_r(2*length),
@@ -56,12 +55,15 @@ Model::Model(Conf* conf, MultModelParam param, double lambdaS):
 		{
 	// initial s;
 	nLens = param.parameter.size();
+	occupation  = 0 ; 
+
+	/*
 
 	for(int i=0; i<nLens; ++i) {
 
 		totalParam += param.nParam[i];
 	}
-	occupation  = 0 ; 
+	
 	L.reserve(3*length);
 	Ds.reserve(2*length);
 	Dphi.reserve(2*length);
@@ -88,6 +90,8 @@ Model::Model(Conf* conf, MultModelParam param, double lambdaS):
 	for(int i=0; i<conf->srcSize[0]*conf->srcSize[1]; ++i) {
 			H0.insert(i, i)= 1;
 	}
+	*/
+	
 
 }
 
@@ -324,18 +328,6 @@ void Model::updatePosMapping(Image* image, Conf* conf) {
 	length = conf->length;
 	vector<double> srcPos;
 
-	vector<double> test_srcPos; 
-	//getDeflectionAngle(Conf* conf, int imgX, int imgY, double *pDeltaX, double *pDeltaY)
-
-	double testDx =0; 
-	double testDy = 0; 
-	double testImgX = 136; 
-	double testImgY = 136; 
-	test_srcPos = getDeflectionAngle(conf, testImgX, testImgY, &testDx, &testDy); 
-
-	//cout << testImgX << "\t" << testImgY << "\t" << test_srcPos[0]/conf->srcRes+conf->srcXCenter << "\t" 
-	//<< test_srcPos[1]/conf->srcRes+conf->srcYCenter << "\t" << testDx << "\t" << testDy << "\t" <<endl; 
-
 	for(int i=0; i<length; ++i) {
 		int imgX = image->xList[i];
 		int imgY = image->yList[i];
@@ -349,11 +341,6 @@ void Model::updatePosMapping(Image* image, Conf* conf) {
 		srcPosXList.push_back(srcPos[0]);
 		srcPosYList.push_back(srcPos[1]);
 		
-
-		//cout << "dx: \t" << srcPos[0]/conf->srcRes
-		 //<< "\tdy: " << srcPos[1]/conf->srcRes << endl; 
-
-
 		srcPosXListPixel.push_back(srcPos[0]/conf->srcRes+conf->srcXCenter);
 		srcPosYListPixel.push_back(srcPos[1]/conf->srcRes+conf->srcYCenter);
 
@@ -649,7 +636,7 @@ void Model::updateCritCaustic(Image* dataImage,  Conf* conf) {
 
 Image Model::getFullResidual(Image* dataImage) {
 	// Assume "mod_image" is known; 
-
+	mod_img = dataImage->dataList; 
 	Image fullResidualImage(* dataImage); 
 	map<pair<int, int>, double> modMap; 
 	for(int i=0; i< mod_img.size(); ++i)  {
@@ -1204,6 +1191,44 @@ vector<string> MultModelParam::printCurrentModels(int curr) {
 	ret.push_back(modelsInCol); 
 
 	return ret; 
+}
+
+
+void Model::clearVectors() {
+
+	/*vector<double> srcPosXListPixel;	  // Source position after deflection in X direction, in pixel;
+	vector<double> srcPosYListPixel;	  // Source position after deflection in Y direction, in pixel;
+
+	vector<double> pDeltaX;  	// Deflection angle in X direction;
+	vector<double> pDeltaY; 	// Deflection angle in Y direction;
+	vector<double> invMag;
+	vector<double> dSy1; 
+	vector<double> dSy2; 
+
+	vector<double> res_img;    // Residual brightness
+	vector<double> res_full_img;  //  the full residual map; 
+	vector<double> simple_res_img;
+
+
+	vector<double> mod_img;
+	vector<double> critical;
+	*/
+
+
+
+	param.parameter.clear(); 
+	srcPosXListPixel.clear(); 
+	srcPosYListPixel.clear(); 
+	pDeltaX.clear(); 
+	pDeltaY.clear(); 
+	critical.clear();
+
+	res_img.clear(); 
+	res_full_img.clear(); 
+	simple_res_img.clear(); 
+	mod_img.clear(); 
+
+
 }
 
 

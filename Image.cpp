@@ -325,7 +325,7 @@ void Image::updateFilterImage(string regionFileName, int flag) {
 			//return 1; 
 		}
 	}
-	if(flag==0) {
+	else if(flag==0) {
 		for(int i=0; i<naxis1*naxis2; ++i) {
 			int y=i/naxis1;
 			int x=i%naxis1;
@@ -337,6 +337,8 @@ void Image::updateFilterImage(string regionFileName, int flag) {
 
 	}
 
+	else 
+		cout << "Wrong region flag is used:  " << flag << endl; 
 	length = dataList.size() ;
 	//cout << "length = " << length << endl;
 	for(int i=0; i<dataList.size(); ++i) {

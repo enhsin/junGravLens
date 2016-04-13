@@ -141,9 +141,8 @@ public:
 
 
 	vector<double> mod_img;
-	vector<double> red_res_img; //
 	vector<double> critical;
-	vector<double> caustic;
+
 
 	//vector<double> s;
 
@@ -218,10 +217,11 @@ public:
 	double getGradientOrderReg	(Conf* conf, vector<double> briList); 
 	double getCurvatureOrderReg	(Conf* conf, vector<double> briList); 
 
+
 	
 	//vector<string> &split(string &s, char delim, vector<string> &elems) ; 
 
-	void clearMatrix();
+	void clearVectors();
 };
 
 #endif /* MODEL_H_ */

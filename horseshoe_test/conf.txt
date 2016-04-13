@@ -13,13 +13,19 @@ imgRes	0.04
 potRes	0.1
 
 ## Files
+
 imageFileName	horseshoe_test/HorseShoe_large.fits
-regionFileName	horseshoe_test/mask_horseshoe_points.reg
+regionFileName	horseshoe_test/mask_horseshoe_large_4.reg
 varFileName	  jun_var.fits
 psfFileName		horseshoe_test/HorseShoe_psf.fits
 criticalName	horseshoe_test/critical.reg
 causticName	horseshoe_test/caustic.reg
 
+
+## Flags
+## '1' indicates using region of the data, instead of all the data; 
+## '0' indicates not using any region file; 
+usingRegion			1
 
 ## Source plane size
 srcX	100
@@ -32,8 +38,10 @@ back_std 0.0019
 ## Model_PTMASS {xfrom, xto, xinc, yfrom, yto, yinc, critfrom, critto, critinc, ellfrom, ellto, ellinc, pafrom, pato, painc, corefrom, coreto, coreinc}
 ##
 ##
-SIE 0.0 0.0 1.0 0.0 0.0 0.2 5.17 5.17 0.2 0.0 0.0 0.01 0.0 0.0 2.0 0.0 0.0 0.2
-SIE -20.0 -20.0 5.0 20.0 20.0 10.0 0.0 0.0 0.2 0.0 0.0 0.01 0.0 0.0 2.0 0.0 0.0 0.2
+#SIE 0.0 0.0 2.0 0.0 0.0 2.0 0.0 6.0 0.2 0.0 0.0 0.01 0.0 0.0 2.0 0.0 0.0 0.2
+#SIE -150.0 0.0 10.0 -100.0 100.0 10.0 0.0 6.0 0.2 0.0 0.0 0.01 0.0 0.0 2.0 0.0 0.0 0.2
+SIE 0.0 0.0 2.0 0.0 0.0 2.0 4.17 8.17 0.2 0.0 0.0 0.01 0.0 0.0 2.0 0.0 0.0 0.2
+SIE 0.0 0.0 10.0 0.0 0.0 10.0 0.0 0.0 0.2 0.0 0.0 0.01 0.0 0.0 2.0 0.0 0.0 0.2
 SIE 100.0 100.0 10.0 0.0 0.0 10.0 0.0 0.0 2.0 0.0 0.0 0.01 0.0 0.0 2.0 0.0 0.0 0.2
 ##
 ##

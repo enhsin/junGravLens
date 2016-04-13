@@ -44,8 +44,6 @@ ARG1=horseshoe_test/
 ARG2=conf.txt
 ARG3=output.txt
 
-
-
 all:  $(COMMON_HDRS) $(OBJS) libfortranstuff.a
 
 	@#$(CC) $(CFLAGS) -o junGL commons.cpp main.cpp Image.cpp Model.cpp gl_crit.cpp parafit.cpp $(LDFLAGS)
