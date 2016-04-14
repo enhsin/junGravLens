@@ -197,7 +197,7 @@ public:
 	Model();
 	Model(Conf* conList, MultModelParam multModelParam, double lambdaS);
 	void updateMatrixT(Conf* conf);
-	vector<double> getDeflectionAngle(Conf* conList, int imgX, int imgY, double *pDeltaX, double *pDeltaY);
+	static vector<double> getDeflectionAngle(Conf* conList, int imgX, int imgY, double *pDeltaX, double *pDeltaY,  MultModelParam param);
 	void updatePosMapping(Image* image,  Conf* conList);
 	void updateLensAndRegularMatrix(Image* dataImage,  Conf* constList);
 	void updateGradient(Image* dataImage);
@@ -206,7 +206,7 @@ public:
 	void updateRegularMatrix();
 	void updatePenalty( sp_mat* invC, vec d);
 	void writeSrcImage(string outFileName, Conf* conList);
-	void updateCritCaustic(Image* dataImage,  Conf* constList);
+	//void updateCritCaustic(Image* dataImage,  Conf* constList);
 	virtual ~Model();
 	Image getFullResidual(Image* dataImage);
 	double getRegularizationSrcValue (vec d);
@@ -218,10 +218,12 @@ public:
 	double getCurvatureOrderReg	(Conf* conf, vector<double> briList); 
 
 
-	
 	//vector<string> &split(string &s, char delim, vector<string> &elems) ; 
 
 	void clearVectors();
 };
+
+vector< vector<double> > getCritCaustic(Conf* conf, MultModelParam param); 
+
 
 #endif /* MODEL_H_ */

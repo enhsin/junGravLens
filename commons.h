@@ -103,6 +103,8 @@ vector<string> splitString(string s);
 double	lm_arccosh(double x); 
 double	lm_nfw_mass(double x); 
 
+//vector<double> getCritCaustic(Conf* conf, Model* model); 
+
 
 
 #endif

@@ -122,7 +122,7 @@ void Model::updateMatrixT(Conf* conf) {
 	cout << endl;
 }
 
-vector<double> Model::getDeflectionAngle(Conf* conf, int imgX, int imgY, double *pDeltaX, double *pDeltaY) {
+vector<double> Model::getDeflectionAngle(Conf* conf, int imgX, int imgY, double *pDeltaX, double *pDeltaY, MultModelParam param) {
 	double fDenom = 0 ; 
 	double srcX   = 0;  
 	double srcY   = 0 ; 
@@ -131,7 +131,7 @@ vector<double> Model::getDeflectionAngle(Conf* conf, int imgX, int imgY, double 
 	double pfX = 0; 
 	double pfY = 0;
 	vector<double> srcPos;
-
+	int nLens = param.parameter.size(); 
 	
 
 	pfX = (imgX - conf->imgXCenter ) * conf->imgRes; 			// image center frame;
@@ -334,7 +334,7 @@ void Model::updatePosMapping(Image* image, Conf* conf) {
 		//cout << param.critRad << endl;
 		double defX = 0 ;
 		double defY = 0 ;
-		srcPos = getDeflectionAngle(conf,imgX, imgY, &defX, &defY);
+		srcPos = getDeflectionAngle(conf,imgX, imgY, &defX, &defY, param);
 		pDeltaX.push_back(defX);
 		pDeltaY.push_back(defY);
 
@@ -557,86 +557,7 @@ void Model::updatePenalty(sp_mat* invC, vec d) {
 
 
 
-void Model::updateCritCaustic(Image* dataImage,  Conf* conf) {
-	// automatic using  full Image ( no region files ); 
 
-	//Imgage* fullImage(&dataImage); 
-	//fillImage->updateFilterImage("whatever..", 0);
-
-
-	map<pair<int, int>,int>::iterator left, right, up, down;
-	vector<double> w, w5;
-
-	vector<double> a11, a12, a21, a22;
-	double h = conf->imgRes;
-	for (int i=0; i<conf->length; ++i) {
-		left  = posMap.find(make_pair(dataImage->xList[i]-1, dataImage->yList[i]));
-		right = posMap.find(make_pair(dataImage->xList[i]+1, dataImage->yList[i]));
-		up    = posMap.find(make_pair(dataImage->xList[i], dataImage->yList[i]+1));
-		down  = posMap.find(make_pair(dataImage->xList[i], dataImage->yList[i]-1));
-
-		if(left!=posMap.end() && up!=posMap.end() && down!=posMap.end() && right!=posMap.end()) {
-
-			int iLeft = left->second;
-			int iUp   = up  ->second;
-			int iDown = down->second;
-			int iRight= right->second;
-
-			a11.push_back((pDeltaX[iRight]-pDeltaX[iLeft])/(2*h));
-			a12.push_back((pDeltaX[iUp]-pDeltaX[iDown])/(2*h));
-			a21.push_back((pDeltaY[iRight]-pDeltaY[iLeft])/(2*h));
-			a22.push_back((pDeltaY[iUp]-pDeltaY[iDown])/(2*h));
-		}
-		else {
-			a11.push_back(0);
-			a12.push_back(0);
-			a21.push_back(0);
-			a22.push_back(0);
-		}
-		invMag.push_back(1.0-(a11[i]+a22[i])+a11[i]*a22[i]-a12[i]*a21[i]);
-	}
-	// update inverse magnification
-	int sign_t = 0;
-
-	string header = "# Region file format: DS9 version 4.1\n\
-					# Filename: horseshoe_test/HorseShoe_new.fits\n\
-					global color=green dashlist=8 3 width=1 font=\"helvetica 10 normal roman\" select=1 highlite=1 dash=0 fixed=0 edit=1 move=1 delete=1 include=1 source=1\n\
-					image\n"; 
-	ofstream criticalFile; 
-	criticalFile.open(conf->criticalName); 
-	criticalFile << header; 
-
-	for (int i=0; i<conf->length; ++i) {
-			left  = posMap.find(make_pair(dataImage->xList[i]-1, dataImage->yList[i]));
-			right = posMap.find(make_pair(dataImage->xList[i]+1, dataImage->yList[i]));
-			up    = posMap.find(make_pair(dataImage->xList[i], dataImage->yList[i]+1));
-			down  = posMap.find(make_pair(dataImage->xList[i], dataImage->yList[i]-1));
-
-			if(left!=posMap.end() && up!=posMap.end() && down!=posMap.end() && right!=posMap.end()) {
-
-				int iLeft = left->second;
-				int iUp   = up  ->second;
-				int iDown = down->second;
-				int iRight= right->second;
-				sign_t = sign(invMag[i])*(sign(invMag[iLeft]) + sign(invMag[iRight]) + sign(invMag[iUp]) + sign(invMag[iDown]));
-			}
-			else
-				sign_t = 5;  // Assign a value bigger than 4;
-
-
-
-			if(sign_t<4 ) { //} && distSqure > 50*50) {
-				// Distance from center; 
-				
-				critical.push_back(1);
-				criticalFile << "point(" << to_string(dataImage->xList[i]) << "," << to_string(dataImage->yList[i]) << ")\n" ; 
-			}
-			else
-				critical.push_back(0);
-	}
-
-	criticalFile.close(); 
-}
 
 Image Model::getFullResidual(Image* dataImage) {
 	// Assume "mod_image" is known; 
@@ -1235,6 +1156,129 @@ void Model::clearVectors() {
 
 
 }
+
+
+
+vector<vector<double> > getCritCaustic(Conf* conf, MultModelParam param) {
+	// automatic using  full Image ( no region files ); 
+	vector<double> invMag;
+	map<pair<int, int>,int> posMap;
+	vector<double> srcPos, pDeltaX, pDeltaY; 
+	
+	vector<vector<double> > ret; 
+	vector<double> critical;
+	vector<double> xList; 
+	vector<double> yList; 
+	vector<double> srcPosXListPixel; 
+	vector<double> srcPosYListPixel; 
+
+	Image* dataImage = new Image(conf->imageFileName); 
+	dataImage->updateFilterImage("whatever..", 0);
+	int length = dataImage->data.size();
+
+	
+
+	for(int i=0; i<length; ++i) {
+
+		int imgX = dataImage->xList[i];
+		int imgY = dataImage->yList[i];
+		xList.push_back(double(imgX)); 
+		yList.push_back(double(imgY)); 
+		//cout << param.critRad << endl;
+		double defX = 0 ;
+		double defY = 0 ;
+		srcPos = Model::getDeflectionAngle(conf,imgX, imgY, &defX, &defY, param);
+		pDeltaX.push_back(defX);
+		pDeltaY.push_back(defY);
+
+		srcPosXListPixel.push_back(srcPos[0]/conf->srcRes+conf->srcXCenter);
+		srcPosYListPixel.push_back(srcPos[1]/conf->srcRes+conf->srcYCenter);
+
+		posMap[make_pair(imgX, imgY)] = i;
+	}
+
+
+
+	map<pair<int, int>,int>::iterator left, right, up, down;
+	vector<double> w, w5;
+
+	vector<double> a11, a12, a21, a22;
+	double h = conf->imgRes;
+	for (int i=0; i<dataImage->data.size(); ++i) {
+		left  = posMap.find(make_pair(dataImage->xList[i]-1, dataImage->yList[i]));
+		right = posMap.find(make_pair(dataImage->xList[i]+1, dataImage->yList[i]));
+		up    = posMap.find(make_pair(dataImage->xList[i], dataImage->yList[i]+1));
+		down  = posMap.find(make_pair(dataImage->xList[i], dataImage->yList[i]-1));
+
+		if(left!=posMap.end() && up!=posMap.end() && down!=posMap.end() && right!=posMap.end()) {
+
+			int iLeft = left->second;
+			int iUp   = up  ->second;
+			int iDown = down->second;
+			int iRight= right->second;
+
+			a11.push_back((pDeltaX[iRight]-pDeltaX[iLeft])/(2*h));
+			a12.push_back((pDeltaX[iUp]-pDeltaX[iDown])/(2*h));
+			a21.push_back((pDeltaY[iRight]-pDeltaY[iLeft])/(2*h));
+			a22.push_back((pDeltaY[iUp]-pDeltaY[iDown])/(2*h));
+		}
+		else {
+			a11.push_back(0);
+			a12.push_back(0);
+			a21.push_back(0);
+			a22.push_back(0);
+		}
+		invMag.push_back(1.0-(a11[i]+a22[i])+a11[i]*a22[i]-a12[i]*a21[i]);
+	}
+	// update inverse magnification
+	int sign_t = 0;
+
+	string header = "# Region file format: DS9 version 4.1\n\
+					# Filename: horseshoe_test/HorseShoe_new.fits\n\
+					global color=green dashlist=8 3 width=1 font=\"helvetica 10 normal roman\" select=1 highlite=1 dash=0 fixed=0 edit=1 move=1 delete=1 include=1 source=1\n\
+					image\n"; 
+	ofstream criticalFile; 
+	criticalFile.open(conf->criticalName); 
+	criticalFile << header; 
+
+	for (int i=0; i<dataImage->data.size(); ++i) {
+			left  = posMap.find(make_pair(dataImage->xList[i]-1, dataImage->yList[i]));
+			right = posMap.find(make_pair(dataImage->xList[i]+1, dataImage->yList[i]));
+			up    = posMap.find(make_pair(dataImage->xList[i], dataImage->yList[i]+1));
+			down  = posMap.find(make_pair(dataImage->xList[i], dataImage->yList[i]-1));
+
+			if(left!=posMap.end() && up!=posMap.end() && down!=posMap.end() && right!=posMap.end()) {
+
+				int iLeft = left->second;
+				int iUp   = up  ->second;
+				int iDown = down->second;
+				int iRight= right->second;
+				sign_t = sign(invMag[i])*(sign(invMag[iLeft]) + sign(invMag[iRight]) + sign(invMag[iUp]) + sign(invMag[iDown]));
+			}
+			else
+				sign_t = 5;  // Assign a value bigger than 4;
+			if(sign_t<4 ) { //} && distSqure > 50*50) {
+				// Distance from center; 
+				
+				critical.push_back(1);
+				criticalFile << "point(" << to_string(dataImage->xList[i]) << "," << to_string(dataImage->yList[i]) << ")\n" ; 
+			}
+			else
+				critical.push_back(0);
+	}
+
+	criticalFile.close(); 
+	ret.push_back(critical); 
+	ret.push_back(xList);
+	ret.push_back(yList); 
+	ret.push_back(srcPosXListPixel); 
+	ret.push_back(srcPosYListPixel); 
+
+	delete dataImage; 
+ 
+	return ret; 
+}
+
 
 
 #if 0

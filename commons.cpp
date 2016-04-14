@@ -604,12 +604,8 @@ sp_mat generatePSFoperator(string psfFileName, Image* image) {
 		}
 
 	}
-
-
 	return blurOperator;
 }
-
-
 
 
 

@@ -22,6 +22,7 @@ void gridSearch(Conf* conf, MultModelParam param_old, Image* dataImage, vec d, s
 	
 	clock_t begin, end; 
 	double elapsed_secs; 
+	vector<vector<double> > critical;  
 
 	vector<int> maxIndex(3,0); 
 	vector<double> maxObjFunc(3, -1.0); 
@@ -37,9 +38,6 @@ void gridSearch(Conf* conf, MultModelParam param_old, Image* dataImage, vec d, s
 	for(int i=0 ; i< model->param.nComb ; ++i) {
 		
 		model->clearVectors(); 
-
-		
-
 		for(int j=0; j<model->param.nLens; ++j) {   // max of j is 3; 
 			SingleModelParam s; 
 			s.name = model->param.mixAllModels[i][j].name; 
@@ -110,7 +108,7 @@ void gridSearch(Conf* conf, MultModelParam param_old, Image* dataImage, vec d, s
 		}
 
 
-		if(0) {
+		if(1) {
 			//  Output model and residual image: 
 			
 			//model->updateLensAndRegularMatrix(dataImage, conf);
@@ -121,11 +119,15 @@ void gridSearch(Conf* conf, MultModelParam param_old, Image* dataImage, vec d, s
 			fullResidualImage.writeToFile(dir + "img_res_" + to_string(i) + ".fits");
 			modelImg->writeToFile	(dir + "img_mod_" + to_string(i) +".fits");
 			delete modelImg; 
+
+
 			// Output critical and caustic image: 
-			model->updateCritCaustic(dataImage, conf);
-			Image* critImg = new Image(dataImage->xList, dataImage->yList, &model->critical, conf->imgSize[0], conf->imgSize[1], conf->bitpix);
+			//model->updateCritCaustic(dataImage, conf);
+			critical =  getCritCaustic(conf, model->param); 
+			cout << critical[0].size() << endl; 
+			Image* critImg = new Image(critical[1], critical[2], &critical[0], conf->imgSize[0], conf->imgSize[1], conf->bitpix);
 		 	critImg->writeToFile(dir + "img_crit.fits");
-			Image* causticImg = new Image(model->srcPosXListPixel, model->srcPosYListPixel, &model->critical, conf->srcSize[0], conf->srcSize[1], conf->bitpix);
+			Image* causticImg = new Image(critical[3], critical[4], &critical[0], conf->srcSize[0], conf->srcSize[1], conf->bitpix);
 			causticImg->writeToFile( dir + "img_caustic.fits");
 			delete critImg; 
 			
