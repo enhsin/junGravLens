@@ -291,12 +291,12 @@ void Image::updateFilterImage(string regionFileName, int flag) {
 
 	
 	vector<double> xpos, ypos;
-	int regionType = parseReagionFile(regionFileName, &xpos, &ypos);
+	
  
 	cout << "naxis1: " << naxis1 << endl;
 	cout << "naxis2: " << naxis2 << endl;
 	if(flag==1) {  // with region; 
-		
+		int regionType = parseReagionFile(regionFileName, &xpos, &ypos);
 		if(regionType == 1) {  // region type = polygon; 
 
 			for(int i=0; i<naxis1*naxis2; ++i) {
@@ -325,7 +325,7 @@ void Image::updateFilterImage(string regionFileName, int flag) {
 			//return 1; 
 		}
 	}
-	else if(flag==0) {
+	else if(flag==0) {  // without region; 
 		for(int i=0; i<naxis1*naxis2; ++i) {
 			int y=i/naxis1;
 			int x=i%naxis1;

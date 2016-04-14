@@ -35,7 +35,7 @@ Conf::Conf(Image* dataImage, map<string, string> confMap) {
 		hubble = stod(confMap["hubble"]);
 		srcZ = stod(confMap["srcZ"]);
 		lenZ = stod(confMap["lenZ"]);
-
+		imageFileName = confMap["imageFileName"]; 
 
 		long naxis1, naxis2, len ;
 		int bit;
@@ -608,6 +608,10 @@ sp_mat generatePSFoperator(string psfFileName, Image* image) {
 
 	return blurOperator;
 }
+
+
+
+
 
 
 /***************************

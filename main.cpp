@@ -43,13 +43,6 @@ int main(int argc, char* argv[]) {
 	string strConf = argv[2]; 
 	string output = argv[3]; 
 	/***** prepare*****/
-	//string dir("pt_test/");
-	//string dir("nfw_test/"); 
-	//string dir("sersic_test/"); 
-	//string dir("sie_test/");
-	//("horseshoe_test/");
-	//string dir("spemd_test/"); 
-	//string dir("blind_test/");
 	string confFileName = dir+ strConf; 
 	map<string, string> mapConf = parseConfigure(confFileName);
 

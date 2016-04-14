@@ -558,6 +558,11 @@ void Model::updatePenalty(sp_mat* invC, vec d) {
 
 
 void Model::updateCritCaustic(Image* dataImage,  Conf* conf) {
+	// automatic using  full Image ( no region files ); 
+
+	//Imgage* fullImage(&dataImage); 
+	//fillImage->updateFilterImage("whatever..", 0);
+
 
 	map<pair<int, int>,int>::iterator left, right, up, down;
 	vector<double> w, w5;
@@ -619,7 +624,6 @@ void Model::updateCritCaustic(Image* dataImage,  Conf* conf) {
 				sign_t = 5;  // Assign a value bigger than 4;
 
 
-			double distSqure = (dataImage->xList[i]-150)*(dataImage->xList[i]-150) + (dataImage->yList[i]-150)*(dataImage->yList[i]-150); 
 
 			if(sign_t<4 ) { //} && distSqure > 50*50) {
 				// Distance from center; 
@@ -684,7 +688,6 @@ double Model::getScatterReg() {
 
 	double xPosMean = sumX / srcPosXList.size(); 
 	double yPosMean = sumY / srcPosYList.size();
-
 	for (int i=0; i<srcPosXList.size(); ++i) {
 		scatter += (srcPosXList[i]-xPosMean) * (srcPosXList[i]-xPosMean) ;
 		scatter += (srcPosYList[i]-yPosMean) * (srcPosYList[i]-yPosMean) ;
@@ -1219,6 +1222,8 @@ void Model::clearVectors() {
 	param.parameter.clear(); 
 	srcPosXListPixel.clear(); 
 	srcPosYListPixel.clear(); 
+	srcPosXList.clear(); 
+	srcPosYList.clear(); 
 	pDeltaX.clear(); 
 	pDeltaY.clear(); 
 	critical.clear();

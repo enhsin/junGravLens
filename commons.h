@@ -66,6 +66,8 @@ public:
 	long potN;
 	int bitpix;
 
+
+	string imageFileName; 
 	string criticalName; 
 	string causticName; 
 

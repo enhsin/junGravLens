@@ -15,7 +15,7 @@ potRes	0.1
 ## Files
 
 imageFileName	horseshoe_test/HorseShoe_large.fits
-regionFileName	horseshoe_test/mask_horseshoe_large_4.reg
+regionFileName	horseshoe_test/mask_horseshoe_points.reg
 varFileName	  jun_var.fits
 psfFileName		horseshoe_test/HorseShoe_psf.fits
 criticalName	horseshoe_test/critical.reg
@@ -38,9 +38,9 @@ back_std 0.0019
 ## Model_PTMASS {xfrom, xto, xinc, yfrom, yto, yinc, critfrom, critto, critinc, ellfrom, ellto, ellinc, pafrom, pato, painc, corefrom, coreto, coreinc}
 ##
 ##
-#SIE 0.0 0.0 2.0 0.0 0.0 2.0 0.0 6.0 0.2 0.0 0.0 0.01 0.0 0.0 2.0 0.0 0.0 0.2
-#SIE -150.0 0.0 10.0 -100.0 100.0 10.0 0.0 6.0 0.2 0.0 0.0 0.01 0.0 0.0 2.0 0.0 0.0 0.2
-SIE 0.0 0.0 2.0 0.0 0.0 2.0 4.17 8.17 0.2 0.0 0.0 0.01 0.0 0.0 2.0 0.0 0.0 0.2
+#SIE 0.0 0.0 2.0 0.0 0.0 2.0 4.8 4.8 0.2 0.0 0.0 0.01 0.0 0.0 2.0 0.0 0.0 0.2
+#SIE -60.0 -60.0 10.0 20.0 20.0 10.0 3.6 3.6 0.2 0.0 0.0 0.01 0.0 0.0 2.0 0.0 0.0 0.2
+SIE 0.0 0.0 2.0 0.0 0.0 2.0 5.57 5.57 0.2 0.2 0.2 0.01 0.0 0.0 10.0 0.0 0.0 0.2
 SIE 0.0 0.0 10.0 0.0 0.0 10.0 0.0 0.0 0.2 0.0 0.0 0.01 0.0 0.0 2.0 0.0 0.0 0.2
 SIE 100.0 100.0 10.0 0.0 0.0 10.0 0.0 0.0 2.0 0.0 0.0 0.01 0.0 0.0 2.0 0.0 0.0 0.2
 ##

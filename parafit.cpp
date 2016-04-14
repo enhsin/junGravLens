@@ -60,26 +60,57 @@ void gridSearch(Conf* conf, MultModelParam param_old, Image* dataImage, vec d, s
 				s.core 	  = model->param.mixAllModels[i][j].paraList[5];  
 				model->param.parameter.push_back(s); 
 			}
-		}
+		}		
 
 		vector<double> sBright = dataImage->dataList; 
-		Image* srcImg; 
 		model->updatePosMapping(dataImage, conf);
 
-		
+		double scatter 			= model->getScatterReg(); 
+		if(scatter < minScatter)  {
+			minScatter = scatter; 
+			minIndexScatter = i; 
+		}
 
 
-		
+		double zerothOrder, gradientOrder, curvatureOrder; 
+		if (0) {
+			zerothOrder 		= model->getZerothOrderReg   (conf, sBright);
+			if(zerothOrder > maxObjFunc[0])  {
+				maxObjFunc[0] = zerothOrder; 
+				maxIndex[0] = i; 
+			}
+			gradientOrder 	= model->getGradientOrderReg (conf, sBright); 
+			if(gradientOrder > maxObjFunc[1])  {
+				maxObjFunc[1] = gradientOrder; 
+				maxIndex[1] = i; 
+			}
+			curvatureOrder 	= model->getCurvatureOrderReg(conf, sBright);
+			if(curvatureOrder > maxObjFunc[2])  {
+				maxObjFunc[2] = curvatureOrder; 
+				maxIndex[2] = i; 
+			}
+		}	
+
+
+		string pStatus = "[" + to_string(i+1) + "/" + to_string(model->param.nComb) + "]\t" ; 
+		string resultStatus =  to_string(scatter) + "\t"
+				//+ to_string(zerothOrder) + "\t" 
+				//+ to_string(gradientOrder) + "\t" 
+				//+ to_string(curvatureOrder)  
+				+ "\n"; 
+		cout 	<< pStatus << resultStatus ; 
+		output  << pStatus << model->param.printCurrentModels(i).at(0) << resultStatus ; 		
+
 
 		if(1) {
 			// Output src image: 
-			srcImg 	= new Image(model->srcPosXListPixel, model->srcPosYListPixel, &sBright, conf->srcSize[0], conf->srcSize[1], conf->bitpix);		
+			Image* srcImg 	= new Image(model->srcPosXListPixel, model->srcPosYListPixel, &sBright, conf->srcSize[0], conf->srcSize[1], conf->bitpix);		
 			srcImg -> writeToFile(dir + "img_src_" + to_string(i) +".fits" ) ; 
 			delete srcImg; 
 		}
 
 
-		if(1) {
+		if(0) {
 			//  Output model and residual image: 
 			
 			//model->updateLensAndRegularMatrix(dataImage, conf);
@@ -103,40 +134,6 @@ void gridSearch(Conf* conf, MultModelParam param_old, Image* dataImage, vec d, s
 
 
 
-		double scatter 			= model->getScatterReg(); 
-		if(scatter < minScatter)  {
-			minScatter = scatter; 
-			minIndexScatter = i; 
-		}
-
-		if (0) {
-			double zerothOrder 		= model->getZerothOrderReg   (conf, sBright);
-			if(zerothOrder > maxObjFunc[0])  {
-				maxObjFunc[0] = zerothOrder; 
-				maxIndex[0] = i; 
-			}
-			double gradientOrder 	= model->getGradientOrderReg (conf, sBright); 
-			if(gradientOrder > maxObjFunc[1])  {
-				maxObjFunc[1] = gradientOrder; 
-				maxIndex[1] = i; 
-			}
-			double curvatureOrder 	= model->getCurvatureOrderReg(conf, sBright);
-			if(curvatureOrder > maxObjFunc[2])  {
-				maxObjFunc[2] = curvatureOrder; 
-				maxIndex[2] = i; 
-			}
-		}	
-
-
-
-		string pStatus = "[" + to_string(i+1) + "/" + to_string(model->param.nComb) + "]\t" ; 
-		string resultStatus =  to_string(scatter) + "\t"
-				//+ to_string(zerothOrder) + "\t" 
-				//+ to_string(gradientOrder) + "\t" 
-				//+ to_string(curvatureOrder)  
-				+ "\n"; 
-		cout 	<< pStatus << resultStatus ; 
-		output  << pStatus << model->param.printCurrentModels(i).at(0) << resultStatus ; 		
 
 		
 		
