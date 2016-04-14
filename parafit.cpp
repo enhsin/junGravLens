@@ -15,6 +15,7 @@
 #include <limits>
 #include <ctime> 
 
+
 using namespace std;
 //
 void gridSearch(Conf* conf, MultModelParam param_old, Image* dataImage, vec d, string dir, string outputFileName) {
@@ -58,17 +59,18 @@ void gridSearch(Conf* conf, MultModelParam param_old, Image* dataImage, vec d, s
 				s.core 	  = model->param.mixAllModels[i][j].paraList[5];  
 				model->param.parameter.push_back(s); 
 			}
-		}		
+		}	
 
 		vector<double> sBright = dataImage->dataList; 
 		model->updatePosMapping(dataImage, conf);
+
+
 
 		double scatter 			= model->getScatterReg(); 
 		if(scatter < minScatter)  {
 			minScatter = scatter; 
 			minIndexScatter = i; 
 		}
-
 
 		double zerothOrder, gradientOrder, curvatureOrder; 
 		if (0) {
@@ -100,17 +102,17 @@ void gridSearch(Conf* conf, MultModelParam param_old, Image* dataImage, vec d, s
 		output  << pStatus << model->param.printCurrentModels(i).at(0) << resultStatus ; 		
 
 
-		if(1) {
-			// Output src image: 
+		if(conf->outputSrcImg) {
 			Image* srcImg 	= new Image(model->srcPosXListPixel, model->srcPosYListPixel, &sBright, conf->srcSize[0], conf->srcSize[1], conf->bitpix);		
-			srcImg -> writeToFile(dir + "img_src_" + to_string(i) +".fits" ) ; 
+			string outputSrcName = dir + "img_src_" + to_string(i) +".fits"; 
+			if (conf->srcBackground) {
+				srcImg -> writeToFile(outputSrcName, conf->back_mean, conf->back_std ) ;
+			}
+			else 
+				srcImg -> writeToFile(outputSrcName) ; 
 			delete srcImg; 
 		}
-
-
-		if(1) {
-			//  Output model and residual image: 
-			
+		if(conf->outputModImg) {
 			//model->updateLensAndRegularMatrix(dataImage, conf);
 			//model->updateGradient(dataImage);
 			//model->updatePenalty(&dataImage->invC, d);
@@ -119,26 +121,15 @@ void gridSearch(Conf* conf, MultModelParam param_old, Image* dataImage, vec d, s
 			fullResidualImage.writeToFile(dir + "img_res_" + to_string(i) + ".fits");
 			modelImg->writeToFile	(dir + "img_mod_" + to_string(i) +".fits");
 			delete modelImg; 
-
-
-			// Output critical and caustic image: 
-			//model->updateCritCaustic(dataImage, conf);
-			critical =  getCritCaustic(conf, model->param); 
-			cout << critical[0].size() << endl; 
+		}
+		if(conf->outputCritImg) {
+			critical =  getCritCaustic(conf, &model->param); 
 			Image* critImg = new Image(critical[1], critical[2], &critical[0], conf->imgSize[0], conf->imgSize[1], conf->bitpix);
 		 	critImg->writeToFile(dir + "img_crit.fits");
 			Image* causticImg = new Image(critical[3], critical[4], &critical[0], conf->srcSize[0], conf->srcSize[1], conf->bitpix);
 			causticImg->writeToFile( dir + "img_caustic.fits");
 			delete critImg; 
-			
-		}
-
-
-
-
-
-		
-		
+		}	
 	}
 	output.close(); 
 	

@@ -63,6 +63,16 @@ public:
 	double potXCenter;
 	double potYCenter;
 
+	// Flags: 
+	int usingRegion; 
+	int outputSrcImg ; 	
+	int outputModImg ; 
+	int outputCritImg ; 
+	int	srcBackground ; 
+
+	double back_mean; 
+	double back_std; 
+
 	long potN;
 	int bitpix;
 

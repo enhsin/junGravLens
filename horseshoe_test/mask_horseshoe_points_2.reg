@@ -1,22 +1,26 @@
 # Region file format: DS9 version 4.1
+# Filename: horseshoe_test/HorseShoe_large.fits
 global color=green dashlist=8 3 width=1 font="helvetica 10 normal roman" select=1 highlite=1 dash=0 fixed=0 edit=1 move=1 delete=1 include=1 source=1
 image
-point(143.94669,294.91764) # point=box
-point(192.61752,77.636726) # point=box
-point(357.44313,214.25306) # point=box
-point(346.65059,126.53471) # point=box
-point(151.79324,303.08442) # point=box
-point(174.08058,311.94527) # point=box
-point(370.46396,212.55771) # point=box
-point(342.89627,120.30608) # point=box
-point(193.98714,74.300411) # point=box
-point(262,314) # point=box
-point(335,251) # point=box
-point(360,163) # point=box
-point(287,75) # point=box
-point(231,63) # point=box
-point(161,89) # point=box
-point(155,112) # point=box
-point(115,266) # point=box
-point(305,289) # point=box
-point(320,92) # point=box
+point(144.10989,294.83979) # point=box
+point(192.64713,77.511521) # point=box
+point(357.53594,214.3205) # point=box
+point(346.47214,126.48043) # point=box
+point(151.96146,303.16942) # point=box
+point(174.08927,312.00382) # point=box
+point(370.38413,212.55375) # point=box
+point(342.90377,120.42247) # point=box
+point(194.07532,74.230115) # point=box
+point(261.88564,314.02321) # point=box
+point(335.05098,250.92027) # point=box
+point(360.03477,163.08055) # point=box
+point(286.86974,74.987552) # point=box
+point(230.83667,63.123968) # point=box
+point(160.88247,89.122586) # point=box
+point(155.1725,112.09225) # point=box
+point(114.84376,266.06478) # point=box
+point(305.06991,289.03449) # point=box
+point(320.0625,91.899541) # point=box
+point(37.037908,179.9924) # point=box
+point(44.890773,170.90542) # point=box
+point(42.034826,209.01991) # point=box

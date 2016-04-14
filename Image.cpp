@@ -253,6 +253,54 @@ void Image::writeToFile(string imgFileName) {
 		printerror( status );
 }
 
+
+/***************************
+Function:   	writeToFile
+Description:    Write an image object to a fits file;
+Arguments:		(1): Name of the fits file you want to output;
+				(2): Mean of background; 
+				(3): STD of background; 
+Notes: 			This function only write 'data' member of the image object;
+				If you want to specify other data, please use the other 'writeFilterImage' function;
+Returns:		void;
+****************************/
+
+void Image::writeToFile(string imgFileName, double back_mean, double back_std) {
+	fitsfile *fptr;       /* pointer to the FITS file, defined in fitsio.h */
+	int status, ii;
+	long  fpixel;
+	default_random_engine generator; 
+	normal_distribution<double> distribution(back_mean, back_std); 
+
+
+	long naxes[2] = { naxis1, naxis2 };   /* image is 300 pixels wide by 200 rows */
+	remove(imgFileName.c_str());               /* Delete old file if it already exists */
+	status = 0;         /* initialize status before calling fitsio routines */
+	if (fits_create_file(&fptr, imgFileName.c_str(), &status)) /* create new FITS file */
+		printerror( status );           /* call printerror if error occurs */
+	if ( fits_create_img(fptr,  bitpix, naxis, naxes, &status) )
+		printerror( status );
+	double **array = (double **)malloc(naxis2* sizeof(double**));
+	array[0] = (double *)malloc( naxis1 * naxis2* sizeof( double ) );
+	for( ii=1; ii<naxis2; ii++ )
+	      array[ii] = array[ii-1] + naxis1;
+	for (int i = 0; i < naxis2; i++) {
+		for (int j = 0; j < naxis1; j++){
+			double number = distribution(generator); 
+			array[i][j] = data[i*naxis1+j] + number ;
+		}
+	}
+	fpixel = 1;                               /* first pixel to write      */
+	/* write the array of unsigned integers to the FITS file */
+	if (fits_write_img(fptr, TDOUBLE, fpixel, npixels, array[0], &status))
+		printerror( status );
+
+	free( array[0] );  /* free previously allocated memory */
+	free( array);
+	if ( fits_close_file(fptr, &status) )                /* close the file */
+		printerror( status );
+}
+
 /***************************
 Function:   	updateBackSubtract
 Description:    subtract background from the regioin filtered image. 
@@ -291,10 +339,6 @@ void Image::updateFilterImage(string regionFileName, int flag) {
 
 	
 	vector<double> xpos, ypos;
-	
- 
-	cout << "naxis1: " << naxis1 << endl;
-	cout << "naxis2: " << naxis2 << endl;
 	if(flag==1) {  // with region; 
 		int regionType = parseReagionFile(regionFileName, &xpos, &ypos);
 		if(regionType == 1) {  // region type = polygon; 
@@ -414,6 +458,8 @@ void Image::normalizeData() {
 	for(int i=0; i<length; ++i)
 		data[i] = data[i]/sum;
 }
+
+
 
 
 

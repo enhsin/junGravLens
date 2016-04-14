@@ -26,9 +26,9 @@ obs_ncomb      1
 
 ## define lenses and sources
 startup 3 1 0 
-lens point 2.0e12 2.0 2.0 0.0 0.0 0.0  0.0
-lens point 2.0e12 0.0 -2.0 0.0 0.0 0.0  0.0
-lens sie 400 0.0 0.0 0.0 0.0 0.0  0.0
+#lens point 2.0e12 2.0 2.0 0.0 0.0 0.0  0.0
+#lens point 2.0e12 0.0 -2.0 0.0 0.0 0.0  0.0
+lens sie 400 1.0 1.0 0.0 0.0 0.0  0.0
 #lens sie 400 -2.0 -2.0 0.0 0.0 0.0  0.0
 extend gauss 2.379 2.5  0.0  0.0 0.0 0.0 0.2 0.0
 

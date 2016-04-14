@@ -19,6 +19,7 @@
 #include <map>
 #include <ctime>
 
+
 typedef Eigen::SparseMatrix<double> sp_mat;
 typedef Eigen::VectorXd vec;
 
@@ -63,6 +64,16 @@ Conf::Conf(Image* dataImage, map<string, string> confMap) {
 
 		srcSize[0] =stod(confMap["srcX"]);
 		srcSize[1] =stod(confMap["srcY"]);
+
+		back_mean = stod(confMap["back_mean"]); 
+		back_std = stod(confMap["back_std"]);
+
+		usingRegion   = stoi(confMap["usingRegion"]); 
+		outputSrcImg  = stoi(confMap["outputSrcImg"]); 
+		outputModImg  = stoi(confMap["outputModImg"]); 
+		outputCritImg = stoi(confMap["outputCritImg"]); 
+		srcBackground = stoi(confMap["srcBackground"]); 	
+
 
 		srcXCenter = srcSize[0]/2.0;
 		srcYCenter = srcSize[1]/2.0;

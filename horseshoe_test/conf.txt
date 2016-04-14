@@ -16,16 +16,21 @@ potRes	0.1
 
 imageFileName	horseshoe_test/HorseShoe_large.fits
 regionFileName	horseshoe_test/mask_horseshoe_large_4.reg
+#regionFileName	horseshoe_test/mask_horseshoe_points_2.reg
 varFileName	  jun_var.fits
 psfFileName		horseshoe_test/HorseShoe_psf.fits
 criticalName	horseshoe_test/critical.reg
 causticName	horseshoe_test/caustic.reg
 
 
-## Flags
-## '1' indicates using region of the data, instead of all the data; 
-## '0' indicates not using any region file; 
-usingRegion			1
+## Flags:	 '1' == Yes 
+##			 '0' == No
+usingRegion		1
+outputSrcImg	1
+outputModImg	0
+outputCritImg	0
+srcBackground	1
+
 
 ## Source plane size
 srcX	100
@@ -38,14 +43,13 @@ back_std 0.0019
 ## Model_PTMASS {xfrom, xto, xinc, yfrom, yto, yinc, critfrom, critto, critinc, ellfrom, ellto, ellinc, pafrom, pato, painc, corefrom, coreto, coreinc}
 ##
 ##
-#SIE 0.0 0.0 2.0 0.0 0.0 2.0 4.8 4.8 0.2 0.0 0.0 0.01 0.0 0.0 2.0 0.0 0.0 0.2
-#SIE -60.0 -60.0 10.0 20.0 20.0 10.0 3.6 3.6 0.2 0.0 0.0 0.01 0.0 0.0 2.0 0.0 0.0 0.2
-SIE 0.0 0.0 2.0 0.0 0.0 2.0 5.2 5.2 0.1 0.3 0.3 0.02 0.0 0.0 10.0 0.0 0.0 0.2
-SIE 0.0 0.0 10.0 0.0 0.0 10.0 0.0 0.0 0.2 0.0 0.0 0.01 0.0 0.0 2.0 0.0 0.0 0.2
-SIE 100.0 100.0 10.0 0.0 0.0 10.0 0.0 0.0 2.0 0.0 0.0 0.01 0.0 0.0 2.0 0.0 0.0 0.2
+#SIE 0.0 0.0 2.0 0.0 0.0 2.0 4.6 4.6 0.2 0.0 0.0 0.01 0.0 0.0 2.0 0.0 0.0 0.2
+#SIE -160.0 -160.0 10.0 0.0 0.0 10.0 1.4 1.4 0.2 0.0 0.0 0.01 0.0 0.0 2.0 0.0 0.0 0.2
+SIE 0.0 0.0 5.0 0.0 0.0 10.0 4.2 4.2 0.2 0.0 0.0 0.05 0.0 0.0 5.0 0.0 0.0 0.2
+SIE -160.0 -160.0 20.0 0.0 0.0 2.0 1.2 1.2 0.2 0.0 0.0 0.02 0.0 0.0 2.0 0.0 0.0 0.2
+SIE -60.0 -60.0 30.0 -150.0 -150.0 30.0 1.2 1.2 0.2 0.0 0.0 0.01 0.0 0.0 2.0 0.0 0.0 0.2
 ##
 ##
 ## 	Model_NFW {xfrom, xto, xinc, yfrom, yto, yinc,mass_scalefrom,mass_scaleto,mass_scaleinc,rad_scalefrom,rad_scaleto,rad_scaleinc,ellfrom, ellto, ellinc, pafrom, pato, painc}
 ##NFW 0.0 0.0 0.1 0.0 0.0 0.1 0.305 0.305 0.01 20.0 20.0 0.5 0.05 0.05 0.02 140.0 140.0 2.0
-#PTMASS 0.0 0.0 0.1 0.0 0.0 0.1 4.6 5.6 0.02 
 

@@ -62,6 +62,7 @@ public:
 	void updateGridPointType();
 	void writeFilterImage(string imgFileName);
 	void writeToFile(string imgFileName);
+	void writeToFile(string imgFileName, double back_mean, double back_std); 
 	void updateVarList(double threshold, double backVar);
 	void updateVarList(string varFileName, string regionFileName);
 	void normalizeData();

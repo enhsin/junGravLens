@@ -49,11 +49,13 @@ int main(int argc, char* argv[]) {
 
 	Image* dataImage = new Image(mapConf["imageFileName"]);
 	dataImage->updateFilterImage(mapConf["regionFileName"], stoi(mapConf["usingRegion"]));
-	dataImage->updateBackSubtract(stof(mapConf["back_mean"]), stof(mapConf["back_std"])); 
+
+	Conf *conf = new Conf(dataImage, mapConf);
+	dataImage->updateBackSubtract(conf->back_mean, conf->back_std); 
 	dataImage->updateGridPointType();
 	dataImage->updateVarList(1, 0.1); // (threshold, var);
 	dataImage->invC = dataImage->getVarMatrix();
-	Conf *conf = new Conf(dataImage, mapConf);
+	
  
 	vec d =dataImage->getMatrixD();
 	conf->printConfList();

@@ -197,7 +197,7 @@ public:
 	Model();
 	Model(Conf* conList, MultModelParam multModelParam, double lambdaS);
 	void updateMatrixT(Conf* conf);
-	static vector<double> getDeflectionAngle(Conf* conList, int imgX, int imgY, double *pDeltaX, double *pDeltaY,  MultModelParam param);
+	static vector<double> getDeflectionAngle(Conf* conList, int imgX, int imgY, double *pDeltaX, double *pDeltaY,  MultModelParam * param);
 	void updatePosMapping(Image* image,  Conf* conList);
 	void updateLensAndRegularMatrix(Image* dataImage,  Conf* constList);
 	void updateGradient(Image* dataImage);
@@ -223,7 +223,7 @@ public:
 	void clearVectors();
 };
 
-vector< vector<double> > getCritCaustic(Conf* conf, MultModelParam param); 
+vector< vector<double> > getCritCaustic(Conf* conf, MultModelParam * param); 
 
 
 #endif /* MODEL_H_ */

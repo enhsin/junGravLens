@@ -122,7 +122,7 @@ void Model::updateMatrixT(Conf* conf) {
 	cout << endl;
 }
 
-vector<double> Model::getDeflectionAngle(Conf* conf, int imgX, int imgY, double *pDeltaX, double *pDeltaY, MultModelParam param) {
+vector<double> Model::getDeflectionAngle(Conf* conf, int imgX, int imgY, double *pDeltaX, double *pDeltaY, MultModelParam * param) {
 	double fDenom = 0 ; 
 	double srcX   = 0;  
 	double srcY   = 0 ; 
@@ -131,7 +131,7 @@ vector<double> Model::getDeflectionAngle(Conf* conf, int imgX, int imgY, double 
 	double pfX = 0; 
 	double pfY = 0;
 	vector<double> srcPos;
-	int nLens = param.parameter.size(); 
+	int nLens = param->parameter.size(); 
 	
 
 	pfX = (imgX - conf->imgXCenter ) * conf->imgRes; 			// image center frame;
@@ -140,32 +140,32 @@ vector<double> Model::getDeflectionAngle(Conf* conf, int imgX, int imgY, double 
 
 	//cout << "nLens: " << nLens << endl; 
 	for(int i=0; i<nLens; ++i) {
-		fX =  (imgX - conf->imgXCenter - param.parameter[i].centerX ) * conf->imgRes;   // lens center frame, 
-		fY =  (imgY - conf->imgYCenter - param.parameter[i].centerY ) * conf->imgRes;
+		fX =  (imgX - conf->imgXCenter - param->parameter[i].centerX ) * conf->imgRes;   // lens center frame, 
+		fY =  (imgY - conf->imgYCenter - param->parameter[i].centerY ) * conf->imgRes;
 		// Unit:  aresecond.
 
-		if(param.parameter[i].name.compare("PTMASS")==0) {
+		if(param->parameter[i].name.compare("PTMASS")==0) {
 			fDenom = fX*fX+fY*fY;
-			double fMult = param.parameter[i].critRad*param.parameter[i].critRad/fDenom;
+			double fMult = param->parameter[i].critRad*param->parameter[i].critRad/fDenom;
 			*pDeltaX +=  fX*fMult;
 			*pDeltaY +=  fY*fMult;
 		}
 
 
-		if(param.parameter[i].name.compare("SIE")==0) {
+		if(param->parameter[i].name.compare("SIE")==0) {
 
 			double phi,root1mq,fq,fac,fCore=0,fCosTheta,fSinTheta,x1,y1,deltax1,deltay1;
 			if (fX == 0 && fY == 0)  {
-				*pDeltaX += param.parameter[i].critRad; 
-				*pDeltaY += param.parameter[i].critRad;
+				*pDeltaX += param->parameter[i].critRad; 
+				*pDeltaY += param->parameter[i].critRad;
 
 			}
 			
 
 			//pre-calculate constants
-			fCosTheta = cos(param.parameter[i].PA*M_PI/180 + 0.5* M_PI);
-			fSinTheta = sin(param.parameter[i].PA*M_PI/180 + 0.5* M_PI);
-			fq = 1-param.parameter[i].e;
+			fCosTheta = cos(param->parameter[i].PA*M_PI/180 + 0.5* M_PI);
+			fSinTheta = sin(param->parameter[i].PA*M_PI/180 + 0.5* M_PI);
+			fq = 1-param->parameter[i].e;
 			if (fq>1.0) cout << "Axis ratio should be smaller than 1. " << endl;
 			if (fq==1.0) fq = 0.999;
 
@@ -175,7 +175,7 @@ vector<double> Model::getDeflectionAngle(Conf* conf, int imgX, int imgY, double 
 
 			root1mq = sqrt(1.0-fq*fq);
 			phi = sqrt(fq*fq*(fCore*fCore + x1*x1) + y1*y1);
-			fac = param.parameter[i].critRad*sqrt(fq)/root1mq;
+			fac = param->parameter[i].critRad*sqrt(fq)/root1mq;
 			deltax1 = fac*atan(root1mq*x1/(phi + fCore));
 			deltay1 = fac*lm_arctanh(root1mq*y1/(phi+ fCore*fq*fq));
 
@@ -187,8 +187,8 @@ vector<double> Model::getDeflectionAngle(Conf* conf, int imgX, int imgY, double 
 
 		}
 		
-
-		if(param.parameter[i].name.compare("NFW")==0) {
+		/*
+		if(param->parameter[i].name.compare("NFW")==0) {
 		
 			double fEllip,fCosTheta,fSinTheta,x1,y1,fPhi,fAngRadius,fTempResult,fCosPhi,fSinPhi,fScale;
   			fCosTheta = cos(param.parameter[i].PA*M_PI/180 + 0.5*M_PI);
@@ -234,7 +234,7 @@ vector<double> Model::getDeflectionAngle(Conf* conf, int imgX, int imgY, double 
             if (fEllip > 1.0 || fEllip <= 0) 
             	  cout << "Bad parameters of 'e' . " << endl; 
 			
-			/* rotate so that major axis of mass in x direction */
+			// rotate so that major axis of mass in x direction 
 			fCosTheta = cos(param.parameter[i].PA*M_PI/180 + 0.5*M_PI);
 			fSinTheta = sin(param.parameter[i].PA*M_PI/180 + 0.5*M_PI);
 
@@ -242,15 +242,15 @@ vector<double> Model::getDeflectionAngle(Conf* conf, int imgX, int imgY, double 
 			y1 = -fX*fSinTheta + fY*fCosTheta;
 			
 			//iStatus = lm_deflCacheLookup(LM_SERSIC,&deVaucCache,x1,y1,pLensComp->fParameter[1],pLensComp->fParameter[3],pLensComp->fParameter[4], &deflx, &defly);
-			/*
+			
 			if (iStatus == LM_CACHE_MISS) {
 					iStatus = lm_CalcSersicDefl(x1,y1,pLensComp->fParameter[1],pLensComp->fParameter[3],pLensComp->fParameter[4], &deflx, &defly);
 					if (iStatus != 0) {
 						goto EXIT;
 					}
 				}
-			*/
-				/* rotate back again */
+			
+				
 			*pDeltaX = (deflx*fCosTheta - defly*fSinTheta)*param.parameter[i].kap;
 			*pDeltaY = (defly*fCosTheta + deflx*fSinTheta)*param.parameter[i].kap;
 
@@ -294,21 +294,14 @@ vector<double> Model::getDeflectionAngle(Conf* conf, int imgX, int imgY, double 
 			
 
 			}
+		*/
 		}
 
+		
 	// SrcX and SrcY are in unit aresec;   
 	// (SrcX, SrcY) = (0, 0) is the center point of source plane; 
 	srcX = pfX - (*pDeltaX);     
 	srcY = pfY - (*pDeltaY);
-
-
-	/*   
-	ofstream debug("debug.txt" , ios::out | ios::app  );
-	
-	debug << imgX << "\t" << imgY  << "\t" <<*pDeltaX<< "\t" << *pDeltaY << "\t"<<  srcX << "\t" << srcY << endl;
-	debug.close();
-	*/
-
 	// In arcsecond
 	srcPos.push_back(srcX);
 	srcPos.push_back(srcY);
@@ -328,13 +321,16 @@ void Model::updatePosMapping(Image* image, Conf* conf) {
 	length = conf->length;
 	vector<double> srcPos;
 
+	
 	for(int i=0; i<length; ++i) {
 		int imgX = image->xList[i];
 		int imgY = image->yList[i];
 		//cout << param.critRad << endl;
 		double defX = 0 ;
 		double defY = 0 ;
-		srcPos = getDeflectionAngle(conf,imgX, imgY, &defX, &defY, param);
+		srcPos = getDeflectionAngle(conf,imgX, imgY, &defX, &defY, &param);
+
+
 		pDeltaX.push_back(defX);
 		pDeltaY.push_back(defY);
 
@@ -1159,7 +1155,7 @@ void Model::clearVectors() {
 
 
 
-vector<vector<double> > getCritCaustic(Conf* conf, MultModelParam param) {
+vector<vector<double> > getCritCaustic(Conf* conf, MultModelParam * param) {
 	// automatic using  full Image ( no region files ); 
 	vector<double> invMag;
 	map<pair<int, int>,int> posMap;
@@ -1173,10 +1169,8 @@ vector<vector<double> > getCritCaustic(Conf* conf, MultModelParam param) {
 	vector<double> srcPosYListPixel; 
 
 	Image* dataImage = new Image(conf->imageFileName); 
-	dataImage->updateFilterImage("whatever..", 0);
-	int length = dataImage->data.size();
-
-	
+	dataImage->updateFilterImage("whatever..", 0);   // without any region file --- using all data points; 
+	int length = dataImage->data.size();	
 
 	for(int i=0; i<length; ++i) {
 
@@ -1203,6 +1197,9 @@ vector<vector<double> > getCritCaustic(Conf* conf, MultModelParam param) {
 	vector<double> w, w5;
 
 	vector<double> a11, a12, a21, a22;
+
+
+	
 	double h = conf->imgRes;
 	for (int i=0; i<dataImage->data.size(); ++i) {
 		left  = posMap.find(make_pair(dataImage->xList[i]-1, dataImage->yList[i]));
@@ -1233,13 +1230,11 @@ vector<vector<double> > getCritCaustic(Conf* conf, MultModelParam param) {
 	// update inverse magnification
 	int sign_t = 0;
 
-	string header = "# Region file format: DS9 version 4.1\n\
-					# Filename: horseshoe_test/HorseShoe_new.fits\n\
-					global color=green dashlist=8 3 width=1 font=\"helvetica 10 normal roman\" select=1 highlite=1 dash=0 fixed=0 edit=1 move=1 delete=1 include=1 source=1\n\
-					image\n"; 
 	ofstream criticalFile; 
 	criticalFile.open(conf->criticalName); 
-	criticalFile << header; 
+
+
+
 
 	for (int i=0; i<dataImage->data.size(); ++i) {
 			left  = posMap.find(make_pair(dataImage->xList[i]-1, dataImage->yList[i]));
@@ -1266,6 +1261,13 @@ vector<vector<double> > getCritCaustic(Conf* conf, MultModelParam param) {
 			else
 				critical.push_back(0);
 	}
+
+	// get finer data points:  
+	int level = 5; 
+
+
+
+
 
 	criticalFile.close(); 
 	ret.push_back(critical); 
