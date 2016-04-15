@@ -74,6 +74,7 @@ Conf::Conf(Image* dataImage, map<string, string> confMap) {
 		outputCritImg = stoi(confMap["outputCritImg"]); 
 		srcBackground = stoi(confMap["srcBackground"]); 	
 
+		causticLevel  = stoi(confMap["causticLevel"]); 
 
 		srcXCenter = srcSize[0]/2.0;
 		srcYCenter = srcSize[1]/2.0;

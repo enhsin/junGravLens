@@ -48,6 +48,7 @@ public:
 	double srcZ;
 	double lenZ;
 
+	int causticLevel; 
 
 	double length;
 	size_t srcSize[2];

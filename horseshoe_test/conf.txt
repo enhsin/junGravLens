@@ -11,7 +11,7 @@ lenZ	0.4457
 srcRes	0.1
 imgRes	0.04
 potRes	0.1
-
+causticLevel  5
 ## Files
 
 imageFileName	horseshoe_test/HorseShoe_large.fits
@@ -28,7 +28,7 @@ causticName	horseshoe_test/caustic.reg
 usingRegion		1
 outputSrcImg	1
 outputModImg	0
-outputCritImg	0
+outputCritImg	1
 srcBackground	1
 
 
@@ -43,11 +43,11 @@ back_std 0.0019
 ## Model_PTMASS {xfrom, xto, xinc, yfrom, yto, yinc, critfrom, critto, critinc, ellfrom, ellto, ellinc, pafrom, pato, painc, corefrom, coreto, coreinc}
 ##
 ##
-#SIE 0.0 0.0 2.0 0.0 0.0 2.0 4.6 4.6 0.2 0.0 0.0 0.01 0.0 0.0 2.0 0.0 0.0 0.2
-#SIE -160.0 -160.0 10.0 0.0 0.0 10.0 1.4 1.4 0.2 0.0 0.0 0.01 0.0 0.0 2.0 0.0 0.0 0.2
-SIE 0.0 0.0 5.0 0.0 0.0 10.0 4.2 4.2 0.2 0.0 0.0 0.05 0.0 0.0 5.0 0.0 0.0 0.2
-SIE -160.0 -160.0 20.0 0.0 0.0 2.0 1.2 1.2 0.2 0.0 0.0 0.02 0.0 0.0 2.0 0.0 0.0 0.2
-SIE -60.0 -60.0 30.0 -150.0 -150.0 30.0 1.2 1.2 0.2 0.0 0.0 0.01 0.0 0.0 2.0 0.0 0.0 0.2
+SIE 0.0 0.0 2.0 0.0 0.0 2.0 5.17 5.17 0.2 0.32 0.32 0.01 176.0 176.0 2.0 0.0 0.0 0.2
+SIE -152.0 -152.0 10.0 0.0 0.0 10.0 0.0 0.0 0.2 0.44 0.44 0.01 14.0 14.0 2.0 0.0 0.0 0.2
+#SIE 0.0 0.0 5.0 0.0 0.0 10.0 4.2 4.2 0.2 0.0 0.0 0.05 0.0 0.0 5.0 0.0 0.0 0.2
+#SIE -160.0 -160.0 20.0 0.0 0.0 2.0 1.2 1.2 0.2 0.0 0.0 0.02 0.0 0.0 2.0 0.0 0.0 0.2
+SIE -60.0 -60.0 30.0 -150.0 -150.0 30.0 0.0 0.0 0.2 0.0 0.0 0.01 0.0 0.0 2.0 0.0 0.0 0.2
 ##
 ##
 ## 	Model_NFW {xfrom, xto, xinc, yfrom, yto, yinc,mass_scalefrom,mass_scaleto,mass_scaleinc,rad_scalefrom,rad_scaleto,rad_scaleinc,ellfrom, ellto, ellinc, pafrom, pato, painc}

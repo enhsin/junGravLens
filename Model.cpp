@@ -122,26 +122,21 @@ void Model::updateMatrixT(Conf* conf) {
 	cout << endl;
 }
 
-vector<double> Model::getDeflectionAngle(Conf* conf, int imgX, int imgY, double *pDeltaX, double *pDeltaY, MultModelParam * param) {
+vector<double> Model::getDeflectionAngle(Conf* conf, double pfX, double pfY, double *pDeltaX, double *pDeltaY, MultModelParam * param) {
 	double fDenom = 0 ; 
 	double srcX   = 0;  
 	double srcY   = 0 ; 
 	double fX  = 0; 
 	double fY  = 0; 
-	double pfX = 0; 
-	double pfY = 0;
+	//double pfX = 0; 
+	//double pfY = 0;
 	vector<double> srcPos;
 	int nLens = param->parameter.size(); 
 	
-
-	pfX = (imgX - conf->imgXCenter ) * conf->imgRes; 			// image center frame;
-	pfY = (imgY - conf->imgYCenter ) * conf->imgRes;
-
-
 	//cout << "nLens: " << nLens << endl; 
 	for(int i=0; i<nLens; ++i) {
-		fX =  (imgX - conf->imgXCenter - param->parameter[i].centerX ) * conf->imgRes;   // lens center frame, 
-		fY =  (imgY - conf->imgYCenter - param->parameter[i].centerY ) * conf->imgRes;
+		fX =  pfX - (param->parameter[i].centerX * conf->imgRes);   // lens center frame, 
+		fY =  pfY - (param->parameter[i].centerY * conf->imgRes);
 		// Unit:  aresecond.
 
 		if(param->parameter[i].name.compare("PTMASS")==0) {
@@ -328,7 +323,11 @@ void Model::updatePosMapping(Image* image, Conf* conf) {
 		//cout << param.critRad << endl;
 		double defX = 0 ;
 		double defY = 0 ;
-		srcPos = getDeflectionAngle(conf,imgX, imgY, &defX, &defY, &param);
+
+		double pfX = (imgX - conf->imgXCenter ) * conf->imgRes; 			// image center frame;
+		double pfY = (imgY - conf->imgYCenter ) * conf->imgRes;
+
+		srcPos = getDeflectionAngle(conf,pfX, pfY, &defX, &defY, &param);
 
 
 		pDeltaX.push_back(defX);
@@ -1154,58 +1153,73 @@ void Model::clearVectors() {
 }
 
 
-
-vector<vector<double> > getCritCaustic(Conf* conf, MultModelParam * param) {
-	// automatic using  full Image ( no region files ); 
+vector<vector<double> > getCritCausticFine(vector<double> xPosListArc, vector<double> yPosListArc, Conf* conf, MultModelParam * param, int level) {
+	// level = 5; 
 	vector<double> invMag;
 	map<pair<int, int>,int> posMap;
 	vector<double> srcPos, pDeltaX, pDeltaY; 
-	
-	vector<vector<double> > ret; 
-	vector<double> critical;
-	vector<double> xList; 
-	vector<double> yList; 
 	vector<double> srcPosXListPixel; 
 	vector<double> srcPosYListPixel; 
 
-	Image* dataImage = new Image(conf->imageFileName); 
-	dataImage->updateFilterImage("whatever..", 0);   // without any region file --- using all data points; 
-	int length = dataImage->data.size();	
+	vector<double> new_xPosListArc; 
+	vector<double> new_yPosListArc; 
 
-	for(int i=0; i<length; ++i) {
+	double curr_res = conf->imgRes/level; 
 
-		int imgX = dataImage->xList[i];
-		int imgY = dataImage->yList[i];
-		xList.push_back(double(imgX)); 
-		yList.push_back(double(imgY)); 
-		//cout << param.critRad << endl;
-		double defX = 0 ;
-		double defY = 0 ;
-		srcPos = Model::getDeflectionAngle(conf,imgX, imgY, &defX, &defY, param);
-		pDeltaX.push_back(defX);
-		pDeltaY.push_back(defY);
+	vector<vector<double> > ret; 
 
-		srcPosXListPixel.push_back(srcPos[0]/conf->srcRes+conf->srcXCenter);
-		srcPosYListPixel.push_back(srcPos[1]/conf->srcRes+conf->srcYCenter);
+	vector<double> imgXList; 
+	vector<double> imgYList; 
 
-		posMap[make_pair(imgX, imgY)] = i;
-	}
+	double side = 1.0/level;   // unit is pixel; 
 
+	int index = 0 ; 
+	for (int i=0; i<xPosListArc.size(); ++i) {
+		int old_imgX = int(round(xPosListArc[i] / conf->imgRes + conf->imgXCenter )); 
+		int old_imgY = int(round(yPosListArc[i] / conf->imgRes + conf->imgYCenter )); 
 
+		for(int j=0; j<level; ++j) {
+
+			
+			for(int k=0; k<level; ++k) {
+			double new_posX = (j * side) * curr_res + xPosListArc[i];   // in arcsecond
+			double new_posY = (k * side) * curr_res + yPosListArc[i];   // in arcsecond
+
+			double defX = 0 ;
+			double defY = 0 ;  
+			srcPos = Model::getDeflectionAngle(conf, new_posX, new_posY, &defX, &defY, param);
+			pDeltaX.push_back(defX);    // in arcsec; 
+			pDeltaY.push_back(defY);		
+			srcPosXListPixel.push_back(srcPos[0]/conf->srcRes+conf->srcXCenter); 
+			srcPosYListPixel.push_back(srcPos[1]/conf->srcRes+conf->srcYCenter);
+
+			int imgX = old_imgX * level + k; 
+			int imgY = old_imgY * level + j; 
+
+			imgXList.push_back(imgX); 
+			imgYList.push_back(imgY); 
+
+			posMap[make_pair(imgX, imgY)] = index;
+			++index; 
+
+			}
+		}
+	}		
 
 	map<pair<int, int>,int>::iterator left, right, up, down;
 	vector<double> w, w5;
 
 	vector<double> a11, a12, a21, a22;
-
-
 	
-	double h = conf->imgRes;
-	for (int i=0; i<dataImage->data.size(); ++i) {
-		left  = posMap.find(make_pair(dataImage->xList[i]-1, dataImage->yList[i]));
-		right = posMap.find(make_pair(dataImage->xList[i]+1, dataImage->yList[i]));
-		up    = posMap.find(make_pair(dataImage->xList[i], dataImage->yList[i]+1));
-		down  = posMap.find(make_pair(dataImage->xList[i], dataImage->yList[i]-1));
+	double h = curr_res;
+	for (int i=0; i< index; ++i) {
+
+
+
+		left  = posMap.find(make_pair(imgXList[i]-1, imgYList[i]));
+		right = posMap.find(make_pair(imgXList[i]+1, imgYList[i]));
+		up    = posMap.find(make_pair(imgXList[i], imgYList[i]+1));
+		down  = posMap.find(make_pair(imgXList[i], imgYList[i]-1));
 
 		if(left!=posMap.end() && up!=posMap.end() && down!=posMap.end() && right!=posMap.end()) {
 
@@ -1229,18 +1243,14 @@ vector<vector<double> > getCritCaustic(Conf* conf, MultModelParam * param) {
 	}
 	// update inverse magnification
 	int sign_t = 0;
+	
 
-	ofstream criticalFile; 
-	criticalFile.open(conf->criticalName); 
-
-
-
-
-	for (int i=0; i<dataImage->data.size(); ++i) {
-			left  = posMap.find(make_pair(dataImage->xList[i]-1, dataImage->yList[i]));
-			right = posMap.find(make_pair(dataImage->xList[i]+1, dataImage->yList[i]));
-			up    = posMap.find(make_pair(dataImage->xList[i], dataImage->yList[i]+1));
-			down  = posMap.find(make_pair(dataImage->xList[i], dataImage->yList[i]-1));
+	for (int i=0; i<index; ++i) {
+			
+			left  = posMap.find(make_pair(imgXList[i]-1, imgYList[i]));
+			right = posMap.find(make_pair(imgXList[i]+1, imgYList[i]));
+			up    = posMap.find(make_pair(imgXList[i], imgYList[i]+1));
+			down  = posMap.find(make_pair(imgXList[i], imgYList[i]-1));
 
 			if(left!=posMap.end() && up!=posMap.end() && down!=posMap.end() && right!=posMap.end()) {
 
@@ -1249,34 +1259,60 @@ vector<vector<double> > getCritCaustic(Conf* conf, MultModelParam * param) {
 				int iDown = down->second;
 				int iRight= right->second;
 				sign_t = sign(invMag[i])*(sign(invMag[iLeft]) + sign(invMag[iRight]) + sign(invMag[iUp]) + sign(invMag[iDown]));
+	
 			}
 			else
 				sign_t = 5;  // Assign a value bigger than 4;
 			if(sign_t<4 ) { //} && distSqure > 50*50) {
 				// Distance from center; 
 				
-				critical.push_back(1);
-				criticalFile << "point(" << to_string(dataImage->xList[i]) << "," << to_string(dataImage->yList[i]) << ")\n" ; 
+				//critical.push_back(1);
+
+				new_xPosListArc.push_back((imgXList[i]-conf->imgXCenter*level)* curr_res); 
+				new_yPosListArc.push_back((imgYList[i]-conf->imgYCenter*level)* curr_res); 
 			}
-			else
-				critical.push_back(0);
+	}
+	ret.push_back(new_xPosListArc); 
+	ret.push_back(new_yPosListArc); 
+
+	return ret; 
+}
+
+
+vector<Image* > getCritCaustic(Conf* conf, MultModelParam * param) {
+	// automatic using  full Image ( no region files ); 
+	
+	vector<Image*> ret; 
+	vector<double> critical, xList, yList;
+	vector<double> srcPosXListPixel; 
+	vector<double> srcPosYListPixel; 
+	int level =  conf->causticLevel; 
+
+	Image* dataImage = new Image(conf->imageFileName); 
+	dataImage->updateFilterImage("whatever..", 0);   // without any region file --- using all data points; 
+	int length = dataImage->data.size();	
+
+	vector<double> xPosListArc; 
+	vector<double> yPosListArc; 
+
+	for(int i=0; i<length; ++i) {
+		xPosListArc.push_back((dataImage->xList[i]-conf->imgXCenter)*conf->imgRes); 
+		yPosListArc.push_back((dataImage->yList[i]-conf->imgYCenter)*conf->imgRes); 
 	}
 
-	// get finer data points:  
-	int level = 5; 
+	vector<vector<double> >  zeroCrit  = getCritCausticFine(xPosListArc, yPosListArc, conf, param, 1); 
+	 zeroCrit = getCritCausticFine(zeroCrit[0], zeroCrit[1], conf, param, level); 
 
+	double newResolution = conf->imgRes/level; 
 
-
-
-
-	criticalFile.close(); 
-	ret.push_back(critical); 
-	ret.push_back(xList);
-	ret.push_back(yList); 
-	ret.push_back(srcPosXListPixel); 
-	ret.push_back(srcPosYListPixel); 
-
-	delete dataImage; 
+	for(int i=0; i<zeroCrit[0].size(); ++i) {
+		xList.push_back(zeroCrit[0][i]/newResolution + conf->imgXCenter*level); 
+		yList.push_back(zeroCrit[1][i]/newResolution + conf->imgYCenter*level); 
+		critical.push_back(1); 
+	}
+	/// modify ending: 
+	Image* critImg = new Image(xList, yList, &critical, conf->imgSize[0]*level, conf->imgSize[1]*level, conf->bitpix);
+	ret.push_back(critImg); 
  
 	return ret; 
 }

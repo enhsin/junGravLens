@@ -192,12 +192,11 @@ typedef	struct	_lmDeflCache {
 }	lmDeflCache;
 
 
-
 public:
 	Model();
 	Model(Conf* conList, MultModelParam multModelParam, double lambdaS);
 	void updateMatrixT(Conf* conf);
-	static vector<double> getDeflectionAngle(Conf* conList, int imgX, int imgY, double *pDeltaX, double *pDeltaY,  MultModelParam * param);
+	static vector<double> getDeflectionAngle(Conf* conList, double pfX, double pfY, double *pDeltaX, double *pDeltaY,  MultModelParam * param);
 	void updatePosMapping(Image* image,  Conf* conList);
 	void updateLensAndRegularMatrix(Image* dataImage,  Conf* constList);
 	void updateGradient(Image* dataImage);
@@ -217,13 +216,14 @@ public:
 	double getGradientOrderReg	(Conf* conf, vector<double> briList); 
 	double getCurvatureOrderReg	(Conf* conf, vector<double> briList); 
 
+	vector<vector<double> > getCritCausticFine(vector<double> xPosListArc, vector<double> yPosListArc, Conf* conf, MultModelParam * param, int level); 
 
 	//vector<string> &split(string &s, char delim, vector<string> &elems) ; 
 
 	void clearVectors();
 };
 
-vector< vector<double> > getCritCaustic(Conf* conf, MultModelParam * param); 
+vector<Image* > getCritCaustic(Conf* conf, MultModelParam * param); 
 
 
 #endif /* MODEL_H_ */
