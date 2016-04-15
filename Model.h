@@ -224,6 +224,7 @@ public:
 };
 
 vector<Image* > getCritCaustic(Conf* conf, MultModelParam * param); 
+void createDs9Contour(vector<double>* xList, vector<double>* yList, double level, string contourCritName) ; 
 
 
 #endif /* MODEL_H_ */

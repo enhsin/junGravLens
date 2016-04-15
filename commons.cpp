@@ -57,6 +57,7 @@ Conf::Conf(Image* dataImage, map<string, string> confMap) {
 
 		criticalName = confMap["criticalName"]; 
 		causticName = confMap["causticName"]; 
+		contourCritName = confMap["contourCritName"]; 
 
 		srcRes = stod(confMap["srcRes"]);
 		imgRes = stod(confMap["imgRes"]);
