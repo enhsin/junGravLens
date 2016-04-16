@@ -11,7 +11,7 @@ lenZ	0.4457
 srcRes	0.1
 imgRes	0.04
 potRes	0.1
-causticLevel  2
+causticLevel  4
 
 ## Files
 imageFileName	horseshoe_test/HorseShoe_large.fits
@@ -21,8 +21,9 @@ varFileName	  jun_var.fits
 psfFileName		horseshoe_test/HorseShoe_psf.fits
 criticalName	horseshoe_test/critical.reg
 causticName	horseshoe_test/caustic.reg
-contourCritName  horseshoe_test/ds9con.con
-
+#
+contourCritName  horseshoe_test/ds9crit.con
+contourCausName  horseshoe_test/ds9caus.con
 
 ## Flags:	 '1' == Yes && '0' == No
 usingRegion		1
@@ -39,7 +40,6 @@ back_mean 0.02
 back_std 0.0019
 
 ## Model_PTMASS {xfrom, xto, xinc, yfrom, yto, yinc, critfrom, critto, critinc}
-#PTMASS 0.0 0.0 0.0 0.0 0.0 0.0 4.6 5.6 0.05 
 ## Model_SIE {xfrom, xto, xinc, yfrom, yto, yinc, critfrom, critto, critinc, ellfrom, ellto, ellinc, pafrom, pato, painc, corefrom, coreto, coreinc}
 ##
 ##

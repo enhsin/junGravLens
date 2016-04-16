@@ -58,6 +58,7 @@ Conf::Conf(Image* dataImage, map<string, string> confMap) {
 		criticalName = confMap["criticalName"]; 
 		causticName = confMap["causticName"]; 
 		contourCritName = confMap["contourCritName"]; 
+		contourCausName = confMap["contourCausName"]; 
 
 		srcRes = stod(confMap["srcRes"]);
 		imgRes = stod(confMap["imgRes"]);
@@ -68,6 +69,8 @@ Conf::Conf(Image* dataImage, map<string, string> confMap) {
 
 		back_mean = stod(confMap["back_mean"]); 
 		back_std = stod(confMap["back_std"]);
+
+
 
 		usingRegion   = stoi(confMap["usingRegion"]); 
 		outputSrcImg  = stoi(confMap["outputSrcImg"]); 

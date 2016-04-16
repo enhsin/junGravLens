@@ -125,10 +125,11 @@ void gridSearch(Conf* conf, MultModelParam param_old, Image* dataImage, vec d, s
 		if(conf->outputCritImg) {
 			vector<Image* > curve =  getCritCaustic(conf, &model->param); 
 			Image* critImg = curve[0]; 
-			//Image* causticImg = curve[1]; 
-			 critImg->writeToFile(dir + "img_crit.fits");
-			//causticImg->writeToFile( dir + "img_caustic.fits");
+			Image* causImg = curve[1]; 
+			critImg->writeToFile(dir + "img_crit.fits");
+			causImg->writeToFile(dir + "img_caus.fits");
 			delete critImg; 
+			delete causImg; 
 		}	
 	}
 	output.close(); 

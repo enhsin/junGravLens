@@ -82,6 +82,7 @@ public:
 	string criticalName; 
 	string causticName; 
 	string contourCritName; 
+	string contourCausName; 
 
 	Conf(Image* image, map<string, string> confMap);
 	void printConfList();

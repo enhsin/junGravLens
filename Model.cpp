@@ -1158,11 +1158,10 @@ vector<vector<double> > getCritCausticFine(vector<double> xPosListArc, vector<do
 	vector<double> invMag;
 	map<pair<int, int>,int> posMap;
 	vector<double> srcPos, pDeltaX, pDeltaY; 
-	vector<double> srcPosXListPixel; 
-	vector<double> srcPosYListPixel; 
+	vector<double> srcPosXListArc; 
+	vector<double> srcPosYListArc; 
 
-	vector<double> new_xPosListArc; 
-	vector<double> new_yPosListArc; 
+	
 
 	double curr_res = conf->imgRes/level; 
 
@@ -1188,8 +1187,8 @@ vector<vector<double> > getCritCausticFine(vector<double> xPosListArc, vector<do
 			srcPos = Model::getDeflectionAngle(conf, new_posX, new_posY, &defX, &defY, param);
 			pDeltaX.push_back(defX);    // in arcsec; 
 			pDeltaY.push_back(defY);		
-			srcPosXListPixel.push_back(srcPos[0]/conf->srcRes+conf->srcXCenter); 
-			srcPosYListPixel.push_back(srcPos[1]/conf->srcRes+conf->srcYCenter);
+			srcPosXListArc.push_back(srcPos[0]); 
+			srcPosYListArc.push_back(srcPos[1]);
 
 			int imgX = old_imgX * level + k; 
 			int imgY = old_imgY * level + j; 
@@ -1206,7 +1205,12 @@ vector<vector<double> > getCritCausticFine(vector<double> xPosListArc, vector<do
 	vector<double> w, w5;
 
 	vector<double> a11, a12, a21, a22;
-	
+	vector<double> new_xPosListArc; 
+	vector<double> new_yPosListArc; 
+	vector<double> new_xSrcPosListArc; 
+	vector<double> new_ySrcPosListArc; 
+
+
 	double h = curr_res;
 	for (int i=0; i< index; ++i) {
 		left  = posMap.find(make_pair(imgXList[i]-1, imgYList[i]));
@@ -1258,15 +1262,19 @@ vector<vector<double> > getCritCausticFine(vector<double> xPosListArc, vector<do
 
 			if(sign_t<4 ) { //} && distSqure > 50*50) {
 				new_xPosListArc.push_back((imgXList[i]-conf->imgXCenter*level)* curr_res); 
-				new_yPosListArc.push_back((imgYList[i]-conf->imgYCenter*level)* curr_res); 
+				new_yPosListArc.push_back((imgYList[i]-conf->imgYCenter*level)* curr_res);
+				new_xSrcPosListArc.push_back(srcPosXListArc[i]); 
+				new_ySrcPosListArc.push_back(srcPosYListArc[i]); 
+
 
 			}
 	}
+
+	// Center:  (0, 0)
 	ret.push_back(new_xPosListArc); 
 	ret.push_back(new_yPosListArc); 
-
-
-
+	ret.push_back(new_xSrcPosListArc); 
+	ret.push_back(new_ySrcPosListArc); 
 	return ret; 
 }
 
@@ -1276,6 +1284,7 @@ vector<Image* > getCritCaustic(Conf* conf, MultModelParam * param) {
 	
 	vector<Image*> ret; 
 	vector<double> critical, xList, yList;
+	vector<double> caustic, srcXList, srcYList; 
 	vector<double> srcPosXListPixel; 
 	vector<double> srcPosYListPixel; 
 	int level =  conf->causticLevel; 
@@ -1299,16 +1308,29 @@ vector<Image* > getCritCaustic(Conf* conf, MultModelParam * param) {
 		critXY = getCritCausticFine(critXY[0], critXY[1], conf, param, level); 
 
 	double newResolution = conf->imgRes/level; 
+	double newSrcResolution = conf->srcRes/level; 
 
 	for(int i=0; i<critXY[0].size(); ++i) {
+
+
+		// Image coordinate; 
 		xList.push_back(critXY[0][i]/newResolution + conf->imgXCenter*level); 
 		yList.push_back(critXY[1][i]/newResolution + conf->imgYCenter*level); 
+
+		srcXList.push_back(critXY[2][i]/newSrcResolution + conf->srcXCenter*level); 
+		srcYList.push_back(critXY[3][i]/newSrcResolution + conf->srcYCenter*level); 
 		critical.push_back(1); 
+
 	}
-	createDs9Contour(&xList, &yList, level, conf->contourCritName) ; 
+	createDs9Contour(&xList,    &yList,    level, conf->contourCritName) ; 
+	createDs9Contour(&srcXList, &srcYList, level, conf->contourCausName) ; 
+
 	/// modify ending: 
 	Image* critImg = new Image(xList, yList, &critical, conf->imgSize[0]*level, conf->imgSize[1]*level, conf->bitpix);
+	Image* causImg = new Image(srcXList, srcYList, &critical, conf->srcSize[0]*level, conf->srcSize[1]*level, conf->bitpix);
+
 	ret.push_back(critImg); 
+	ret.push_back(causImg); 
  	return ret; 
 }
 
@@ -1341,44 +1363,7 @@ void createDs9Contour(vector<double>* xList, vector<double>* yList, double level
 			n[8] = posMap.find(make_pair(x+1, y-1));
 
 			int numNeighbor = 0;
-			// For only the right half neighbors;  
-			/*
-			if(n[1] !=posMap.end()) numNeighbor++;
-			if(n[2] !=posMap.end()) numNeighbor++; 
-			if(n[4] !=posMap.end()) numNeighbor++;  
-			if(n[5] !=posMap.end()) numNeighbor++; 
-			if(n[7] !=posMap.end()) numNeighbor++; 
-			if(n[8] !=posMap.end()) numNeighbor++; 
-			*/
-			/*
-			int ind = -1; 
-
-			if(n[1] !=posMap.end() and n[2] !=posMap.end() and n[5] !=posMap.end() )  // n1, n2, n5 found; 
-				ind = n[2]->second; 
-			if(n[1] !=posMap.end() and n[2] ==posMap.end() and n[5] ==posMap.end() )  // n1 found; 
-				ind = n[1]->second; 	
-			if(n[1] ==posMap.end() and n[2] !=posMap.end() and n[5] ==posMap.end() )  // n2 found; 
-				ind = n[2]->second; 
-			if(n[1] ==posMap.end() and n[2] ==posMap.end() and n[5] !=posMap.end() )  //  n5 found; 
-				ind = n[5]->second; 
-			if(n[1] != posMap.end() and n[2] != posMap.end() and n[5] ==posMap.end() )  //  n1, n2 found; 
-				ind = n[2]->second; 
-			if(n[1] == posMap.end() and n[2] !=posMap.end() and n[5] !=posMap.end() )  //  n2, n5 found; 
-				ind = n[2]->second; 
-			if(n[1] != posMap.end() and n[2] == posMap.end() and n[5] !=posMap.end() )  //  n1, n5 found; 
-				ind = n[5]->second; 	
-
-			
-
-			if(n[1] !=posMap.end() and n[2] !=posMap.end() and n[5] !=posMap.end() ) {
-				if(ind !=-1) {
-				contourFile << to_string((*xList)[i]/level)   << "\t" << to_string((*yList)[i]/level)   << endl; 
- 				contourFile << to_string((*xList)[ind]/level) << "\t" << to_string((*yList)[ind]/level) << endl; 
- 				contourFile << endl; 
- 			}
-			//}
-	*/
-			
+		
 			for (int j=0; j<9; ++j) {
 				if(n[j]!=posMap.end()) {
 					int ind = n[j]->second; 
