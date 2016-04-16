@@ -50,6 +50,7 @@ all:  $(COMMON_HDRS) $(OBJS) libfortranstuff.a
 	@$(CC) $(CFLAGS) -o junGL $(OBJS) $(LDFLAGS)
 	@#valgrind --tool=memcheck --leak-check=full --verbose --log-file=memcheck.log --track-origins=yes ./junGL
 	@./junGL $(ARG1) $(ARG2) $(ARG3)
+	ds9 horseshoe_test/HorseShoe_large.fits & 
 commons.o: commons.cpp
 	@$(CC) -c -o commons.o commons.cpp $(CFLAGS)
 main.o:  main.cpp

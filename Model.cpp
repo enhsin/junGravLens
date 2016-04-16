@@ -149,7 +149,9 @@ vector<double> Model::getDeflectionAngle(Conf* conf, double pfX, double pfY, dou
 
 		if(param->parameter[i].name.compare("SIE")==0) {
 
-			double phi,root1mq,fq,fac,fCore=0,fCosTheta,fSinTheta,x1,y1,deltax1,deltay1;
+			double phi,root1mq,fq,fac,fCosTheta,fSinTheta,x1,y1,deltax1,deltay1;
+
+			double fCore= param->parameter[i].core; 
 			if (fX == 0 && fY == 0)  {
 				*pDeltaX += param->parameter[i].critRad; 
 				*pDeltaY += param->parameter[i].critRad;
@@ -846,6 +848,10 @@ MultModelParam::MultModelParam(map<string,string> confMap) {
 				tempParam.PAFrom 		= stof(items[12]);
 				tempParam.PATo			= stof(items[13]);
 				tempParam.PAInc			= stof(items[14]);
+				tempParam.coreFrom		= stof(items[15]); 
+				tempParam.coreTo		= stof(items[16]); 
+				tempParam.coreInc		= stof(items[17]); 
+
 				parameter.push_back(tempParam);
 				nParam.push_back(NUM_SIE_PARAM);
 
@@ -954,18 +960,21 @@ void MultModelParam::printModels() {
 				<< parameter[i].critRadFrom << "\t"
 				<< parameter[i].eFrom << "\t" 
 				<< parameter[i].PAFrom << "\t"
+				<< parameter[i].coreFrom << "\t"
 				<< "\n_To\t"
 				<< parameter[i].centerXTo<< "\t" 
 				<< parameter[i].centerYTo << "\t"
 				<< parameter[i].critRadTo << "\t"
 				<< parameter[i].eTo << "\t" 
 				<< parameter[i].PATo << "\t" 
+				<< parameter[i].coreTo << "\t"
 				<< "\n_Inc\t"
 				<< parameter[i].centerXInc << "\t" 
 				<< parameter[i].centerYInc << "\t"
 				<< parameter[i].critRadInc << "\t"
 				<< parameter[i].eInc << "\t" 
 				<< parameter[i].PAInc << "\t"
+				<< parameter[i].coreInc << "\t"
 				<< endl; 
 				
 		}
@@ -1038,22 +1047,19 @@ void MultModelParam::mix() {
 			vector<mixModels> v1; 
 			for (double critRad = parameter[i].critRadFrom;	critRad <= parameter[i].critRadTo; critRad += parameter[i].critRadInc) {
 				for (double centerX = parameter[i].centerXFrom;	centerX <= parameter[i].centerXTo; centerX += parameter[i].centerXInc) {
-
 					for (double centerY = parameter[i].centerYFrom;	centerY <= parameter[i].centerYTo; centerY += parameter[i].centerYInc) {
-
 						for (double e = parameter[i].eFrom;	e <= parameter[i].eTo; e += parameter[i].eInc) {
-
-							for (double PA = parameter[i].PAFrom;	PA <= parameter[i].PATo; PA += parameter[i].PAInc) {
-
-								mixModels sModel("SIE");
-								
-								sModel.paraList[0] = critRad; 
-								sModel.paraList[1] = centerX; 
-								sModel.paraList[2] = centerY; 
-								sModel.paraList[3] = e;
-								sModel.paraList[4] = PA;
-								sModel.paraList[5] = 0;  //parameter[i].core;
-								v1.push_back(sModel); 
+							for (double PA = parameter[i].PAFrom; PA <= parameter[i].PATo; PA += parameter[i].PAInc) {
+								for(double core = parameter[i].coreFrom; core <= parameter[i].coreTo; core += parameter[i].coreInc) {
+									mixModels sModel("SIE");
+									sModel.paraList[0] = critRad; 
+									sModel.paraList[1] = centerX; 
+									sModel.paraList[2] = centerY; 
+									sModel.paraList[3] = e;
+									sModel.paraList[4] = PA;
+									sModel.paraList[5] = core;  //parameter[i].core;
+									v1.push_back(sModel); 
+								}
 							}
 						}
 					}
@@ -1270,7 +1276,7 @@ vector<vector<double> > getCritCausticFine(vector<double> xPosListArc, vector<do
 			}
 	}
 
-	// Center:  (0, 0)
+	// Center:  (0, 0)  in arcsecond
 	ret.push_back(new_xPosListArc); 
 	ret.push_back(new_yPosListArc); 
 	ret.push_back(new_xSrcPosListArc); 
@@ -1313,12 +1319,12 @@ vector<Image* > getCritCaustic(Conf* conf, MultModelParam * param) {
 	for(int i=0; i<critXY[0].size(); ++i) {
 
 
-		// Image coordinate; 
-		xList.push_back(critXY[0][i]/newResolution + conf->imgXCenter*level); 
-		yList.push_back(critXY[1][i]/newResolution + conf->imgYCenter*level); 
+		// Image coordinate (in pixel)
+		xList.push_back(critXY[0][i]/newResolution + conf->imgXCenter*level +1); 
+		yList.push_back(critXY[1][i]/newResolution + conf->imgYCenter*level +1); 
 
-		srcXList.push_back(critXY[2][i]/newSrcResolution + conf->srcXCenter*level); 
-		srcYList.push_back(critXY[3][i]/newSrcResolution + conf->srcYCenter*level); 
+		srcXList.push_back(critXY[2][i]/newSrcResolution + conf->srcXCenter*level +1); 
+		srcYList.push_back(critXY[3][i]/newSrcResolution + conf->srcYCenter*level +1); 
 		critical.push_back(1); 
 
 	}
@@ -1362,8 +1368,7 @@ void createDs9Contour(vector<double>* xList, vector<double>* yList, double level
 			n[7] = posMap.find(make_pair(x  , y-1));
 			n[8] = posMap.find(make_pair(x+1, y-1));
 
-			int numNeighbor = 0;
-		
+
 			for (int j=0; j<9; ++j) {
 				if(n[j]!=posMap.end()) {
 					int ind = n[j]->second; 
@@ -1376,6 +1381,15 @@ void createDs9Contour(vector<double>* xList, vector<double>* yList, double level
 
 		}
  	contourFile.close(); 
+}
+
+
+
+void createLensImage(MultModelParam * param, Conf* conf) {
+
+
+
+
 }
 
 
