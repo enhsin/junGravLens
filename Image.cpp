@@ -340,8 +340,8 @@ void Image::updateFilterImage(string regionFileName, int flag) {
 	
 	vector<double> xpos, ypos;
 	if(flag==1) {  // with region; 
-		int regionType = parseReagionFile(regionFileName, &xpos, &ypos);
-		if(regionType == 1) {  // region type = polygon; 
+		string regionType = parseReagionFile(regionFileName, &xpos, &ypos);
+		if(regionType == "polygon") {  // region type = polygon; 
 
 			for(int i=0; i<naxis1*naxis2; ++i) {
 				int y=i/naxis1;
@@ -354,7 +354,7 @@ void Image::updateFilterImage(string regionFileName, int flag) {
 			}	
 		}
 		
-		else if(regionType == 2 ) {
+		else if(regionType == "point" ) {
 			for(int i=0; i< xpos.size(); ++i) {
 				xList.push_back(int(xpos[i])); 
 				yList.push_back(int(ypos[i])); 
@@ -363,7 +363,48 @@ void Image::updateFilterImage(string regionFileName, int flag) {
 				
 			}
 		}		
+		else if(regionType == "box") {
 
+			// xpos and ypos contain the same values:  [centerx, centery, sizex, sizey, rotation] // rotation will be always '0'
+			double boxCenterX 	= xpos[0]; 
+			double boxCenterY 	= xpos[1]; 
+			double boxSizeX 	= xpos[2]; 
+			double boxSizeY 	= xpos[3]; 
+			double boxRotation 	= xpos[4]; 
+			for(int i=0; i<naxis1; ++i) {
+				for (int j=0; j<naxis2; ++j) {
+					int dy= j - boxCenterY;
+					int dx= i - boxCenterX;
+					if(     dx <  0.5*boxSizeX and dy <  0.5*boxSizeY 
+						and dx > -0.5*boxSizeX and dy > -0.5*boxSizeY ) {
+						dataList.push_back(data[j*naxis1 + i]);
+						xList.push_back(i);
+						yList.push_back(j);
+					}
+				}
+			}	
+
+		}
+		else if(regionType == "circle") {
+
+			// xpos and ypos contain the same values:  [centerx, centery, sizex, sizey, rotation] // rotation will be always '0'
+			double circleCenterX 	= xpos[0]; 
+			double circleCenterY 	= xpos[1]; 
+			double circleR 			= xpos[2]; 
+			for(int i=0; i<naxis1; ++i) {
+				for (int j=0; j<naxis2; ++j) {
+					int dy= j - circleCenterX;
+					int dx= i - circleCenterY;
+					double dr2 = dx*dx + dy*dy; 
+					if( dr2 < circleR*circleR) {
+						dataList.push_back(data[j*naxis1 + i]);
+						xList.push_back(i);
+						yList.push_back(j);
+					}
+				}
+			}	
+
+		}
 		else {
 			cout << "Region type is not supported! " << endl; 
 			//return 1; 

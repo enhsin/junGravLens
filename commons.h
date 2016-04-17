@@ -98,7 +98,7 @@ void printerror( int status);
 
 bool pnpoly(size_t nvert, vector<double> *vertx, vector<double> *verty, double testx, double testy);
 void updateConf(string confFileName);
-int parseReagionFile(string regionFileName, vector<double> *xpos, vector<double> *ypos);
+string parseReagionFile(string regionFileName, vector<double> *xpos, vector<double> *ypos);
 map<string, string> parseConfigure(string confFileName) ;
 double getPenalty(sp_mat* M, vec* r, vec* d, sp_mat* C);
 double lm_arctanh(double x);

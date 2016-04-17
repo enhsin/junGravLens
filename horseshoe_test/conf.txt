@@ -28,7 +28,7 @@ contourCausName  horseshoe_test/ds9caus.con
 ## Flags:	 '1' == Yes && '0' == No
 usingRegion		1
 outputSrcImg	1
-outputModImg	0
+outputModImg	1
 outputCritImg	1
 outputLensImg	1
 srcBackground	1

@@ -126,7 +126,7 @@ bool pnpoly(size_t nvert, vector<double> *vertx, vector<double> *verty, double t
 }
 
 
-int parseReagionFile(string regionFileName, vector<double> *xpos, vector<double> *ypos) {
+string parseReagionFile(string regionFileName, vector<double> *xpos, vector<double> *ypos) {
 	// regionType = 0:   not supported yet; 
 	// regionType = 1:   Polygon region;
 	// regionType = 2:   Point region; 
@@ -134,7 +134,7 @@ int parseReagionFile(string regionFileName, vector<double> *xpos, vector<double>
 	ifstream regionFile(regionFileName.c_str());
 	string line, token;
 	size_t pos=0;
-	int regionType = 0; 
+	string regionType; 
 	size_t pos1 = 0; 
 	size_t pos2 = 0; 
 	while (getline(regionFile, line)) {
@@ -152,7 +152,7 @@ int parseReagionFile(string regionFileName, vector<double> *xpos, vector<double>
 					//cout << token << endl;
 					flag = (-1)*flag;
 				};
-				regionType = 1; 
+				regionType = "polygon"; 
 			}	
 			if(line.substr(0,5)=="point") { 
 				pos1 = line.find_first_of("(", pos);
@@ -164,7 +164,40 @@ int parseReagionFile(string regionFileName, vector<double> *xpos, vector<double>
 				getline(ss, token, ')'); 
 				ypos->push_back(stod(token)); 
 				//cout << token << endl; 
-				regionType = 2; 
+				regionType = "point"; 
+			}
+
+			if(line.substr(0,3)=="box") {
+				pos1 = line.find_first_of("(", pos);
+				pos2 = line.find_first_of(")", pos);
+				istringstream ss(line.substr(pos1+1, pos2-pos1));	
+				for (int j=0;j<4 ; ++j) {
+					getline(ss, token, ','); 
+					xpos->push_back(stod(token));
+					ypos->push_back(stod(token));
+				}
+				getline(ss, token, ')'); 
+				xpos->push_back(stod(token)); 
+				ypos->push_back(stod(token));
+
+				regionType = "box"; 
+			}
+
+
+			if(line.substr(0,6)=="circle") {
+				pos1 = line.find_first_of("(", pos);
+				pos2 = line.find_first_of(")", pos);
+				istringstream ss(line.substr(pos1+1, pos2-pos1));	
+				for (int j=0;j<2 ; ++j) {
+					getline(ss, token, ','); 
+					xpos->push_back(stod(token));
+					ypos->push_back(stod(token));
+				}
+				getline(ss, token, ')'); 
+				xpos->push_back(stod(token)); 
+				ypos->push_back(stod(token));
+
+				regionType = "circle"; 
 			}
 		}
 
