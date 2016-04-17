@@ -58,10 +58,10 @@ Image::Image(vector<int> xpos, vector<int> ypos, vector<double> *briList, long n
 	npixels = naxis1*naxis2;
 	long iList=0, x, y;
 	for(int i=0; i< briList->size(); ++i) {
-		x = nearbyint(xpos[i]);
-		y = nearbyint(ypos[i]);
+		x = xpos[i];
+		y = ypos[i];
 
-		if(x>0 && x< naxis1 && y>0 && y<naxis2) {
+		if(x>=0 && x< naxis1 && y>=0 && y<naxis2) {
 			iList = naxis1*y+x;
 		}
 		data[iList] += briList->at(i);

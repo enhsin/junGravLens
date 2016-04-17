@@ -68,7 +68,8 @@ public:
 	int usingRegion; 
 	int outputSrcImg ; 	
 	int outputModImg ; 
-	int outputCritImg ; 
+	int outputCritImg ;
+	int	outputLensImg ; 
 	int	srcBackground ; 
 
 	double back_mean; 

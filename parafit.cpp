@@ -131,6 +131,11 @@ void gridSearch(Conf* conf, MultModelParam param_old, Image* dataImage, vec d, s
 			delete critImg; 
 			delete causImg; 
 		}	
+		if(conf->outputLensImg) {
+			Image* lensImg = createLensImage(conf, &model->param); 
+			lensImg->writeToFile(dir + "img_lens.fits");
+			delete lensImg; 
+		}	
 	}
 	output.close(); 
 	

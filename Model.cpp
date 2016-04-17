@@ -1385,9 +1385,59 @@ void createDs9Contour(vector<double>* xList, vector<double>* yList, double level
 
 
 
-void createLensImage(MultModelParam * param, Conf* conf) {
+Image* createLensImage(Conf* conf, MultModelParam * param) {
+
+	double level = 1; 
+	vector<int> xList;  // in pixel, the same size as 'dataImage'; 
+	vector<int> yList;
+	vector<double> val;
+	for(int i=0; i<conf->imgSize[1]*level; ++i) {
+		for(int j=0; j<conf->imgSize[0]*level; ++j) {
+			xList.push_back(j); 
+			yList.push_back(i); 
+			val.push_back(0); 
+		}
+	}
 
 
+	cout << param->nLens << endl; 
+	for(int i=0; i< param->nLens; ++i) {
+
+		if(param->parameter[i].name =="PTMASS") {
+		}
+		if (param->parameter[i].name =="SIE") {
+
+			cout << i << endl; 
+			double centerX = param->parameter[i].centerX;
+			double centerY = param->parameter[i].centerY; 
+			double critRad = param->parameter[i].critRad; 
+			double q = 1-param->parameter[i].e; 
+			double PA = param->parameter[i].PA; 
+			double core = param->parameter[i].core; 
+			if (q==1)  q=0.999; 
+			for(int j=0; j<xList.size(); ++j) {
+				double x = (xList[j] - (centerX + conf->imgXCenter))*conf->imgRes  ; 
+				double y = (yList[j] - (centerY + conf->imgYCenter))*conf->imgRes  ;  
+				double coeff =1 ; // sqrt(q/(1-q*q)); 
+				val[j] += critRad*coeff /sqrt(x*x*q + y*y/q + core*core); 
+			}
+
+
+		}
+		if(param->parameter[i].name =="NFW") {
+		}
+
+
+		
+
+	}
+
+
+
+	cout << "val: " << xList[0] << "\t" << val[0] << endl; 
+	Image* lensImg = new Image(xList, yList, &val, conf->imgSize[0]*level, conf->imgSize[1]*level, conf->bitpix);
+
+	return lensImg; 
 
 
 }
