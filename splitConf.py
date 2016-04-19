@@ -87,9 +87,9 @@ def writeConf(path, header, fMixConf):
     i=0
     fileNameList = []
     for conf in fMixConf:
-        fileName =  path + "testConf_" + str(i)+".txt"
+        fileName =  "testConf_" + str(i)+".txt"
         fileNameList.append(fileName)
-        f = open(fileName, 'w')
+        f = open(path + fileName, 'w')
         f.write(header + "\n" + conf )
         f.close()
         i+=1

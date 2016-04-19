@@ -1412,14 +1412,16 @@ Image* createLensImage(Conf* conf, MultModelParam * param) {
 			double centerY = param->parameter[i].centerY; 
 			double critRad = param->parameter[i].critRad; 
 			double q = 1-param->parameter[i].e; 
-			double PA = param->parameter[i].PA; 
+			double PA = param->parameter[i].PA/180 * M_PI + 0.5 * M_PI; 
 			double core = param->parameter[i].core; 
 			if (q==1)  q=0.999; 
 			for(int j=0; j<xList.size(); ++j) {
 				double x = (xList[j] - (centerX + conf->imgXCenter))*conf->imgRes  ; 
-				double y = (yList[j] - (centerY + conf->imgYCenter))*conf->imgRes  ;  
+				double y = (yList[j] - (centerY + conf->imgYCenter))*conf->imgRes  ; 
+				double new_x = x*cos(PA) + y*sin(PA); 
+				double new_y = x*sin(PA) - y*cos(PA);  
 				double coeff =1 ; // sqrt(q/(1-q*q)); 
-				val[j] += critRad*coeff /sqrt(x*x*q + y*y/q + core*core); 
+				val[j] += critRad*coeff /sqrt(new_x*new_x*q + new_y*new_y/q + core*core); 
 			}
 
 

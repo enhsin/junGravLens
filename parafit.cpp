@@ -21,8 +21,6 @@ using namespace std;
 void gridSearch(Conf* conf, MultModelParam param_old, Image* dataImage, vec d, string dir, string outputFileName) {
 	Model *model = new Model(conf, param_old, 0.1);
 	
-	clock_t begin, end; 
-	double elapsed_secs; 
 	vector<vector<double> > critical;  
 
 	vector<int> maxIndex(3,0); 
@@ -30,12 +28,15 @@ void gridSearch(Conf* conf, MultModelParam param_old, Image* dataImage, vec d, s
 
 	int minIndexScatter = 0 ; 
 	double minScatter = std::numeric_limits<double>::max(); 
-	//cout << minScatter << endl; 
-	//vector<vector<mixModels> > mixAllModels;
+
 	ofstream output; 
 	output.open(outputFileName); 
 	//MultModelParam newParam (param);  
 
+
+	clock_t	begin = clock(); 
+
+	cout << model->param.nComb << endl; 
 	for(int i=0 ; i< model->param.nComb ; ++i) {
 		
 		model->clearVectors(); 
@@ -92,15 +93,16 @@ void gridSearch(Conf* conf, MultModelParam param_old, Image* dataImage, vec d, s
 		}	
 
 
-		string pStatus = "[" + to_string(i+1) + "/" + to_string(model->param.nComb) + "]\t" ; 
-		string resultStatus =  to_string(scatter) + "\t"
+		if(0) {
+			string pStatus = "[" + to_string(i+1) + "/" + to_string(model->param.nComb) + "]\t" ; 
+			string resultStatus =  to_string(scatter) + "\t"
 				//+ to_string(zerothOrder) + "\t" 
 				//+ to_string(gradientOrder) + "\t" 
 				//+ to_string(curvatureOrder)  
 				+ "\n"; 
-		cout 	<< pStatus << resultStatus ; 
-		output  << pStatus << model->param.printCurrentModels(i).at(0) << resultStatus ; 		
-
+			cout 	<< pStatus << resultStatus ; 
+			output  << pStatus << model->param.printCurrentModels(i).at(0) << resultStatus ; 		
+		}
 
 		if(conf->outputSrcImg) {
 			Image* srcImg 	= new Image(model->srcPosXListPixel, model->srcPosYListPixel, &sBright, conf->srcSize[0], conf->srcSize[1], conf->bitpix);		
@@ -139,6 +141,10 @@ void gridSearch(Conf* conf, MultModelParam param_old, Image* dataImage, vec d, s
 	}
 	output.close(); 
 	
+
+	clock_t end = clock(); 
+	double elapsed_secs = double(end-begin)/CLOCKS_PER_SEC; 
+	cout << "Time used: " << elapsed_secs << endl; 
 
 	// Print out the best model : 
 	cout << "************************\nThe best models : " << minScatter << endl;

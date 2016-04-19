@@ -1,0 +1,27 @@
+# Region file format: DS9 version 4.1
+# Filename: jun_image.fits
+global color=green dashlist=8 3 width=1 font="helvetica 10 normal roman" select=1 highlite=1 dash=0 fixed=0 edit=1 move=1 delete=1 include=1 source=1
+image
+point(98.898148,214.31096) # point=box
+point(96.969136,192.60957) # point=box
+point(92.628858,174.28395) # point=box
+point(102.27392,173.8017) # point=box
+point(99.862654,153.54707) # point=box
+point(221.39043,239.87037) # point=box
+point(227.17747,234.56559) # point=box
+point(193.41975,322.33565) # point=box
+point(225.73071,325.22917) # point=box
+point(252.25463,321.37114) # point=box
+point(283.11883,312.20833) # point=box
+point(278.2963,303.52778) # point=box
+point(304.33796,294.36497) # point=box
+point(301.44444,288.09568) # point=box
+point(326.03935,273.62809) # point=box
+point(348.70525,98.570216) # point=box
+point(333.7554,87.478395) # point=box
+point(342.91821,83.62037) # point=box
+point(319.77006,72.528549) # point=box
+point(328.93287,67.223765) # point=box
+point(304.33796,54.685185) # point=box
+point(249.36111,317.03086) # point=box
+point(104.20293,131.36343) # point=box
