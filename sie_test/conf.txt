@@ -5,7 +5,7 @@ weos	  -1.000000
 hubble	  0.696000
 srcZ	2.379
 lenZ	0.4457
-
+causticLevel  4
 
 ## Setting secondary parameters: 
 srcRes	0.1
@@ -18,6 +18,14 @@ regionFileName	sie_test/full.reg
 varFileName	  jun_var.fits
 psfFileName		PSF_test/cut_psf.fits
 
+## Flags:    '1' == Yes && '0' == No
+usingRegion     1
+outputSrcImg    1
+outputModImg    1
+outputCritImg   1
+outputLensImg   1
+srcBackground   1
+
 
 ## Source plane size
 srcX	200
@@ -28,8 +36,8 @@ back_std 0.0
 ## Model_SIE {xfrom, xto, xinc, yfrom, yto, yinc, critfrom, critto, critinc, ellfrom, ellto, ellinc, pafrom, pato, painc, corefrom, coreto, coreinc}
 ##SIE 0.0 0.0 0.5 -10.0 10.0 0.2 7.26 7.26 0.01 0.1 0.1 0.01 38.0 38.0 1.0 0.0 0.0 0.0 
 SIE 0.0 0.0 0.5 0.0 0.0 1.0 2.23 4.23 0.1 0.0 0.0 0.01 0.0 0.0 1.0 0.0 0.0 0.1 
-PTMASS 0.0 40.0 2.0 20.0 20.0 2.0 3.7 3.7 0.1
-PTMASS 0.0 0.0 0.1 -40.0 0.0 2.0 2.7 4.7 0.1
+PTMASS 16.0 24.0 2.0 20.0 20.0 2.0 3.7 3.7 0.1
+PTMASS 0.0 0.0 0.1 -24.0 -16.0 2.0 2.7 4.7 0.1
 
 
 

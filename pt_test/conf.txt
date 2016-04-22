@@ -5,7 +5,7 @@ weos	  -1.000000
 hubble	  0.696000
 srcZ	2.379
 lenZ	0.4457
-
+causticLevel  4
 
 ## Setting secondary parameters: 
 srcRes	0.1
@@ -19,13 +19,24 @@ varFileName	  jun_var.fits
 psfFileName		PSF_test/cut_psf.fits
 
 
+## Flags:    '1' == Yes && '0' == No
+usingRegion     1
+outputSrcImg    1
+outputModImg    1
+outputCritImg   1
+outputLensImg   1
+srcBackground   1
+
+
 ## Source plane size
 srcX	200
 srcY	200
+back_mean 0.0
+back_std 0.0
 
 
 ## Model_PTMASS {xfrom, xto, xinc, yfrom, yto, yinc, critfrom, critto, critinc}
-PTMASS 0.0 0.0 0.1 0.0 0.0 0.1 4.14 4.14 0.03
+PTMASS -0.2 0.2 0.1 0.0 0.0 0.1 4.14 4.14 0.03
 PTMASS 20.0 20.0 0.1 20.0 20.0 0.1 4.14 4.14 0.03
 
 

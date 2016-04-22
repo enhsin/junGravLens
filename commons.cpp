@@ -442,8 +442,10 @@ void getAngularSizeDistance(Conf* conf, double z, double* comoveD, double* angul
 	double c = 299792.458;
 	double DCMR = 0.0;      //  comoving radial distance in units of c/H0
 	double WM = conf->omega;
-	double WR = 4.165E-5/(conf->hubble*conf->hubble) ;   // includes 3 massless neutrino species, T0 = 2.72528
-	double WK = 1-WM-WR-WV;
+	//double WR = 4.165E-5/(conf->hubble*conf->hubble) ;   // includes 3 massless neutrino species, T0 = 2.72528
+	//double WK = 1-WM-WR-WV;
+    double WR = 0.;
+    double WK = 0.;
 	double az = 1.0/(1+1.0*z);
 	double a, adot;
 	double n=1000;        // number of points in integrals

@@ -599,18 +599,23 @@ double Model::getScatterReg() {
 	double scatter = 0;   // STD of position 'x' and 'y'
 	double sumX = 0; 
 	double sumY = 0;  
-	for (int i=0; i<srcPosXList.size(); ++i) {
+    int counter(0);
+	for (size_t i=0; i<srcPosXList.size(); ++i) {
+        if (std::isnan(srcPosXList[i]) || std::isnan(srcPosYList[i])) continue;
 		sumX += srcPosXList[i]; 
-		sumY += srcPosYList[i]; 
+		sumY += srcPosYList[i];
+        counter++;
 	}
+    cout<<"sum "<<sumX<<" "<<sumY<<" "<<counter<<endl;
 
-	double xPosMean = sumX / srcPosXList.size(); 
-	double yPosMean = sumY / srcPosYList.size();
-	for (int i=0; i<srcPosXList.size(); ++i) {
+	double xPosMean = sumX / counter; 
+	double yPosMean = sumY / counter;
+	for (size_t i=0; i<srcPosXList.size(); ++i) {
+        if (std::isnan(srcPosXList[i]) || std::isnan(srcPosYList[i])) continue;
 		scatter += (srcPosXList[i]-xPosMean) * (srcPosXList[i]-xPosMean) ;
 		scatter += (srcPosYList[i]-yPosMean) * (srcPosYList[i]-yPosMean) ;
 	}
-	scatter = scatter / srcPosXList.size();  
+	scatter = scatter / counter;  
 	return scatter; 
 	
 }
@@ -1072,7 +1077,9 @@ void MultModelParam::mix() {
 
 
 	}
-	mix.resize(3); 
+    cout << "mix size: " << mix.size() << endl;
+	if (mix.size() > 3) mix.resize(3);
+
 	/* for maximum 3 models:  j, k, m */
 
 		for(int j=0; j<mix[0].size(); ++j) {
