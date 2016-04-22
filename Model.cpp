@@ -1078,24 +1078,29 @@ void MultModelParam::mix() {
 
 	}
     cout << "mix size: " << mix.size() << endl;
-	if (mix.size() > 3) mix.resize(3);
+	mix.resize(3);
+
+    size_t ms1(1), ms2(1);
+    if (ms1<mix[1].size()) ms1=mix[1].size();
+    if (ms2<mix[2].size()) ms2=mix[2].size();
+    cout<<mix[0].size()<<" " << ms1<<" "<<ms2<<endl;
 
 	/* for maximum 3 models:  j, k, m */
-
-		for(size_t j=0; j<mix[0].size(); ++j) {
-			for(size_t k=0; k<mix[1].size(); ++k ) {
-				for(size_t m=0; m<mix[2].size(); ++m) {
-					vector<mixModels> v2; 
-					v2.push_back(mix[0][j]); 
-					v2.push_back(mix[1][k]); 
-					v2.push_back(mix[2][m]); 
-					mixAllModels.push_back(v2); 
-				}
-
+	for(size_t j=0; j<mix[0].size(); ++j) {
+		for(size_t k=0; k<ms1; ++k ) {
+			for(size_t m=0; m<ms2; ++m) {
+				vector<mixModels> v2;
+				v2.push_back(mix[0][j]);
+				if (nLens>1) v2.push_back(mix[1][k]);
+				if (nLens>2) v2.push_back(mix[2][m]);
+				mixAllModels.push_back(v2);
 			}
 
 		}
-	nComb = mixAllModels.size(); 
+
+	}
+	nComb = mixAllModels.size();
+    cout << "nComb: " << nComb << endl;
 }
 
 
