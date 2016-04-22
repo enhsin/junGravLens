@@ -561,7 +561,7 @@ Image Model::getFullResidual(Image* dataImage) {
 	mod_img = dataImage->dataList; 
 	Image fullResidualImage(* dataImage); 
 	map<pair<int, int>, double> modMap; 
-	for(int i=0; i< mod_img.size(); ++i)  {
+	for(size_t i=0; i< mod_img.size(); ++i)  {
 		int pos = dataImage->yList[i] * dataImage->naxis1 + dataImage->xList[i]; 
 		fullResidualImage.data[pos] -= mod_img[i]; 
 	}
@@ -798,7 +798,7 @@ MultModelParam::MultModelParam(map<string,string> confMap) {
 			}; 
 			strs.push_back(s); 
 
-			for(int i=0; i<strs.size(); ++i) {
+			for(size_t i=0; i<strs.size(); ++i) {
 				vector<string> items = splitString(strs[i]);
 				SingleModelParam tempParam;
 				tempParam.name = "PTMASS";
@@ -831,7 +831,7 @@ MultModelParam::MultModelParam(map<string,string> confMap) {
 				pos = s.find(delimiter);
 			}; 
 			strs.push_back(s); 
-			for(int i=0; i<strs.size(); ++i) {
+			for(size_t i=0; i<strs.size(); ++i) {
 
 				vector<string> items = splitString(strs[i]);
 				SingleModelParam tempParam;
@@ -1082,9 +1082,9 @@ void MultModelParam::mix() {
 
 	/* for maximum 3 models:  j, k, m */
 
-		for(int j=0; j<mix[0].size(); ++j) {
-			for(int k=0; k<mix[1].size(); ++k ) {
-				for(int m=0; m<mix[2].size(); ++m) {
+		for(size_t j=0; j<mix[0].size(); ++j) {
+			for(size_t k=0; k<mix[1].size(); ++k ) {
+				for(size_t m=0; m<mix[2].size(); ++m) {
 					vector<mixModels> v2; 
 					v2.push_back(mix[0][j]); 
 					v2.push_back(mix[1][k]); 
@@ -1108,7 +1108,7 @@ vector<string> MultModelParam::printCurrentModels(int curr) {
 
 	// return a string for "output.txt"; 
 	modelsInCol += ( "[" + to_string(curr+1)+"/"+to_string(nComb)  + "]\n" ); 
-	for(int i=0; i<mixAllModels[curr].size(); ++i) {
+	for(size_t i=0; i<mixAllModels[curr].size(); ++i) {
 		modelsInCol += (mixAllModels[curr][i].name  + ":\t") ; 
 		for (int j=0; j< 8; ++j) {
 			modelsInCol += (to_string(mixAllModels[curr][i].paraList[j]) + "\t") ; 
@@ -1186,7 +1186,7 @@ vector<vector<double> > getCritCausticFine(vector<double> xPosListArc, vector<do
 	double side = 1.0/level;   // unit is pixel; 
 
 	int index = 0 ; 
-	for (int i=0; i<xPosListArc.size(); ++i) {
+	for (size_t i=0; i<xPosListArc.size(); ++i) {
 		int old_imgX = int(round(xPosListArc[i] / conf->imgRes + conf->imgXCenter )); 
 		int old_imgY = int(round(yPosListArc[i] / conf->imgRes + conf->imgYCenter )); 
 
@@ -1323,7 +1323,7 @@ vector<Image* > getCritCaustic(Conf* conf, MultModelParam * param) {
 	double newResolution = conf->imgRes/level; 
 	double newSrcResolution = conf->srcRes/level; 
 
-	for(int i=0; i<critXY[0].size(); ++i) {
+	for(size_t i=0; i<critXY[0].size(); ++i) {
 
 
 		// Image coordinate (in pixel)
@@ -1352,7 +1352,7 @@ void createDs9Contour(vector<double>* xList, vector<double>* yList, double level
 	//   contour in image coordinate; 
 	ofstream contourFile(contourFileName);
 	map<pair<int, int>, int> posMap;
-	for (int i=0; i<xList->size(); ++i) {
+	for (size_t i=0; i<xList->size(); ++i) {
 		posMap[make_pair(int((*xList)[i]), int((*yList)[i]))] = i; 
 	}
 	vector <map<pair<int, int>,int>::iterator> n(9); //  n1, n2, n3, n4, n5, n6, n7, n8, n9; 
@@ -1361,7 +1361,7 @@ void createDs9Contour(vector<double>* xList, vector<double>* yList, double level
 	 * 	n3, || n4,  n5
 	 *	n6, || n7,  n8
 	 */
-	for (int i=0; i<xList->size(); ++i) {
+	for (size_t i=0; i<xList->size(); ++i) {
 			int x = int((*xList)[i]); 
 			int y = int((*yList)[i]); 
 
@@ -1422,7 +1422,7 @@ Image* createLensImage(Conf* conf, MultModelParam * param) {
 			double PA = param->parameter[i].PA/180 * M_PI + 0.5 * M_PI; 
 			double core = param->parameter[i].core; 
 			if (q==1)  q=0.999; 
-			for(int j=0; j<xList.size(); ++j) {
+			for(size_t j=0; j<xList.size(); ++j) {
 				double x = (xList[j] - (centerX + conf->imgXCenter))*conf->imgRes  ; 
 				double y = (yList[j] - (centerY + conf->imgYCenter))*conf->imgRes  ; 
 				double new_x = x*cos(PA) + y*sin(PA); 
