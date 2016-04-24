@@ -99,7 +99,7 @@ public:
 
 	MultModelParam(map<string,string> confMap) ; 
 	void printModels() ; 
-	void mix(); 
+	void mix(int opt);
 	vector<string> printCurrentModels(int curr); 
 
 };
@@ -221,6 +221,8 @@ public:
 	//vector<string> &split(string &s, char delim, vector<string> &elems) ; 
 
 	void clearVectors();
+    void copyParam(int i);
+    void copyParam(int i1, int i2);
 };
 
 vector<Image* > getCritCaustic(Conf* conf, MultModelParam * param); 

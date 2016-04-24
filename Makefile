@@ -6,7 +6,7 @@ CXXFLAGS := -Wall -O3 -g -std=c++11 $(INC)
 LDFLAGS := -L. -L/home/epeng/Program/phosim_core/source/cfitsio/lib
 LDLIBS := -lcfitsio -lgsl -lgslcblas -lm -lfortranstuff
 
-SRCS := main.cpp Image.cpp commons.cpp Model.cpp gl_crit.cpp parafit.cpp
+SRCS := main.cpp Image.cpp commons.cpp Model.cpp gl_crit.cpp parafit.cpp parafit2.cpp mc.cpp
 OBJS  := $(patsubst %.cpp, %.o, $(SRCS))
 
 all: $(appname)
