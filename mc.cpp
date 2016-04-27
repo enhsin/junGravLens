@@ -1,7 +1,7 @@
 /*
  * mc.cpp
  *
- *  Created on: Apr, 2016
+ *  Created on: Apr 23, 2016
  *      Author: En-Hsin Peng
  */
 
@@ -88,7 +88,9 @@ double MC::stepPar(MultModelParam &param, double cfac, size_t &iter) {
                     }
                 }
                 if (stepSig < minSig) stepSig = minSig;
-                param.mixAllModels[3][j].paraList[k] += cgauss()*stepSig;
+                double r = cgauss();
+                param.mixAllModels[3][j].paraList[k] = par0 + r*stepSig;
+                std::cout << r << " " << stepSig << " " << std::endl;
                 if (param.mixAllModels[3][j].paraList[k] < param.mixAllModels[6][j].paraList[k])
                     param.mixAllModels[3][j].paraList[k] = param.mixAllModels[6][j].paraList[k];
                 if (param.mixAllModels[3][j].paraList[k] > param.mixAllModels[7][j].paraList[k])
