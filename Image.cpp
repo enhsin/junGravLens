@@ -30,6 +30,7 @@ Image::Image(vector<double> xpos, vector<double> ypos, vector<double> *briList, 
 	npixels = naxis1*naxis2;
 
 	long iList=0, x, y;
+    vector<int> count(naxis1*naxis2, 0);
 	for(int i=0; i< briList->size(); ++i) {
 		x = nearbyint(xpos[i]);
 		y = nearbyint(ypos[i]);
@@ -38,8 +39,11 @@ Image::Image(vector<double> xpos, vector<double> ypos, vector<double> *briList, 
 			iList = naxis1*y+x;
 		}
 		data[iList] += briList->at(i);
-
+        count[iList] += 1;
 	}
+    for (size_t i=0; i<naxis1*naxis2; ++i) {
+        if (count[i] > 0) data[i] /= count[i];
+    }
 }
 
 

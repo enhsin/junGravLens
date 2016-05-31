@@ -64,11 +64,11 @@ int main(int argc, char* argv[]) {
 	MultModelParam param = MultModelParam(mapConf);
 	
 	param.printModels();
-	param.mix(1); 	 // update 'AllMixModels'; 
+	param.mix(0); 	 // update 'AllMixModels'; 
 
 
-	//gridSearch(conf, param,  dataImage, d, dir, output);	
-    mcFit(conf, param,  dataImage, d, dir, output);
+	gridSearch(conf, param,  dataImage, d, dir, output);	
+    //mcFit(conf, param,  dataImage, d, dir, output);
 
 	delete conf; 
 	delete dataImage; 
